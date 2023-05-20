@@ -1,0 +1,65 @@
+<config>
+
+
+	<levels>
+		<level name="Level1-SelvaMisionera" sectorInicial="Sector-Area1" conectorInicial="Conector_area1_inicial"/> 
+	</levels>
+	
+	
+	
+	<fisica>
+		<velocidadCaminar>210</velocidadCaminar>
+		<velocidadCargandoEsconditeMovil>70</velocidadCargandoEsconditeMovil>
+		<duracionSegundosSalto>1</duracionSegundosSalto>
+		<velocidadRotacion>150</velocidadRotacion>
+		<velocidadSalto>425</velocidadSalto>
+		<gravedad>-8</gravedad>
+		<slideFactor>1.3</slideFactor>
+		<boundingSphereCenterY>16</boundingSphereCenterY>
+		<boundingSphereAgachadoCenterY>10</boundingSphereAgachadoCenterY>
+		<boundingSphereRadio>15</boundingSphereRadio>
+		<boundingSphereRadioAgachado>10</boundingSphereRadioAgachado>
+		<boundingSphereDebug>1</boundingSphereDebug>
+		<anguloSalto>45</anguloSalto>
+		<anguloGolpe>45</anguloGolpe>
+		<frecuenciaSonidoCorrer>0.1</frecuenciaSonidoCorrer>
+		<frecuenciaSonidoCaminar>0.1</frecuenciaSonidoCaminar>
+	</fisica>
+	
+	<camara>
+		<offsetY>15</offsetY>
+		<offsetZ>-98</offsetZ>
+		<displacementY>22</displacementY>
+		<offsetYForMinOffsetY>30</offsetYForMinOffsetY>
+		<minOffsetZ>-1</minOffsetZ>
+		<distanciaVisual>1200</distanciaVisual>
+		<facingBackwardOffsetZ>-105</facingBackwardOffsetZ>
+		<facingBackwardMinOffsetZ>1</facingBackwardMinOffsetZ>
+	</camara>
+	
+	<guardia>
+		<duracionSegundosVigilancia>7</duracionSegundosVigilancia>
+		<velocidadCaminar>100</velocidadCaminar>
+		<velocidadCorrer>180</velocidadCorrer>
+		<velocidadRotacion>200</velocidadRotacion>
+		<distanciaVisual>300</distanciaVisual>
+		<distanciaVisualEspaldas>25</distanciaVisualEspaldas>
+		<anguloVision>45</anguloVision>
+		<anguloRotacionVigilancia>90</anguloRotacionVigilancia>
+		<velocidadRotacionVigilancia>50</velocidadRotacionVigilancia>
+		<distanciaAtaque>40</distanciaAtaque>
+		<alturaVision>30</alturaVision>
+		<alturaVisionAgachado>15</alturaVisionAgachado>
+	</guardia>
+	
+	<keys>
+		<forward>UpArrow</forward>
+		<backward>DownArrow</backward>
+		<turnLeft>LeftArrow</turnLeft>
+		<turnRight>RightArrow</turnRight>
+		<action>Space</action>
+		<crouch>LeftAlt</crouch>
+		<enter>Return</enter>
+	</keys>
+
+</config>

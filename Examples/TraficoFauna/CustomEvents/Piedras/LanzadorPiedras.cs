@@ -1,0 +1,230 @@
+﻿/*
+Copyright 2012 Educ.ar S.E.
+
+This file is part of "Trafico de Fauna".
+
+"Trafico de Fauna" is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+"Trafico de Fauna" is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
+*/
+using System;
+using System.Collections.Generic;
+using System.Text;
+using TgcViewer.Utils.TgcSceneLoader;
+using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
+using TraficoFauna.Examples;
+using Examples.TraficoFauna.Dialogs;
+using TgcViewer;
+using Microsoft.DirectX.DirectInput;
+using Examples.TraficoFauna.Meshes;
+using Examples.TraficoFauna.Interpolators;
+
+namespace Examples.TraficoFauna.CustomEvents.Piedras
+{
+
+    /// <summary>
+    /// Lanza piedras en forma intermitente desde un punto del BoundingBox hacia el otro.
+    /// Chocan contra el personaje principal.
+    /// </summary>
+    public class LanzadorPiedras : CustomEvent
+    {
+        readonly float ROTACION_VELOCIDAD = FastMath.PI;
+
+        TgcMeshShader mesh;
+        Vector3 posOrigen;
+        Vector3 posFinal;
+        float frecuencia;
+        float velocidad;
+        bool lanzando;
+        float acumTime;
+        Vector3 movementDir;
+        float origDistanceToTravel;
+        float distanceToTravel;
+        InterpoladorVaiven vaiven;
+        float meshOriginalPosY;
+        bool axisX;
+        float rotAngle;
+        TgcBoundingBox boundingBox;
+
+
+        public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
+        {
+            //Mesh
+            TgcSceneLoader loader = new TgcSceneLoader();
+            loader.MeshFactory = new TgcMeshShaderFactory();
+            string meshPath = Game.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
+            TgcScene scene = loader.loadSceneFromFile(meshPath);
+            mesh = (TgcMeshShader)scene.Meshes[0];
+
+            //Extremos y direccion de movimiento
+            axisX = GameUtils.getBBExtremeCentersXZ(meshData, out posOrigen, out posFinal);
+            boundingBox = GameUtils.createBBFromMeshData(meshData);
+            Vector3 axisRadius = mesh.BoundingBox.calculateAxisRadius();
+            meshOriginalPosY = axisRadius.Y;
+            posOrigen.Y = meshOriginalPosY;
+            posFinal.Y = meshOriginalPosY;
+            movementDir = posFinal - posOrigen;
+            movementDir.Y = meshOriginalPosY;
+            origDistanceToTravel = movementDir.Length();
+            movementDir.Normalize();
+
+            //Rotacion segun orientacion
+            if (axisX)
+            {
+                rotAngle = posOrigen.X > posFinal.X ? ROTACION_VELOCIDAD : -ROTACION_VELOCIDAD;
+            }
+            else
+            {
+                rotAngle = posOrigen.Z > posFinal.Z ? -ROTACION_VELOCIDAD : ROTACION_VELOCIDAD;
+            }
+
+            //Efecto rebote
+            vaiven = new InterpoladorVaiven(0, 20, 100);
+
+            //Propiedad: frecuencia=4 (default=3) es en segundos
+            if (GameUtils.containsUserProp(meshData.userProperties, "frecuencia"))
+            {
+                if (!float.TryParse(meshData.userProperties["frecuencia"], out frecuencia))
+                {
+                    throw new Exception("Frecuencia de LanzadorPiedras no es numerica: " + meshData.name);
+                }
+            }
+            else
+            {
+                frecuencia = 3;
+            }
+            //Propiedad: velocidad=100 (default=300) es en segundos
+            if (GameUtils.containsUserProp(meshData.userProperties, "velocidad"))
+            {
+                if (!float.TryParse(meshData.userProperties["velocidad"], out velocidad))
+                {
+                    throw new Exception("Velocidad de LanzadorPiedras no es numerica: " + meshData.name);
+                }
+            }
+            else
+            {
+                velocidad = 300;
+            }
+        }
+
+        public override void init()
+        {
+            lanzando = false;
+            acumTime = 0;
+            mesh.Enabled = false;
+        }
+
+        public override void end()
+        {
+            Game.instance.sonidos.piedra_rodando.stop();
+        }
+
+        public override void update()
+        {
+            float elapsedTime = GuiController.Instance.ElapsedTime;
+
+            //Mover piedra actual
+            if (lanzando)
+            {
+                float movement = velocidad * elapsedTime;
+                distanceToTravel -= movement;
+                if (distanceToTravel < 0)
+                {
+                    //Llego a su destino
+                    lanzando = false;
+                    mesh.Enabled = false;
+
+                    //Apagar sonido de girando
+                    Game.instance.sonidos.piedra_rodando.stop();
+                }
+                else
+                {
+                    //Rotar segun orientacion
+                    if (axisX)
+                    {
+                        mesh.rotateZ(rotAngle * elapsedTime);
+                    }
+                    else
+                    {
+                        mesh.rotateX(rotAngle * elapsedTime);
+                    }
+
+                    //Desplazar en XZ y mover en Y con vaiven 
+                    Vector3 move = Vector3.Scale(movementDir, movement);
+                    Vector3 newPos = mesh.Position + move;
+                    newPos.Y = meshOriginalPosY + vaiven.update();
+                    mesh.Position = newPos;
+                }
+
+                //Ver si la piedra colisiona contra el personaje
+                if (Game.instance.mainCharacter.collideWithAABB(mesh.BoundingBox))
+                {
+                    //Sonido de golpe de piedra
+                    Game.instance.sonidos.piedra_golpear_personaje.play(false);
+
+                    //Quitar vida
+                    Game.instance.currentLevel.removeLifeToPlayer();
+                }
+
+            }
+            //Ver si paso el tiempo para lanzar una nueva piedra
+            else
+            {
+                acumTime += elapsedTime;
+
+                //Lanzar nueva piedra
+                if (acumTime > frecuencia)
+                {
+                    lanzando = true;
+                    acumTime = 0;
+                    mesh.Enabled = true;
+                    mesh.Position = posOrigen;
+                    distanceToTravel = origDistanceToTravel;
+                    mesh.Rotation = new Vector3(0, 0, 0);
+
+                    //Activar sonido de rodando
+                    Game.instance.sonidos.piedra_rodando.play(true);
+                }
+            }
+            
+        }
+
+        public override void render()
+        {
+            //Dibujar si esta en rango visible
+            if (Game.instance.mainCharacter.isInProximityRange(posOrigen))
+            {
+                Game.instance.shaders.setCorrectTechnique(mesh);
+                mesh.render();
+            }
+        }
+
+        public override void renderDebug()
+        {
+            boundingBox.render();
+        }
+
+        public override ColliderObject getColliderObject()
+        {
+            return null;
+        }
+
+        public override void dispose()
+        {
+            mesh.dispose();
+            mesh = null;
+            boundingBox.dispose();
+            boundingBox = null;
+        }
+    }
+}
