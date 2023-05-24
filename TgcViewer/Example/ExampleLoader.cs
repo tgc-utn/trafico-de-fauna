@@ -23,6 +23,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Windows.Forms;
+using TraficoFauna.Examples;
 
 namespace TgcViewer.Example
 {
@@ -57,11 +58,13 @@ namespace TgcViewer.Example
         {
             //Cargar ejemplos dinamicamente
             currentExamples = new List<TgcExample>();
+            /*
             foreach (string exampleDir in exampleDirs)
             {
                 currentExamples.AddRange(loadExamples(exampleDir));
             }
-
+            */
+            currentExamples.Add(new Game());
             //Cargar el TreeView, agrupando ejemplos por categoria
             treeExamplesDict.Clear();
             foreach (TgcExample example in currentExamples)

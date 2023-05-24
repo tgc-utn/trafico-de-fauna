@@ -40,7 +40,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -82,15 +82,15 @@
     <Compile Include="Example\ExampleLoader.cs" />
     <Compile Include="Example\TgcExample.cs" />
     <Compile Include="GuiController.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Form\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Form\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,6 +104,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="TraficoFauna\Menu\Error\ErrorWindow.resx">
+      <DependentUpon>ErrorWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -115,6 +118,83 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TraficoFauna\Bananas\Banana.cs" />
+    <Compile Include="TraficoFauna\Bananas\BananasPool.cs" />
+    <Compile Include="TraficoFauna\Bananas\CajaBanana.cs" />
+    <Compile Include="TraficoFauna\Bananas\CajasBananasPool.cs" />
+    <Compile Include="TraficoFauna\Billboards\HorizontalAnimatedBillboard.cs" />
+    <Compile Include="TraficoFauna\Billboards\HorizontalDisplacementBillboard.cs" />
+    <Compile Include="TraficoFauna\Billboards\PointSpriteBillboard.cs" />
+    <Compile Include="TraficoFauna\Billboards\QuadAnimatedBillboard.cs" />
+    <Compile Include="TraficoFauna\Camera\GameThirdPersonCamera.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Billboards\BillboardExplosion.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Billboards\WaterEffect.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\CustomEvent.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\CustomEventsManager.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Dialogs\PositionDialog.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Particulas\ParticulasAgua.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Particulas\ParticulasFuego.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Particulas\ParticulasHojasCayendo.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Particulas\ParticulasHumo.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Piedras\LanzadorPiedras.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Prueba.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Surfaces\MeshChorreando.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\Surfaces\WaterSurface.cs" />
+    <Compile Include="TraficoFauna\CustomEvents\ZonasEspeciales\ZonaDeMuerte.cs" />
+    <Compile Include="TraficoFauna\Debug\DebugMode.cs" />
+    <Compile Include="TraficoFauna\Dialogs\SimpleMessageDialog.cs" />
+    <Compile Include="TraficoFauna\Dialogs\TextDialog.cs" />
+    <Compile Include="TraficoFauna\Enemies\Ataque\WaypointAtaque.cs" />
+    <Compile Include="TraficoFauna\Enemies\Ataque\WaypointAtaqueArista.cs" />
+    <Compile Include="TraficoFauna\Enemies\Ataque\WaypointsAtaqueManager.cs" />
+    <Compile Include="TraficoFauna\Enemies\Guardia.cs" />
+    <Compile Include="TraficoFauna\Enemies\GuardiasManager.cs" />
+    <Compile Include="TraficoFauna\Enemies\GuardiasPool.cs" />
+    <Compile Include="TraficoFauna\Enemies\GuardiaWaypoint.cs" />
+    <Compile Include="TraficoFauna\Escondites\EsconditeFijo.cs" />
+    <Compile Include="TraficoFauna\Escondites\EsconditeMovil.cs" />
+    <Compile Include="TraficoFauna\Game.cs" />
+    <Compile Include="TraficoFauna\GameConfig.cs" />
+    <Compile Include="TraficoFauna\GameModes\Transiciones.cs" />
+    <Compile Include="TraficoFauna\GameUtils.cs" />
+    <Compile Include="TraficoFauna\Interpolators\InterpoladorLineal.cs" />
+    <Compile Include="TraficoFauna\Interpolators\InterpoladorVaiven.cs" />
+    <Compile Include="TraficoFauna\Interpolators\Position2dInterpolator.cs" />
+    <Compile Include="TraficoFauna\Interpolators\Temporizador.cs" />
+    <Compile Include="TraficoFauna\ItemsAnimal\ItemAnimal.cs" />
+    <Compile Include="TraficoFauna\ItemsAnimal\Llave.cs" />
+    <Compile Include="TraficoFauna\ItemsAnimal\RotadorDeItems.cs" />
+    <Compile Include="TraficoFauna\Levels\Conector.cs" />
+    <Compile Include="TraficoFauna\Levels\Level.cs" />
+    <Compile Include="TraficoFauna\Levels\LevelSector.cs" />
+    <Compile Include="TraficoFauna\MainCharacters\MainCharacter.cs" />
+    <Compile Include="TraficoFauna\MainCharacters\SphereCollisionManager.cs" />
+    <Compile Include="TraficoFauna\Menu\AnimatedSprite.cs" />
+    <Compile Include="TraficoFauna\Menu\Drawer2D.cs" />
+    <Compile Include="TraficoFauna\Menu\Error\ErrorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TraficoFauna\Menu\Error\ErrorWindow.Designer.cs">
+      <DependentUpon>ErrorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TraficoFauna\Menu\GameSprite.cs" />
+    <Compile Include="TraficoFauna\Menu\HUD.cs" />
+    <Compile Include="TraficoFauna\Menu\MenuPrincipal.cs" />
+    <Compile Include="TraficoFauna\Meshes\ColliderObject.cs" />
+    <Compile Include="TraficoFauna\Meshes\IAlphaObject.cs" />
+    <Compile Include="TraficoFauna\Meshes\MeshAnimatedTexture.cs" />
+    <Compile Include="TraficoFauna\Meshes\TgcMeshShader.cs" />
+    <Compile Include="TraficoFauna\Particles\ColaDeParticulas.cs" />
+    <Compile Include="TraficoFauna\Particles\Particle.cs" />
+    <Compile Include="TraficoFauna\Particles\ParticleEmitter.cs" />
+    <Compile Include="TraficoFauna\Particles\PilaDeParticulas.cs" />
+    <Compile Include="TraficoFauna\PostProcess\PostProcessEffects.cs" />
+    <Compile Include="TraficoFauna\Saltos\Salto.cs" />
+    <Compile Include="TraficoFauna\Saltos\SaltosManager.cs" />
+    <Compile Include="TraficoFauna\SceneCuts\GameIntro.cs" />
+    <Compile Include="TraficoFauna\Shaders.cs" />
+    <Compile Include="TraficoFauna\Sonidos\GameSounds.cs" />
+    <Compile Include="TraficoFauna\Sonidos\TemporalSound.cs" />
     <Compile Include="Utils\2D\TgcText2d.cs" />
     <Compile Include="Utils\Input\TgcCamera.cs" />
     <Compile Include="Utils\Render\TgcDefaultRenderQueue.cs" />
@@ -191,9 +271,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
