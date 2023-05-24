@@ -115,11 +115,11 @@ namespace Examples.TraficoFauna.Bananas
 
             if (cantidadBananas == 0)
             {
-                mesh = Game.instance.cajasBananasPool.getAvaliableMeshSinBanana();
+                mesh = GameModel.instance.cajasBananasPool.getAvaliableMeshSinBanana();
             }
             else
             {
-                mesh = Game.instance.cajasBananasPool.getAvaliableMeshConBanana();
+                mesh = GameModel.instance.cajasBananasPool.getAvaliableMeshConBanana();
             }
 
             mesh.playAnimation("StandBy", true);
@@ -132,7 +132,7 @@ namespace Examples.TraficoFauna.Bananas
             if (enable)
             {
                 //Dibujar si esta en rango visible
-                if (Game.instance.mainCharacter.isInProximityRange(mesh.Position))
+                if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
                     /*
                     //Solo animar si no esta en la animacion de quieta
@@ -148,7 +148,7 @@ namespace Examples.TraficoFauna.Bananas
 
                     this.mesh.animateAndRender();
 
-                    if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+                    if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                     {
                         boundingSphere.render();
                     }
@@ -222,7 +222,7 @@ namespace Examples.TraficoFauna.Bananas
                 Vector3 currentVecRot = mainCharacter.getCurrentVecRot();
                 Vector3 dir = Vector3.Subtract(meshPos, mainCharacter.CurrentPos);
                 float dotAngle = Vector3.Dot(currentVecRot, dir);
-                if (dotAngle > Game.instance.gameConfig.fisica.anguloGolpeDotValue)
+                if (dotAngle > GameModel.instance.gameConfig.fisica.anguloGolpeDotValue)
                 {
                     golpes--;
                     //Se rompe la caja, otorgar bananas
@@ -232,19 +232,19 @@ namespace Examples.TraficoFauna.Bananas
                         if (cantidadBananas > 0)
                         {
                             mainCharacter.agregarBananas(cantidadBananas);
-                            Game.instance.hud.efectoAgarrarVariasBananas(cantidadBananas);
-                            Game.instance.sonidos.banana_agarrar_varias.play();
+                            GameModel.instance.hud.efectoAgarrarVariasBananas(cantidadBananas);
+                            GameModel.instance.sonidos.banana_agarrar_varias.play();
                         }
 
                         //Romper
                         mesh.playAnimation("Explosion", false);
-                        Game.instance.sonidos.caja_bananas_romper.play();
+                        GameModel.instance.sonidos.caja_bananas_romper.play();
                     }
                     //Golpear caja
                     else
                     {
                         mesh.playAnimation("Golpe", false);
-                        Game.instance.sonidos.caja_bananas_golpear.play();
+                        GameModel.instance.sonidos.caja_bananas_golpear.play();
                     }
                 }
             }

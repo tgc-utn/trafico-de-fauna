@@ -216,9 +216,9 @@ namespace Examples.TraficoFauna.Enemies
             //Rotar y ajustar BoundingSpheres
             mesh.rotateY(origAngleRot);
             origVecRot = getCurrentVecRot();
-            bSphereVisual.setValues(mesh.Position, Game.instance.gameConfig.guardia.distanciaVisual);
-            bSphereAttack.setValues(mesh.Position, Game.instance.gameConfig.guardia.distanciaAtaque);
-            bSphereVisualEspaldas.setValues(mesh.BoundingBox.calculateBoxCenter(), Game.instance.gameConfig.guardia.distanciaVisualEspaldas);
+            bSphereVisual.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaVisual);
+            bSphereAttack.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaAtaque);
+            bSphereVisualEspaldas.setValues(mesh.BoundingBox.calculateBoxCenter(), GameModel.instance.gameConfig.guardia.distanciaVisualEspaldas);
 
 
             //Estado inicial
@@ -308,7 +308,7 @@ namespace Examples.TraficoFauna.Enemies
                 rotatingNextAngleSign = (float)Math.Sign(rotatingNextAngle);
 
                 //Acomodar medio giro de vigilancia, para arrancar la vigilancia desde cero
-                rotatingNextAngle += (Game.instance.gameConfig.guardia.anguloRotacionVigilancia / 2) * rotatingNextAngleSign;
+                rotatingNextAngle += (GameModel.instance.gameConfig.guardia.anguloRotacionVigilancia / 2) * rotatingNextAngleSign;
 
                 //Cambiar de estado
                 currentState = State.RotatingForWatching;
@@ -329,7 +329,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         private void rotatingForWatching()
         {
-            float frameRot = Game.instance.gameConfig.guardia.velocidadRotacionVigilancia * GuiController.Instance.ElapsedTime;
+            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * GuiController.Instance.ElapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.rotateY(rotatingAcumRotation);
@@ -361,7 +361,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         private void watching()
         {
-            GameConfig.Guardia g = Game.instance.gameConfig.guardia;
+            GameConfig.Guardia g = GameModel.instance.gameConfig.guardia;
             float elapsedTime = GuiController.Instance.ElapsedTime;
 
             watchingElapsedTime += elapsedTime;
@@ -421,7 +421,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         private void rotating()
         {
-            float frameRot = Game.instance.gameConfig.guardia.velocidadRotacion * GuiController.Instance.ElapsedTime;
+            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * GuiController.Instance.ElapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.rotateY(rotatingAcumRotation);
@@ -478,7 +478,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         private void walking()
         {
-            float movement = Game.instance.gameConfig.guardia.velocidadCaminar * GuiController.Instance.ElapsedTime;
+            float movement = GameModel.instance.gameConfig.guardia.velocidadCaminar * GuiController.Instance.ElapsedTime;
             walkingDistanceToTravel -= movement;
             if (walkingDistanceToTravel < 0)
             {
@@ -535,7 +535,7 @@ namespace Examples.TraficoFauna.Enemies
             bSphereVisualEspaldas.moveCenter(centerMovement);
 
             //Si esta escondido, no se puede detectar (al menos que te este pasando por arriba)
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             if (mainCharacter.Hidden)
             {
                 //Ver si no le pasamos por arriba
@@ -555,7 +555,7 @@ namespace Examples.TraficoFauna.Enemies
             }
 
             //Detectar colision con angulo de vision: boundingSphere + dot de angulo
-            float visionY = mainCharacter.Crouched ? Game.instance.gameConfig.guardia.alturaVisionAgachado : Game.instance.gameConfig.guardia.alturaVision;
+            float visionY = mainCharacter.Crouched ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado : GameModel.instance.gameConfig.guardia.alturaVision;
             if (isMainCharacterVisible(visionY, true))
             {
                 //El personaje se esta viendo, pasar a modo alarma
@@ -568,7 +568,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         private void initAttackMode()
         {
-            Game.instance.currentLevel.CurrentSector.setAlarmMode();
+            GameModel.instance.currentLevel.CurrentSector.setAlarmMode();
             setChasing();
         }
 
@@ -581,7 +581,7 @@ namespace Examples.TraficoFauna.Enemies
         /// <returns>True si es visible</returns>
         private bool isMainCharacterVisible(float visionY, bool checkVisionAngle)
         {
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
 
             //Detectar colision con esfera de vision
             if (mainCharacter.collideWithBSphere(bSphereVisual))
@@ -592,7 +592,7 @@ namespace Examples.TraficoFauna.Enemies
                     Vector3 guardiaCharacterVec = Vector3.Normalize(Vector3.Subtract(mainCharacter.CurrentPos, mesh.Position));
                     Vector3 currentVecRot = getCurrentVecRot();
                     float dotAngle = Vector3.Dot(currentVecRot, guardiaCharacterVec);
-                    if (dotAngle > Game.instance.gameConfig.guardia.anguloVisionDotValue)
+                    if (dotAngle > GameModel.instance.gameConfig.guardia.anguloVisionDotValue)
                     {
                         //Hay vision, ver que nada se interponga en el camino
                         return checkDirectViewCollision(mesh.Position, bSphereVisual, mainCharacter.CurrentPos, visionY);
@@ -621,7 +621,7 @@ namespace Examples.TraficoFauna.Enemies
         private bool checkDirectViewCollision(Vector3 enemyPos, TgcBoundingSphere bsphereVision, Vector3 mainCharacterPos, float visionY)
         {
             //Ver que nada se interponga en el camino
-            List<ColliderObject> objetosColisionables = Game.instance.currentLevel.CurrentSector.ObjetosColisionables;
+            List<ColliderObject> objetosColisionables = GameModel.instance.currentLevel.CurrentSector.ObjetosColisionables;
             foreach (ColliderObject collider in objetosColisionables)
             {
                 if (TgcCollisionUtils.testSphereAABB(bsphereVision, collider.BoundingBox))
@@ -677,13 +677,13 @@ namespace Examples.TraficoFauna.Enemies
         private void chasing()
         {
             //Ver si el personaje esta dentro de la esfera de ataque del guardia
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
-            GameConfig conf = Game.instance.gameConfig;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            GameConfig conf = GameModel.instance.gameConfig;
             bSphereAttack.setCenter(mesh.Position);
             if (mainCharacter.collideWithBSphere(bSphereAttack))
             {
                 //Perder vida
-                Game.instance.currentLevel.removeLifeToPlayer();
+                GameModel.instance.currentLevel.removeLifeToPlayer();
             }
 
             //Avanzar de alguna forma para acercarse mas al personaje
@@ -996,13 +996,13 @@ namespace Examples.TraficoFauna.Enemies
         public void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(mesh.Position))
+            if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
             {
                 mesh.animateAndRender();
 
 
                 //Debug
-                if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+                if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
                     renderVision();
                 }
@@ -1016,10 +1016,10 @@ namespace Examples.TraficoFauna.Enemies
         {
             Vector3 currentVecRot = getCurrentVecRot();
 
-            float visionY = Game.instance.mainCharacter.Crouched ? Game.instance.gameConfig.guardia.alturaVisionAgachado : Game.instance.gameConfig.guardia.alturaVision;
+            float visionY = GameModel.instance.mainCharacter.Crouched ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado : GameModel.instance.gameConfig.guardia.alturaVision;
             Vector3 meshPos = new Vector3(mesh.Position.X, visionY, mesh.Position.Z);
-            Vector3 x = meshPos + Vector3.Scale(currentVecRot, Game.instance.gameConfig.guardia.distanciaVisual);
-            float delta = Game.instance.gameConfig.guardia.radioPerpendicularVision;
+            Vector3 x = meshPos + Vector3.Scale(currentVecRot, GameModel.instance.gameConfig.guardia.distanciaVisual);
+            float delta = GameModel.instance.gameConfig.guardia.radioPerpendicularVision;
             Vector3 orthonormal = Vector3.Cross((x - meshPos), new Vector3(0, 1, 0));
             orthonormal.Normalize();
             Vector3 orthonormalScaled = Vector3.Scale(orthonormal, delta);

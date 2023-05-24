@@ -75,7 +75,7 @@ namespace Examples.TraficoFauna.Menu
 
             int width = GuiController.Instance.Panel3d.Width;
             int height = GuiController.Instance.Panel3d.Height;
-            string menuPath = Game.instance.gameConfig.menuPath;
+            string menuPath = GameModel.instance.gameConfig.menuPath;
 
             //Ocultar cursor del mouse
             Cursor.Hide();
@@ -117,7 +117,7 @@ namespace Examples.TraficoFauna.Menu
         /// </summary>
         public void init()
         {
-            Game.instance.sonidos.playMusic(Game.instance.sonidos.music_menu);
+            GameModel.instance.sonidos.playMusic(GameModel.instance.sonidos.music_menu);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Examples.TraficoFauna.Menu
                     //Cargar nivel
                     loadingFistLevel = false;
                     gameStarted = true;
-                    Game.instance.loadFirstLevel();
+                    GameModel.instance.loadFirstLevel();
                 }
                 else
                 {
@@ -240,7 +240,7 @@ namespace Examples.TraficoFauna.Menu
         private void returnToGame()
         {
             showingControls = false;
-            Game.instance.currentGameMode = Game.GameMode.Playing;
+            GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
         }
 
     }

@@ -90,7 +90,7 @@ namespace Examples.TraficoFauna.Meshes
 
             if (alphaBlendEnable)
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
             else
             {
@@ -112,8 +112,8 @@ namespace Examples.TraficoFauna.Meshes
         /// </summary>
         public new void executeRender()
         {
-            Effect effect = Game.instance.shaders.effect;
-            this.Technique = Game.instance.shaders.ANIMATE_UV;
+            Effect effect = GameModel.instance.shaders.effect;
+            this.Technique = GameModel.instance.shaders.ANIMATE_UV;
 
 
             //Actualizar incremento de UV

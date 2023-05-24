@@ -159,10 +159,10 @@ namespace Examples.TraficoFauna.Billboards
             //Dibujar
             Device d3dDevice = GuiController.Instance.D3dDevice;
             TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
-            Shaders shaders = Game.instance.shaders;
+            Shaders shaders = GameModel.instance.shaders;
             Effect effect = shaders.effect;
 
-            effect.Technique = Game.instance.shaders.ANIMATE_UV;
+            effect.Technique = GameModel.instance.shaders.ANIMATE_UV;
             effect.SetValue("animateUV", TgcParserUtils.vector2ToFloat2Array(currentUVsum));
             Matrix matWorldView = Matrix.Identity * d3dDevice.Transform.View;
             Matrix matWorldViewProj = matWorldView * d3dDevice.Transform.Projection;

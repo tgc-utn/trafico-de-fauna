@@ -46,10 +46,10 @@ namespace TraficoFauna.Examples
     /// <summary>
     /// Clase principal del juego
     /// </summary>
-    public class Game : TgcExample
+    public class GameModel : TgcExample
     {
 
-        public static Game instance;
+        public static GameModel instance;
         public GameConfig gameConfig;
         public Level currentLevel;
         public MainCharacter mainCharacter;
@@ -110,7 +110,7 @@ namespace TraficoFauna.Examples
                 GuiController.Instance.BackgroundColor = Color.Black;
 
                 //Singleton trucho
-                Game.instance = this;
+                GameModel.instance = this;
 
                 //Error Window
                 errorWindow = new ErrorWindow();
@@ -319,7 +319,7 @@ namespace TraficoFauna.Examples
             //Si termino el juego y ya cambido de modo, esconder sector actual
             if (currentGameMode == GameMode.GameWin)
             {
-                Game.instance.currentLevel.CurrentSector.hideSector();
+                GameModel.instance.currentLevel.CurrentSector.hideSector();
             }
         }
 

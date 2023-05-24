@@ -46,7 +46,7 @@ namespace Examples.TraficoFauna.Dialogs
             int width = GuiController.Instance.Panel3d.Width;
             int height = GuiController.Instance.Panel3d.Height;
             Device device = GuiController.Instance.D3dDevice;
-            string dialogPath = Game.instance.gameConfig.menuPath + "Dialogs\\";
+            string dialogPath = GameModel.instance.gameConfig.menuPath + "Dialogs\\";
 
             //Fondo del cuadro de texto
             drawer2D = new Drawer2D();
@@ -60,7 +60,7 @@ namespace Examples.TraficoFauna.Dialogs
             text2d = new TgcText2d();
             text2d.Color = Color.White;
             PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-            privateFontCollection.AddFontFile(Game.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
+            privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
             FontFamily[] families = privateFontCollection.Families;
             System.Drawing.Font font = new System.Drawing.Font(families[0], 20, FontStyle.Regular, GraphicsUnit.Pixel);
             text2d.changeFont(font);

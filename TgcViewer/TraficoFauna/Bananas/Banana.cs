@@ -88,7 +88,7 @@ namespace Examples.TraficoFauna.Bananas
                 return;
             }
 
-            mesh = Game.instance.bananasPool.getAvaliableMesh();
+            mesh = GameModel.instance.bananasPool.getAvaliableMesh();
             mesh.Position = center;
         }
 
@@ -97,15 +97,15 @@ namespace Examples.TraficoFauna.Bananas
             if (enable)
             {
                 //Dibujar si esta en rango visible
-                if (Game.instance.mainCharacter.isInProximityRange(mesh.Position))
+                if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
                     rotador.rotate(this.mesh);
-                    Game.instance.shaders.setCorrectTechnique(mesh);
+                    GameModel.instance.shaders.setCorrectTechnique(mesh);
                     this.mesh.render();
                 }
 
                 //Debug
-                if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+                if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
                     boundingSphere.render();
                 }
@@ -141,10 +141,10 @@ namespace Examples.TraficoFauna.Bananas
             if (mainCharacter.collideWithBSphere(boundingSphere))
             {
                 mainCharacter.agregarBananas(1);
-                TgcStaticSound sound = Game.instance.sonidos.banana_agarrar;
+                TgcStaticSound sound = GameModel.instance.sonidos.banana_agarrar;
                 sound.stop();
                 sound.play();
-                Game.instance.hud.efectoAgarrarBanana();
+                GameModel.instance.hud.efectoAgarrarBanana();
                 this.enable = false;
             }
         }

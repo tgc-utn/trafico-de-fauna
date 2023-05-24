@@ -51,7 +51,7 @@ namespace Examples.TraficoFauna.GameModes
             temporizadorGameOver = new Temporizador();
             temporizadorGameWin = new Temporizador();
 
-            string menuPath = Game.instance.gameConfig.menuPath;
+            string menuPath = GameModel.instance.gameConfig.menuPath;
 
             //Background game over
             backgroundGameOver = new GameSprite();
@@ -79,11 +79,11 @@ namespace Examples.TraficoFauna.GameModes
         {
             if (temporizadorLoadingSector.update())
             {
-                Game.instance.currentGameMode = Game.GameMode.Playing;
+                GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
             }
             else
             {
-                drawer2D.DrawSpriteAtomic(Game.instance.menuPrincipal.BackgroundLoading);
+                drawer2D.DrawSpriteAtomic(GameModel.instance.menuPrincipal.BackgroundLoading);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Examples.TraficoFauna.GameModes
         public void initGameOver()
         {
             temporizadorGameOver.setValues(5f);
-            Game.instance.sonidos.game_over.play();
+            GameModel.instance.sonidos.game_over.play();
         }
 
         public void renderGameOver()
@@ -99,7 +99,7 @@ namespace Examples.TraficoFauna.GameModes
             if (temporizadorGameOver.update())
             {
                 //Arrancar desde el primer nivel del juego
-                Game.instance.loadFirstLevel();
+                GameModel.instance.loadFirstLevel();
             }
             else
             {
@@ -110,7 +110,7 @@ namespace Examples.TraficoFauna.GameModes
         public void initGameWin()
         {
             temporizadorGameWin.setValues(10f);
-            Game.instance.sonidos.game_win.play();
+            GameModel.instance.sonidos.game_win.play();
         }
 
         public void renderGameWin()
@@ -118,7 +118,7 @@ namespace Examples.TraficoFauna.GameModes
             if (temporizadorGameWin.update())
             {
                 //Arrancar desde el primer nivel del juego
-                Game.instance.loadFirstLevel();
+                GameModel.instance.loadFirstLevel();
             }
             else
             {

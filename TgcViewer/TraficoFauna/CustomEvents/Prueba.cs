@@ -61,9 +61,9 @@ namespace Examples.TraficoFauna.CustomEvents
 
         public override void render()
         {
-            if (Game.instance.mainCharacter.collideWithAABB(boundingBox))
+            if (GameModel.instance.mainCharacter.collideWithAABB(boundingBox))
             {
-                Game.instance.sonidos.game_over.play();
+                GameModel.instance.sonidos.game_over.play();
             }
         }
 

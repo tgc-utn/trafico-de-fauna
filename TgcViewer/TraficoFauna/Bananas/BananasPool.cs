@@ -43,7 +43,7 @@ namespace Examples.TraficoFauna.Bananas
         public void loadModels()
         {
             //Parsear modelo una vez
-            string mediaPath = Game.instance.gameConfig.basePath + "Bananas\\Banana\\";
+            string mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\Banana\\";
             string meshPath = mediaPath + "Banana-TgcScene.xml";
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();

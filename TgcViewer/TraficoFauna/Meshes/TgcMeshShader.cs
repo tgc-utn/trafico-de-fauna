@@ -92,7 +92,7 @@ namespace Examples.TraficoFauna.Meshes
 
             if (alphaBlendEnable)
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
             else
             {
@@ -117,7 +117,7 @@ namespace Examples.TraficoFauna.Meshes
         {
             Device device = GuiController.Instance.D3dDevice;
             TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
-            Effect effect = Game.instance.shaders.effect;
+            Effect effect = GameModel.instance.shaders.effect;
 
             //Cargar technique
             effect.Technique = this.technique;

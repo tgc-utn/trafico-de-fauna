@@ -188,12 +188,12 @@ namespace Examples.TraficoFauna
         /// </summary>
         public void render()
         {
-            Game.instance.currentLevel.AlphaObjects.Add(this);
+            GameModel.instance.currentLevel.AlphaObjects.Add(this);
         }
 
         public void renderWithAlpha()
         {
-            SimpleMessageDialog simpleMessageDialog = Game.instance.simpleMessageDialog;
+            SimpleMessageDialog simpleMessageDialog = GameModel.instance.simpleMessageDialog;
             simpleMessageDialog.setText(this.texto);
             simpleMessageDialog.render();
         }

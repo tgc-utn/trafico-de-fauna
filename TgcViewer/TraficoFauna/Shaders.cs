@@ -55,7 +55,7 @@ namespace Examples.TraficoFauna
             //Cargar Shader de StaticMesh
             string compilationErrors;
             this.effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                Game.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
+                GameModel.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
                 null, null, ShaderFlags.None, null, out compilationErrors);
             if (effect == null)
             {
@@ -106,7 +106,7 @@ namespace Examples.TraficoFauna
                 //Cargar Shader de StaticMesh
                 string compilationErrors;
                 this.effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                    Game.instance.gameConfig.shadersPath + "ParticlesShader.fx",
+                    GameModel.instance.gameConfig.shadersPath + "ParticlesShader.fx",
                     null, null, ShaderFlags.None, null, out compilationErrors);
                 if (effect == null)
                 {

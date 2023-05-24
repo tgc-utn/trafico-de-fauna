@@ -41,7 +41,7 @@ namespace Examples.TraficoFauna.Enemies
 
         public void loadModels()
         {
-            string meshPath = Game.instance.gameConfig.basePath + "Guardia\\";
+            string meshPath = GameModel.instance.gameConfig.basePath + "Guardia\\";
             TgcSkeletalLoader loader = new TgcSkeletalLoader();
 
             for (int i = 0; i < MAX_GUARDIAS; i++)

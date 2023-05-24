@@ -138,7 +138,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         public void initGuardias()
         {
-            GuardiasPool pool = Game.instance.guardiasPool;
+            GuardiasPool pool = GameModel.instance.guardiasPool;
             foreach (Guardia g in guardias)
             {
                 if (g.Activo)
@@ -153,7 +153,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         public void hideGuardias()
         {
-            Game.instance.guardiasPool.freeAllMeshes();
+            GameModel.instance.guardiasPool.freeAllMeshes();
             foreach (Guardia g in guardias)
             {
                 g.hide();
@@ -165,7 +165,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         public void update()
         {
-            if (Game.instance.debugMode.Enabled && !Game.instance.debugMode.GuardiasEnabled)
+            if (GameModel.instance.debugMode.Enabled && !GameModel.instance.debugMode.GuardiasEnabled)
                 return;
 
             foreach (Guardia g in guardias)
@@ -208,7 +208,7 @@ namespace Examples.TraficoFauna.Enemies
         /// </summary>
         public void dispose()
         {
-            Game.instance.guardiasPool.freeAllMeshes();
+            GameModel.instance.guardiasPool.freeAllMeshes();
             foreach (Guardia g in guardias)
             {
                 g.dispose();

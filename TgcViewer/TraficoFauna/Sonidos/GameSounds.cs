@@ -64,7 +64,7 @@ namespace Examples.TraficoFauna.Sonidos
 
         public GameSounds()
         {
-            string sonidosPath = Game.instance.gameConfig.sonidosPath;
+            string sonidosPath = GameModel.instance.gameConfig.sonidosPath;
             sounds = new List<TgcStaticSound>();
             temporalSounds = new List<TemporalSound>();
 

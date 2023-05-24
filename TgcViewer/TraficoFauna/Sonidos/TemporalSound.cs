@@ -83,7 +83,7 @@ namespace Examples.TraficoFauna.Sonidos
             enabled = true;
             amounts = -1;
             currentTimes = 0;
-            Game.instance.sonidos.addTemporalSound(this);
+            GameModel.instance.sonidos.addTemporalSound(this);
         }
 
         /// <summary>

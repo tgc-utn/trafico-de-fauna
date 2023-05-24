@@ -86,7 +86,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
             Vector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = Game.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
+            string meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.Position = new Vector3(nodeCenter.X, 0, nodeCenter.Z);
@@ -151,14 +151,14 @@ namespace Examples.TraficoFauna.ItemsAnimal
             if (!liberado)
             {
                 //Dibujar si esta en rango visible
-                if (Game.instance.mainCharacter.isInProximityRange(mesh.Position))
+                if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
-                    Game.instance.shaders.setCorrectTechnique(mesh);
+                    GameModel.instance.shaders.setCorrectTechnique(mesh);
                     mesh.render();
                 }
 
                 //Debug render
-                if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+                if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
                     bSphereProximidad.render();
                 }
@@ -171,14 +171,14 @@ namespace Examples.TraficoFauna.ItemsAnimal
         /// </summary>
         public bool intentarLiberar()
         {
-            Llave llave = Game.instance.currentLevel.getLlave(this.color);
+            Llave llave = GameModel.instance.currentLevel.getLlave(this.color);
             if (llave.Agarrada)
             {
                 //Liberar
                 this.liberado = true;
-                Game.instance.sonidos.itemAnimal_liberar.play();
-                Game.instance.hud.efectoLiberarItem(this);
-                Game.instance.mainCharacter.agregarItemAnimalLiberado(this);
+                GameModel.instance.sonidos.itemAnimal_liberar.play();
+                GameModel.instance.hud.efectoLiberarItem(this);
+                GameModel.instance.mainCharacter.agregarItemAnimalLiberado(this);
 
                 //Quitar como colision
                 colliderObject.Enabled = false;
@@ -186,8 +186,8 @@ namespace Examples.TraficoFauna.ItemsAnimal
             else
             {
                 //Aun no fue agarrada la llave
-                Game.instance.sonidos.itemAnimal_fallo_liberar.play();
-                Game.instance.hud.efectoFaltaLlaveParaLiberarItem(this);
+                GameModel.instance.sonidos.itemAnimal_fallo_liberar.play();
+                GameModel.instance.hud.efectoFaltaLlaveParaLiberarItem(this);
             }
 
             return this.liberado;

@@ -74,7 +74,7 @@ namespace Examples.TraficoFauna.Saltos
                 Vector3 currentVecRot = mainCharacter.getCurrentVecRot();
                 Vector3 plataformaDir = Vector3.Normalize(Vector3.Subtract(p2.Position, p1.Position));
                 float dotAngle = Vector3.Dot(currentVecRot, plataformaDir);
-                if (dotAngle > Game.instance.gameConfig.fisica.anguloSaltoDotValue)
+                if (dotAngle > GameModel.instance.gameConfig.fisica.anguloSaltoDotValue)
                 {
                     return true;
                 }

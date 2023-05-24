@@ -37,7 +37,7 @@ namespace Examples.TraficoFauna.CustomEvents.Particulas
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            emitter = new ParticleEmitter(Game.instance.gameConfig.shadersPath + "Particles\\humo.png", 5);
+            emitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\humo.png", 5);
             emitter.Position = GameUtils.getBBLowerCenterFromMeshData(meshData);
             emitter.Dispersion = 100;
             emitter.ParticleTimeToLive = 1.5f;
@@ -64,9 +64,9 @@ namespace Examples.TraficoFauna.CustomEvents.Particulas
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(emitter.Position))
+            if (GameModel.instance.mainCharacter.isInProximityRange(emitter.Position))
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
         }
 

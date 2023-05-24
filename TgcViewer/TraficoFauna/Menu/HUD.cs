@@ -71,13 +71,13 @@ namespace Examples.TraficoFauna
             int height = GuiController.Instance.Panel3d.Height;
             SCREEN_CENTRAL_POS = new Vector2(width / 2, height / 2);
 
-            string hudPath = Game.instance.gameConfig.menuPath + "HUD\\";
+            string hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             drawer2D = new Drawer2D();
 
             //Cargar fuentes personalizadas
             privateFontCollection = new PrivateFontCollection();
-            privateFontCollection.AddFontFile(Game.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
+            privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
             FontFamily[] families = privateFontCollection.Families;
             GAME_FONT = new Font(families[0], 24, FontStyle.Regular, GraphicsUnit.Pixel);
 
@@ -205,11 +205,11 @@ namespace Examples.TraficoFauna
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
             if (d3dInput.keyPressed(Key.Escape))
             {
-                Game.instance.currentGameMode = Game.GameMode.Menu;
+                GameModel.instance.currentGameMode = GameModel.GameMode.Menu;
             }
 
 
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
 
             //Contador de bananas
             textoContadorBananas.Text = ": " + mainCharacter.BananasAgarradas;
@@ -253,13 +253,13 @@ namespace Examples.TraficoFauna
 
 
             //Contador de items animal liberados
-            textoContadorItemsAnimal.Text = ": " + mainCharacter.ItemsAnimalLiberados + "/" + Game.instance.currentLevel.TotalItemsAnimal;
+            textoContadorItemsAnimal.Text = ": " + mainCharacter.ItemsAnimalLiberados + "/" + GameModel.instance.currentLevel.TotalItemsAnimal;
 
             //Vidas
             textoContadorVidas.Text = ": " + mainCharacter.Vidas;
 
             //Nombre de sector
-            textoCurrentSectorName.Text = Game.instance.currentLevel.CurrentSector.DisplaySectorName;
+            textoCurrentSectorName.Text = GameModel.instance.currentLevel.CurrentSector.DisplaySectorName;
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Examples.TraficoFauna
             drawer2D.BeginDrawSprite();
 
             //Dibujar las llaves agarradas
-            Level level = Game.instance.currentLevel;
+            Level level = GameModel.instance.currentLevel;
             Llave llave;
 
             llave = level.getLlave(Llave.ColorType.ROJA);

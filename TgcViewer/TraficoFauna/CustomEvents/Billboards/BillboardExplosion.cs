@@ -42,7 +42,7 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            billboard = new QuadAnimatedBillboard(Game.instance.gameConfig.basePath + "Billboards\\Explosion.png", new Size(64, 64), 16, 16);
+            billboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Explosion.png", new Size(64, 64), 16, 16);
             billboard.Size = new Vector2(64, 64);
             billboard.Position = GameUtils.getBBLowerCenterFromMeshData(meshData);
         }
@@ -64,9 +64,9 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(billboard.Position))
+            if (GameModel.instance.mainCharacter.isInProximityRange(billboard.Position))
             {
-                billboard.RotationY = Game.instance.mainCharacter.Camera.RotationY;
+                billboard.RotationY = GameModel.instance.mainCharacter.Camera.RotationY;
                 billboard.render();
             }
         }

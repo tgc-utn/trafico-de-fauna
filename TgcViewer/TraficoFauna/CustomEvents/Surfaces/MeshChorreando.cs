@@ -100,9 +100,9 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(mesh.BoundingBox.PMin))
+            if (GameModel.instance.mainCharacter.isInProximityRange(mesh.BoundingBox.PMin))
             {
-                Game.instance.currentLevel.AlphaObjects.Add(mesh);
+                GameModel.instance.currentLevel.AlphaObjects.Add(mesh);
             }
         }
 

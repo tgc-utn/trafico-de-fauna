@@ -45,7 +45,7 @@ namespace Examples.TraficoFauna.Bananas
         public void loadModels()
         {
             //Parsear modelo sin bananas una vez
-            string mediaPath = Game.instance.gameConfig.basePath + "Bananas\\CajaBananas\\";
+            string mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\CajaBananas\\";
             string meshPath = mediaPath + "CajaSinBananas-TgcKeyFrameMesh.xml";
             TgcKeyFrameLoader loader = new TgcKeyFrameLoader();
             TgcKeyFrameParser parser = new TgcKeyFrameParser();

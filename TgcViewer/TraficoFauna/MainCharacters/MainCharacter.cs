@@ -177,7 +177,7 @@ namespace Examples.TraficoFauna
         public void loadModel()
         {
             //Cargar mesh
-            string meshPath = Game.instance.gameConfig.basePath + "MainCharacterMono\\";
+            string meshPath = GameModel.instance.gameConfig.basePath + "MainCharacterMono\\";
             TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
             mesh = skeletalLoader.loadMeshAndAnimationsFromFile(
                 meshPath + "Mono-TgcSkeletalMesh.xml",
@@ -201,7 +201,7 @@ namespace Examples.TraficoFauna
 
             //BoundingSphere que va a usar el mesh
             mesh.AutoUpdateBoundingBox = false;
-            GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             characterSphere = new TgcBoundingSphere(new Vector3(0, fisica.boundingSphereCenterY, 0), fisica.boundingSphereRadio);
 
             //Crear manejador de colisiones
@@ -211,7 +211,7 @@ namespace Examples.TraficoFauna
             collisionManager.SlideFactor = fisica.slideFactor;
 
             //Configurar camara en Tercer Persona personalizada
-            GameConfig.Camara camaraConfig = Game.instance.gameConfig.camara;
+            GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
             camera = new GameThirdPersonCamera();
             camera.Enable = true;
             camera.Target = mesh.Position;
@@ -220,7 +220,7 @@ namespace Examples.TraficoFauna
             camera.TargetDisplacement = new Vector3(0, camaraConfig.displacementY, 0);
 
             //Particulas para las pisadas del personaje
-            stepsEmitter = new ParticleEmitter(Game.instance.gameConfig.shadersPath + "Particles\\pisada_mono.png", 4);
+            stepsEmitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\pisada_mono.png", 4);
             stepsEmitter.Dispersion = 400;
             stepsEmitter.ParticleTimeToLive = 0.5f;
             stepsEmitter.CreationFrecuency = 0.1f;
@@ -229,7 +229,7 @@ namespace Examples.TraficoFauna
             stepsEmitter.MaxSizeParticle = 1f;
 
             //Particulas para el punch al romper cajas
-            punchEmitter = new ParticleEmitter(Game.instance.gameConfig.shadersPath + "Particles\\punch_mono.png", 2);
+            punchEmitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\punch_mono.png", 2);
             punchEmitter.Dispersion = 100;
             punchEmitter.ParticleTimeToLive = 0.4f;
             punchEmitter.CreationFrecuency = 1f;
@@ -237,18 +237,18 @@ namespace Examples.TraficoFauna
             punchEmitter.MinSizeParticle = 40f;
             punchEmitter.MaxSizeParticle = 40f;
 
-            punchBillboard = new QuadAnimatedBillboard(Game.instance.gameConfig.basePath + "Billboards\\personaje_punch_effect.png", new Size(64, 64), 16, 16);
+            punchBillboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\personaje_punch_effect.png", new Size(64, 64), 16, 16);
             punchBillboard.Size = new Vector2(50, 50);
             punchBillboard.Position = mesh.Position;
             punchBillboard.Enabled = false;
 
             //Sonidos
             sonidoPasosCorrer = new TemporalSound();
-            sonidoPasosCorrer.Sound = Game.instance.sonidos.personaje_pasos_correr;
+            sonidoPasosCorrer.Sound = GameModel.instance.sonidos.personaje_pasos_correr;
             sonidoPasosCorrer.Frecuency = fisica.frecuenciaSonidoCorrer;
             sonidoPasosCorrer.Enabled = false;
             sonidoPasosCaminandoEsconditeMovil = new TemporalSound();
-            sonidoPasosCaminandoEsconditeMovil.Sound = Game.instance.sonidos.personaje_pasos_cargando_escondite;
+            sonidoPasosCaminandoEsconditeMovil.Sound = GameModel.instance.sonidos.personaje_pasos_cargando_escondite;
             sonidoPasosCaminandoEsconditeMovil.Frecuency = fisica.frecuenciaSonidoCaminar;
             sonidoPasosCaminandoEsconditeMovil.Enabled = false;
         }
@@ -270,8 +270,8 @@ namespace Examples.TraficoFauna
             punchEmitter.Playing = false;
             punchBillboard.Enabled = false;
             facingBackward = false;
-            currentCameraOffsetForward = Game.instance.gameConfig.camara.offsetZ;
-            currentCameraMinOffsetForward = Game.instance.gameConfig.camara.minOffsetZ;
+            currentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
+            currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
             punching = false;
         }
 
@@ -321,7 +321,7 @@ namespace Examples.TraficoFauna
             mesh.animateAndRender();
 
             //Render pisadas
-            Game.instance.currentLevel.AlphaObjects.Add(stepsEmitter);
+            GameModel.instance.currentLevel.AlphaObjects.Add(stepsEmitter);
 
             //Render punch
             //Game.instance.currentLevel.AlphaObjects.Add(punchEmitter);
@@ -365,7 +365,7 @@ namespace Examples.TraficoFauna
         public bool isInProximityRange(Vector3 pos)
         {
             //Ver si esta dentro del radio de vision
-            return Vector3.Subtract(pos, this.CurrentPos).LengthSq() < Game.instance.gameConfig.camara.distanciaVisualSq;
+            return Vector3.Subtract(pos, this.CurrentPos).LengthSq() < GameModel.instance.gameConfig.camara.distanciaVisualSq;
         }
 
 
@@ -382,8 +382,8 @@ namespace Examples.TraficoFauna
             {
                 vidas += enteros2 - enteros;
                 bananasAgarradas = bananasAgarradas % 100;
-                Game.instance.sonidos.personaje_ganar_vida.play(false);
-                Game.instance.hud.efectoGanarVida();
+                GameModel.instance.sonidos.personaje_ganar_vida.play(false);
+                GameModel.instance.hud.efectoGanarVida();
             }
         }
 
@@ -394,10 +394,10 @@ namespace Examples.TraficoFauna
         public void agregarItemAnimalLiberado(ItemAnimal itemAnimal)
         {
             itemsAnimalLiberados++;
-            if (itemsAnimalLiberados == Game.instance.currentLevel.TotalItemsAnimal)
+            if (itemsAnimalLiberados == GameModel.instance.currentLevel.TotalItemsAnimal)
             {
-                Game.instance.transiciones.initGameWin();
-                Game.instance.currentGameMode = Game.GameMode.GameWin;
+                GameModel.instance.transiciones.initGameWin();
+                GameModel.instance.currentGameMode = GameModel.GameMode.GameWin;
             }
         }
 
@@ -480,10 +480,10 @@ namespace Examples.TraficoFauna
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
             //obtener velocidades de Modifiers
-            GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
-            GameConfig.Keys keys = Game.instance.gameConfig.keys;
+            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
+            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            Level level = Game.instance.currentLevel;
+            Level level = GameModel.instance.currentLevel;
 
             //Crouch
             if (d3dInput.keyDown(keys.crouch))
@@ -546,7 +546,7 @@ namespace Examples.TraficoFauna
                     if (/*mesh.CurrentAnimation.Name == "Run"*/ true)
                     {
                         this.plataformaSalto = plataformaSaltoCollision;
-                        Game.instance.sonidos.personaje_saltar.play();
+                        GameModel.instance.sonidos.personaje_saltar.play();
                         setSaltandoPlataformas();
                         return;
                     }
@@ -558,7 +558,7 @@ namespace Examples.TraficoFauna
                     punching = true;
                     mesh.playAnimation("Punch", false);
                     sonidoPasosCorrer.Enabled = false;
-                    Game.instance.sonidos.personaje_golpe.play();
+                    GameModel.instance.sonidos.personaje_golpe.play();
 
                     //Intentar golpear cajas de bananas cercanas
                     level.CurrentSector.golpearCajasBananas(this);
@@ -720,8 +720,8 @@ namespace Examples.TraficoFauna
         {
             mesh.rotateY(FastMath.PI);
             facingBackward = true;
-            currentCameraOffsetForward = Game.instance.gameConfig.camara.facingBackwardOffsetZ;
-            currentCameraMinOffsetForward = Game.instance.gameConfig.camara.facingBackwardMinOffsetZ;
+            currentCameraOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardOffsetZ;
+            currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardMinOffsetZ;
             camera.OffsetForward = currentCameraOffsetForward;
         }
 
@@ -734,8 +734,8 @@ namespace Examples.TraficoFauna
             {
                 mesh.rotateY(FastMath.PI);
                 facingBackward = false;
-                currentCameraOffsetForward = Game.instance.gameConfig.camara.offsetZ;
-                currentCameraMinOffsetForward = Game.instance.gameConfig.camara.minOffsetZ;
+                currentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
+                currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
                 camera.OffsetForward = currentCameraOffsetForward;
             }
         }
@@ -761,7 +761,7 @@ namespace Examples.TraficoFauna
             setBoundingSphereAgachado();
 
             //Sonido de agacharse
-            Game.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.play(false);
         }
 
         /// <summary>
@@ -771,12 +771,12 @@ namespace Examples.TraficoFauna
         {
             //Sigue agachado mientras se mantiene presionado crouch
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            GameConfig.Keys keys = Game.instance.gameConfig.keys;
+            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
                 bool rotating = false;
 
@@ -838,7 +838,7 @@ namespace Examples.TraficoFauna
             setBoundingSphereAgachado();
 
             //Sonido de agacharse
-            Game.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.play(false);
         }
 
         /// <summary>
@@ -848,12 +848,12 @@ namespace Examples.TraficoFauna
         {
             //Sigue agachado mientras se mantiene presionado crouch
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            GameConfig.Keys keys = Game.instance.gameConfig.keys;
+            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
                 bool rotating = false;
 
@@ -903,7 +903,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void setBoundingSphereAgachado()
         {
-            GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             characterSphere.setValues(
                 new Vector3(characterSphere.Center.X, fisica.boundingSphereAgachadoCenterY, characterSphere.Center.Z),
                 fisica.boundingSphereRadioAgachado);
@@ -914,7 +914,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void setBoundingSphereParado()
         {
-            GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             characterSphere.setValues(
                 new Vector3(characterSphere.Center.X, fisica.boundingSphereCenterY, characterSphere.Center.Z),
                 fisica.boundingSphereRadio);
@@ -950,7 +950,7 @@ namespace Examples.TraficoFauna
             this.esconditeMovil.Escondido = false;
 
             //Sonido de agarrar escondite
-            Game.instance.sonidos.personaje_levantar_escondite_movil.play(false);
+            GameModel.instance.sonidos.personaje_levantar_escondite_movil.play(false);
         }
 
         /// <summary>
@@ -962,10 +962,10 @@ namespace Examples.TraficoFauna
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
             //obtener velocidades de Modifiers
-            GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
-            GameConfig.Keys keys = Game.instance.gameConfig.keys;
+            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
+            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            Level level = Game.instance.currentLevel;
+            Level level = GameModel.instance.currentLevel;
 
             //Crouch, esconderse con el objeto
             if (d3dInput.keyDown(keys.crouch))
@@ -1118,7 +1118,7 @@ namespace Examples.TraficoFauna
             this.esconditeMovil.Escondido = true;
 
             //Sonido de agacharse
-            Game.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.play(false);
         }
 
         /// <summary>
@@ -1128,12 +1128,12 @@ namespace Examples.TraficoFauna
         {
             //Sigue escondido agachado con el objeto mientras se mantiene presionado crouch
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            GameConfig.Keys keys = Game.instance.gameConfig.keys;
+            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
                 bool rotating = false;
 
@@ -1214,7 +1214,7 @@ namespace Examples.TraficoFauna
         private void saltandoPlataformas()
         {
             //Ir avanzando gradualmente
-            float speed = Game.instance.gameConfig.fisica.velocidadSalto;
+            float speed = GameModel.instance.gameConfig.fisica.velocidadSalto;
             float movement = speed * GuiController.Instance.ElapsedTime;
             jumpDistanceToTravel -= movement;
             if (jumpDistanceToTravel < 0)
@@ -1229,7 +1229,7 @@ namespace Examples.TraficoFauna
                 this.plataformaSalto = null;
 
                 //acomodar bounding sphere
-                GameConfig.Fisica fisica = Game.instance.gameConfig.fisica;
+                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
                 characterSphere.setValues(
                     new Vector3(pos.X, fisica.boundingSphereCenterY, pos.Z),
                     fisica.boundingSphereRadio);

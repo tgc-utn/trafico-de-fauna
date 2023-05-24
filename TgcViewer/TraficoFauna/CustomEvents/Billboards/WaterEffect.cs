@@ -43,7 +43,7 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            billboard = new HorizontalAnimatedBillboard(Game.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
+            billboard = new HorizontalAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
             aabb = GameUtils.createBBFromMeshData(meshData);
             billboard.PMin = aabb.PMin;
             billboard.PMax = aabb.PMax;
@@ -66,7 +66,7 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(billboard.PMin))
+            if (GameModel.instance.mainCharacter.isInProximityRange(billboard.PMin))
             {
                 billboard.render();
             }

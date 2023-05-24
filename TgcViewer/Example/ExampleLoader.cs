@@ -64,7 +64,7 @@ namespace TgcViewer.Example
                 currentExamples.AddRange(loadExamples(exampleDir));
             }
             */
-            currentExamples.Add(new Game());
+            currentExamples.Add(new GameModel());
             //Cargar el TreeView, agrupando ejemplos por categoria
             treeExamplesDict.Clear();
             foreach (TgcExample example in currentExamples)

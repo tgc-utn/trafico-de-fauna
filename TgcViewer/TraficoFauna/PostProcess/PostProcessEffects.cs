@@ -75,7 +75,7 @@ namespace Examples.TraficoFauna.PostProcess
             //Cargar Shader de StaticMesh
             string compilationErrors;
             effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                Game.instance.gameConfig.shadersPath + "PostProcess.fx",
+                GameModel.instance.gameConfig.shadersPath + "PostProcess.fx",
                 null, null, ShaderFlags.None, null, out compilationErrors);
             if (effect == null)
             {
@@ -90,7 +90,7 @@ namespace Examples.TraficoFauna.PostProcess
             temporizadorPlayerDead = new Temporizador();
 
             //Modo alarma
-            alarmTexture = TgcTexture.createTexture(d3dDevice, Game.instance.gameConfig.shadersPath + "efecto_alarma.png");
+            alarmTexture = TgcTexture.createTexture(d3dDevice, GameModel.instance.gameConfig.shadersPath + "efecto_alarma.png");
             intVaivenAlarm = new InterpoladorVaiven(0, 1, 5f);
             alarmMode = false;
         }
@@ -175,7 +175,7 @@ namespace Examples.TraficoFauna.PostProcess
             {
                 //Arrancar nuevamente en el ultimo sector
                 effect.Technique = "DefaultTechnique";
-                Game.instance.currentLevel.restoreFromLoseLife();
+                GameModel.instance.currentLevel.restoreFromLoseLife();
             }
             else
             {

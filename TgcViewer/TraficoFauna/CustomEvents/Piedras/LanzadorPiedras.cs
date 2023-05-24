@@ -62,7 +62,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
             //Mesh
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = Game.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
+            string meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
 
@@ -126,7 +126,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
 
         public override void end()
         {
-            Game.instance.sonidos.piedra_rodando.stop();
+            GameModel.instance.sonidos.piedra_rodando.stop();
         }
 
         public override void update()
@@ -145,7 +145,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
                     mesh.Enabled = false;
 
                     //Apagar sonido de girando
-                    Game.instance.sonidos.piedra_rodando.stop();
+                    GameModel.instance.sonidos.piedra_rodando.stop();
                 }
                 else
                 {
@@ -167,13 +167,13 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
                 }
 
                 //Ver si la piedra colisiona contra el personaje
-                if (Game.instance.mainCharacter.collideWithAABB(mesh.BoundingBox))
+                if (GameModel.instance.mainCharacter.collideWithAABB(mesh.BoundingBox))
                 {
                     //Sonido de golpe de piedra
-                    Game.instance.sonidos.piedra_golpear_personaje.play(false);
+                    GameModel.instance.sonidos.piedra_golpear_personaje.play(false);
 
                     //Quitar vida
-                    Game.instance.currentLevel.removeLifeToPlayer();
+                    GameModel.instance.currentLevel.removeLifeToPlayer();
                 }
 
             }
@@ -193,7 +193,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
                     mesh.Rotation = new Vector3(0, 0, 0);
 
                     //Activar sonido de rodando
-                    Game.instance.sonidos.piedra_rodando.play(true);
+                    GameModel.instance.sonidos.piedra_rodando.play(true);
                 }
             }
             
@@ -202,9 +202,9 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(posOrigen))
+            if (GameModel.instance.mainCharacter.isInProximityRange(posOrigen))
             {
-                Game.instance.shaders.setCorrectTechnique(mesh);
+                GameModel.instance.shaders.setCorrectTechnique(mesh);
                 mesh.render();
             }
         }

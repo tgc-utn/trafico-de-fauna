@@ -110,7 +110,7 @@ namespace Examples.TraficoFauna
         {
             this.name = levelName;
             this.index = levelIndex;
-            string levelPath = Game.instance.gameConfig.levelsPath + levelName + "\\";
+            string levelPath = GameModel.instance.gameConfig.levelsPath + levelName + "\\";
 
             //Load sectors
             string[] sectorsDir = Directory.GetDirectories(levelPath, "Sector-*", SearchOption.TopDirectoryOnly);
@@ -163,7 +163,7 @@ namespace Examples.TraficoFauna
         {
             currentSector = findSector(firstSectorName);
             Conector firstConector = currentSector.findSector(firstConectorName);
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             mainCharacter.resetForNewLevel();
             currentSector.initSector(mainCharacter, firstConector);
 
@@ -177,13 +177,13 @@ namespace Examples.TraficoFauna
         public void changeSector(Conector nextConector)
         {
             //Transicion de loading
-            Game.instance.currentGameMode = Game.GameMode.LoadingSector;
-            Game.instance.transiciones.initLoadingSector();
+            GameModel.instance.currentGameMode = GameModel.GameMode.LoadingSector;
+            GameModel.instance.transiciones.initLoadingSector();
 
             //Cargar sector
             currentSector.hideSector();
             currentSector = nextConector.Sector;
-            currentSector.initSector(Game.instance.mainCharacter, nextConector);
+            currentSector.initSector(GameModel.instance.mainCharacter, nextConector);
         }
 
         /// <summary>
@@ -273,19 +273,19 @@ namespace Examples.TraficoFauna
         public void removeLifeToPlayer()
         {
             //Restar vida
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             mainCharacter.Vidas--;
 
             //Poner sonido de perder vida
-            Game.instance.sonidos.stopAllSounds();
-            Game.instance.sonidos.personaje_perder_vida.play();
+            GameModel.instance.sonidos.stopAllSounds();
+            GameModel.instance.sonidos.personaje_perder_vida.play();
 
             //Quitar efecto de modo alarma
-            Game.instance.postProcessEffects.setAlarmModeEnable(false);
+            GameModel.instance.postProcessEffects.setAlarmModeEnable(false);
 
             //Cargar efecto de Game Over
-            Game.instance.postProcessEffects.setPlayerDeadEffect();
-            Game.instance.currentGameMode = Game.GameMode.PlayerDead;
+            GameModel.instance.postProcessEffects.setPlayerDeadEffect();
+            GameModel.instance.currentGameMode = GameModel.GameMode.PlayerDead;
         }
 
         /// <summary>
@@ -294,13 +294,13 @@ namespace Examples.TraficoFauna
         /// </summary>
         public void restoreFromLoseLife()
         {
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             
             //Arrancar en el ultimo conector por el que paso
             if (mainCharacter.Vidas > 0)
             {
-                Game.instance.currentGameMode = Game.GameMode.Playing;
-                changeSector(Game.instance.currentLevel.CurrentSector.CurrentConector);
+                GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
+                changeSector(GameModel.instance.currentLevel.CurrentSector.CurrentConector);
             }
             //Game over
             else
@@ -309,8 +309,8 @@ namespace Examples.TraficoFauna
                 currentSector.hideSector();
 
                 //Mostrar pantalla de GameOver
-                Game.instance.transiciones.initGameOver();
-                Game.instance.currentGameMode = Game.GameMode.GameOver;
+                GameModel.instance.transiciones.initGameOver();
+                GameModel.instance.currentGameMode = GameModel.GameMode.GameOver;
                 
 
                 //Arrancar desde el primer nivel del juego
@@ -324,8 +324,8 @@ namespace Examples.TraficoFauna
         public void changeLevel()
         {
             currentSector.hideSector();
-            GameConfig.Level levelData = Game.instance.gameConfig.getNextLevel(this.index);
-            Game.instance.loadLevel(levelData);
+            GameConfig.Level levelData = GameModel.instance.gameConfig.getNextLevel(this.index);
+            GameModel.instance.loadLevel(levelData);
         }
 
         /// <summary>

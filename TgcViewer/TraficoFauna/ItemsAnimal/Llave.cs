@@ -100,7 +100,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
             Vector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = Game.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
+            string meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.Position = new Vector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
@@ -119,15 +119,15 @@ namespace Examples.TraficoFauna.ItemsAnimal
             if (!agarrada)
             {
                 //Dibujar si esta en rango visible
-                if (Game.instance.mainCharacter.isInProximityRange(mesh.Position))
+                if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
                     rotador.rotate(this.mesh);
-                    Game.instance.shaders.setCorrectTechnique(mesh);
+                    GameModel.instance.shaders.setCorrectTechnique(mesh);
                     this.mesh.render();
                 }
 
                 //Debug render
-                if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+                if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
                     boundingSphere.render();
                 }
@@ -161,7 +161,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
         public void agarrar()
         {
             agarrada = true;
-            Game.instance.sonidos.llave_agarrar.play();
+            GameModel.instance.sonidos.llave_agarrar.play();
         }
 
         public void dispose()

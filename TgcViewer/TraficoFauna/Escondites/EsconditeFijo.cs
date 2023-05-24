@@ -78,7 +78,7 @@ namespace Examples.TraficoFauna.Escondites
         {
             if (mesh.AlphaBlendEnable)
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
             else
             {
@@ -90,7 +90,7 @@ namespace Examples.TraficoFauna.Escondites
         {
             if (escondido)
             {
-                Shaders shaders = Game.instance.shaders;
+                Shaders shaders = GameModel.instance.shaders;
                 mesh.Technique = shaders.RESALTADO;
                 shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
                 shaders.effect.SetValue("scaleFactor", interpolador.update());
@@ -100,9 +100,9 @@ namespace Examples.TraficoFauna.Escondites
             else
             {
                 //Dibujar si esta en rango visible
-                if (Game.instance.mainCharacter.isInProximityRange(bSphere.Center))
+                if (GameModel.instance.mainCharacter.isInProximityRange(bSphere.Center))
                 {
-                    Shaders shaders = Game.instance.shaders;
+                    Shaders shaders = GameModel.instance.shaders;
                     mesh.Technique = shaders.RESALTADO;
                     shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
                     shaders.effect.SetValue("scaleFactor", interpolador.update());

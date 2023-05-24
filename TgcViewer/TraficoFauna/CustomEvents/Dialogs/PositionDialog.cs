@@ -83,8 +83,8 @@ namespace Examples.TraficoFauna.CustomEvents.Dialogs
 
         public override void update()
         {
-            TextDialog dialog = Game.instance.textDialog;
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            TextDialog dialog = GameModel.instance.textDialog;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
 
             switch (currentState)
             {
@@ -111,7 +111,7 @@ namespace Examples.TraficoFauna.CustomEvents.Dialogs
                     {
                         currentState = State.ACTIVE;
                         dialog.setText(text);
-                        Game.instance.sonidos.dialogo_abrir.play();
+                        GameModel.instance.sonidos.dialogo_abrir.play();
                     }
                     break;
                 case State.GOING_OUT:
@@ -127,10 +127,10 @@ namespace Examples.TraficoFauna.CustomEvents.Dialogs
         {
             if (currentState == State.ACTIVE)
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
 
-            if (Game.instance.debugMode.Enabled && Game.instance.debugMode.ShowBoundingVolumes)
+            if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
             {
                 boundingBox.render();
             }
@@ -138,7 +138,7 @@ namespace Examples.TraficoFauna.CustomEvents.Dialogs
 
         public void renderWithAlpha()
         {
-            Game.instance.textDialog.render();
+            GameModel.instance.textDialog.render();
         }
 
         public override void renderDebug()

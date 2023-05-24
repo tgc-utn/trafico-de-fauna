@@ -516,7 +516,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void loadCustomEvent(TgcMeshData meshData, string texturePath, TgcSceneData sceneData)
         {
-            CustomEvent customEvent = Game.instance.customEventsManager.loadCustomEvent(meshData, texturePath, sceneData);
+            CustomEvent customEvent = GameModel.instance.customEventsManager.loadCustomEvent(meshData, texturePath, sceneData);
             this.customEvents.Add(customEvent);
         }
 
@@ -569,17 +569,17 @@ namespace Examples.TraficoFauna
             //deshabilitar Sonidos
             guardiasManager.hideGuardias();
             stopSounds();
-            Game.instance.postProcessEffects.setAlarmModeEnable(false);
+            GameModel.instance.postProcessEffects.setAlarmModeEnable(false);
 
             //Liberar bananas
-            Game.instance.bananasPool.freeAllMeshes();
+            GameModel.instance.bananasPool.freeAllMeshes();
             foreach (Banana b in bananas)
             {
                 b.hide();
             }
 
             //Liberar cajas de bananas
-            Game.instance.cajasBananasPool.freeAllMeshes();
+            GameModel.instance.cajasBananasPool.freeAllMeshes();
             foreach (CajaBanana caja in cajasBananas)
             {
                 caja.hide();
@@ -610,7 +610,7 @@ namespace Examples.TraficoFauna
         public void initSector(MainCharacter mainCharacter, Conector nextConector)
         {
             //Musica
-            Game.instance.sonidos.playMusic(Game.instance.sonidos.music_default);
+            GameModel.instance.sonidos.playMusic(GameModel.instance.sonidos.music_default);
 
             //Restaurar posicion de escondites moviles
             foreach (EsconditeMovil esc in esconditesMoviles)
@@ -675,14 +675,14 @@ namespace Examples.TraficoFauna
             //Render de mallas estaticas
             foreach (TgcMeshShader mesh in staticMeshes)
             {
-                Game.instance.shaders.setCorrectTechnique(mesh);
+                GameModel.instance.shaders.setCorrectTechnique(mesh);
                 mesh.render();
             }
 
             //Render de mallas sin colision
             foreach (TgcMeshShader mesh in meshesSinColision)
             {
-                Game.instance.shaders.setCorrectTechnique(mesh);
+                GameModel.instance.shaders.setCorrectTechnique(mesh);
                 mesh.render();
             }
 
@@ -714,7 +714,7 @@ namespace Examples.TraficoFauna
             }
 
             //Ver si el personaje principal colisiona con algun conector (para mostrar su cartel)
-            Conector conectorColision = checkConectores(Game.instance.mainCharacter);
+            Conector conectorColision = checkConectores(GameModel.instance.mainCharacter);
             if (conectorColision != null)
             {
                 conectorColision.render();
@@ -748,7 +748,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void frustumCulling()
         {
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             //Frustum Culling meshes estaticos
             foreach (TgcMeshShader mesh in staticMeshes)
             {
@@ -790,9 +790,9 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void adaptCameraPosition()
         {
-            GameThirdPersonCamera camera = Game.instance.mainCharacter.Camera;
-            GameConfig.Camara camaraConfig = Game.instance.gameConfig.camara;
-            MainCharacter mainCharacter = Game.instance.mainCharacter;
+            GameThirdPersonCamera camera = GameModel.instance.mainCharacter.Camera;
+            GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
+            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             camera.OffsetForward = mainCharacter.CurrentCameraOffsetForward;
             camera.OffsetHeight = camaraConfig.offsetY;
             Vector3 segmentA;
@@ -889,11 +889,11 @@ namespace Examples.TraficoFauna
             //No alertar a los otros
             //guardiasManager.alertAll();
 
-            GameSounds sonidos = Game.instance.sonidos;
+            GameSounds sonidos = GameModel.instance.sonidos;
             //sonidos.playMusic(sonidos.music_alarm);
             sonidos.mp3Player.stop();
             sonidos.alarma_guardias.play(true);
-            Game.instance.postProcessEffects.setAlarmModeEnable(true);
+            GameModel.instance.postProcessEffects.setAlarmModeEnable(true);
         }
 
         /// <summary>
@@ -999,7 +999,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         public void stopSounds()
         {
-            GameSounds sonidos = Game.instance.sonidos;
+            GameSounds sonidos = GameModel.instance.sonidos;
             sonidos.alarma_guardias.stop();
             sonidos.mp3Player.closeFile();
         }

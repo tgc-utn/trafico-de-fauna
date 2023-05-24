@@ -46,7 +46,7 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             aabb = GameUtils.createBBFromMeshData(meshData);
-            billboard = new HorizontalDisplacementBillboard(Game.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
+            billboard = new HorizontalDisplacementBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
             billboard.Speed = new Vector2(0, 0.3f);
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
@@ -70,9 +70,9 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
         public override void render()
         {
             //Dibujar si esta en rango visible
-            if (Game.instance.mainCharacter.isInProximityRange(billboard.PMin))
+            if (GameModel.instance.mainCharacter.isInProximityRange(billboard.PMin))
             {
-                Game.instance.currentLevel.AlphaObjects.Add(this);
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
         }
 
