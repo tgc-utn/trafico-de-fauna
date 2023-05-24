@@ -116,7 +116,7 @@ namespace TraficoFauna.Examples
                 errorWindow = new ErrorWindow();
 
                 //Cargar gameConfig
-                string basePath = GuiController.Instance.ExamplesDir + "..\\..\\..\\TraficoFauna\\Media\\";
+                string basePath = GuiController.Instance.ExamplesDir + "..\\..\\..\\Media\\";
                 gameConfig = new GameConfig(basePath, "config.xml");
 
                 //Debug Mode
