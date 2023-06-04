@@ -16,10 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.Sound;
+using TGC.Core.Sound;
 using TgcViewer;
 using TraficoFauna.Examples;
 
@@ -98,14 +95,14 @@ namespace Examples.TraficoFauna.Sonidos
         /// <summary>
         /// Actualizar estado y reproducir sonido si corresponde
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             if (!enabled)
             {
                 return;
             }
 
-            acumTime += GuiController.Instance.ElapsedTime;
+            acumTime += elapsedTime;
             if (acumTime > frecuency)
             {
                 acumTime = 0;

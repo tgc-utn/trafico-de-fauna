@@ -17,14 +17,12 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
-using TgcViewer.Utils.TgcKeyFrameLoader;
-using TgcViewer.Utils.TgcSceneLoader;
 using Examples.TraficoFauna.Meshes;
+using TGC.Core.Geometry;
+using TGC.Core.KeyFrameLoader;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.Bananas
 {
@@ -127,7 +125,7 @@ namespace Examples.TraficoFauna.Bananas
             mesh.AnimationEnds += new TgcKeyFrameMesh.AnimationEndsHandler(mesh_AnimationEnds);
         }
 
-        public void render()
+        public void render(float elapsedTime)
         {
             if (enable)
             {
@@ -146,7 +144,7 @@ namespace Examples.TraficoFauna.Bananas
                     }
                     */
 
-                    this.mesh.animateAndRender();
+                    this.mesh.animateAndRender(elapsedTime);
 
                     if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                     {

@@ -16,16 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Render;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
 using TgcViewer;
 using TraficoFauna.Examples;
 using TgcViewer.Utils;
+using TGC.Core.SceneLoader;
+using TGC.Core.Textures;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.Meshes
 {
@@ -115,8 +114,7 @@ namespace Examples.TraficoFauna.Meshes
         /// </summary>
         public new void executeRender()
         {
-            Device device = GuiController.Instance.D3dDevice;
-            TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
+            var device = D3DDevice.Instance.Device;
             Effect effect = GameModel.instance.shaders.effect;
 
             //Cargar technique
@@ -151,9 +149,9 @@ namespace Examples.TraficoFauna.Meshes
                 case MeshRenderType.VERTEX_COLOR:
 
                     //Reset de texturas
-                    texturesManager.clear(0);
-                    texturesManager.clear(1);
-                    device.Material = TgcD3dDevice.DEFAULT_MATERIAL;
+                    TexturesManager.Instance.clear(0);
+                    TexturesManager.Instance.clear(1);
+                    device.Material = D3DDevice.DEFAULT_MATERIAL;
 
                     //Llamar evento para configurar inicio del shader
                     if (ShaderBegin != null)
@@ -194,7 +192,7 @@ namespace Examples.TraficoFauna.Meshes
                 case MeshRenderType.DIFFUSE_MAP:
 
                     //Hacer reset de Lightmap
-                    texturesManager.clear(1);
+                    TexturesManager.Instance.clear(1);
                     
                     //Activar AlphaBlending
                     if (this.alphaBlendEnable)
@@ -226,9 +224,9 @@ namespace Examples.TraficoFauna.Meshes
                         for (int i = 0; i < materials.Length; i++)
                         {
                             device.Material = materials[i];
-                            
+
                             //Setear textura en shader
-                            texturesManager.shaderSet(effect, "diffuseMap_Tex", diffuseMaps[i]);
+                            TexturesManager.Instance.shaderSet(effect, "diffuseMap_Tex", diffuseMaps[i]);
 
                             //Iniciar pasada de shader
                             // guarda: Todos los SetValue tienen que ir ANTES del beginPass.
@@ -276,7 +274,7 @@ namespace Examples.TraficoFauna.Meshes
                         }
 
                         //Cargar lightmap
-                        texturesManager.shaderSet(effect, "lightMap_Tex", lightMap);
+                        TexturesManager.Instance.shaderSet(effect, "lightMap_Tex", lightMap);
 
                         //Dibujar cada subset con su Material y su DiffuseMap correspondiente
                         for (int i = 0; i < materials.Length; i++)
@@ -284,7 +282,7 @@ namespace Examples.TraficoFauna.Meshes
                             device.Material = materials[i];
 
                             //Setear textura en shader
-                            texturesManager.shaderSet(effect, "diffuseMap_Tex", diffuseMaps[i]);
+                            TexturesManager.Instance.shaderSet(effect, "diffuseMap_Tex", diffuseMaps[i]);
 
                             //Iniciar pasada de shader
                             // guarda: Todos los SetValue tienen que ir ANTES del beginPass.

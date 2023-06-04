@@ -17,15 +17,11 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
 using TraficoFauna.Examples;
-using TgcViewer;
-using TgcViewer.Utils.TgcGeometry;
-using TgcViewer.Utils.Sound;
 using Examples.TraficoFauna.Meshes;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.ItemsAnimal
 {
@@ -121,7 +117,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
                 //Dibujar si esta en rango visible
                 if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
-                    rotador.rotate(this.mesh);
+                    rotador.rotate(GameModel.instance.ElapsedTime, this.mesh);
                     GameModel.instance.shaders.setCorrectTechnique(mesh);
                     this.mesh.render();
                 }

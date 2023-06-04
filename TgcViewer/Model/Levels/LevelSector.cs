@@ -18,19 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
-using TgcViewer.Utils.Input;
 using Microsoft.DirectX;
 using TgcViewer;
 using Examples.TraficoFauna.Enemies;
 using Examples.TraficoFauna.Meshes;
 using TraficoFauna.Examples;
-using Microsoft.DirectX.Direct3D;
 using Examples.TraficoFauna.ItemsAnimal;
-using TgcViewer.Utils.Sound;
 using Examples.TraficoFauna.Escondites;
 using Examples.TraficoFauna.Enemies.Ataque;
 using Examples.TraficoFauna.CustomEvents;
@@ -38,6 +32,9 @@ using Examples.TraficoFauna.Saltos;
 using Examples.TraficoFauna.Camera;
 using Examples.TraficoFauna.Bananas;
 using Examples.TraficoFauna.Sonidos;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
+using TGC.Core.Utils;
 
 namespace Examples.TraficoFauna
 {
@@ -396,8 +393,6 @@ namespace Examples.TraficoFauna
             //Usar TgcMeshShader
             sceneData.meshesData = staticMeshesData.ToArray();
             TgcSceneLoader loader = new TgcSceneLoader();
-            loader.TexturesPath = texturePath;
-            loader.LightmapPath = lightmapPath;
             loader.MeshFactory = new TgcMeshShaderFactory();
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             staticMeshes = new List<TgcMeshShader>();
@@ -415,8 +410,6 @@ namespace Examples.TraficoFauna
             //Usar TgcMeshShader
             sceneData.meshesData = sinColisionMeshesData.ToArray();
             TgcSceneLoader loader = new TgcSceneLoader();
-            loader.TexturesPath = texturePath;
-            loader.LightmapPath = lightmapPath;
             loader.MeshFactory = new TgcMeshShaderFactory();
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             meshesSinColision = new List<TgcMeshShader>();
@@ -645,17 +638,17 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Actualizar estado del sector
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             //Actualizar posicion de enemigos
-            guardiasManager.update();
+            guardiasManager.update(elapsedTime);
 
             //Actualizar estado de customEvents
             foreach (CustomEvent customEvent in customEvents)
             {
                 if (customEvent.Enabled)
                 {
-                    customEvent.update();
+                    customEvent.update(elapsedTime);
                 }
             }
         }
@@ -663,10 +656,10 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Render del sector
         /// </summary>
-        public void render()
+        public void render(float elapsedTime, TgcFrustum frustum)
         {
             //Hacer FrustumCulling de los objetos que vale la pena
-            frustumCulling();
+            frustumCulling(frustum);
 
             //Ajustar distancia de camara por colision contra objetos
             adaptCameraPosition();
@@ -687,7 +680,7 @@ namespace Examples.TraficoFauna
             }
 
             //Guaridas
-            guardiasManager.render();
+            guardiasManager.render(elapsedTime);
 
             //Llaves
             foreach (Llave llave in llaves)
@@ -729,7 +722,7 @@ namespace Examples.TraficoFauna
             //Cajas de bananas
             foreach (CajaBanana caja in cajasBananas)
             {
-                caja.render();
+                caja.render(elapsedTime);
             }
 
             //CustomEvents
@@ -746,14 +739,14 @@ namespace Examples.TraficoFauna
         /// Hacer FrustumCulling de meshes estaticos y meshes sin colision
         /// Por fuerza bruta
         /// </summary>
-        private void frustumCulling()
+        private void frustumCulling(TgcFrustum frustum)
         {
             MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             //Frustum Culling meshes estaticos
             foreach (TgcMeshShader mesh in staticMeshes)
             {
                 //Frustum Culling brute force
-                if (TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
+                if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
                 {
                     mesh.Enabled = false;
                 }
@@ -769,7 +762,7 @@ namespace Examples.TraficoFauna
                 if (mainCharacter.isInProximityRange(mesh.BoundingBox.PMin))
                 {
                     //Frustum Culling brute force
-                    if (TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
+                    if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
                     {
                         mesh.Enabled = false;
                     }

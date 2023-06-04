@@ -79,9 +79,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Example\ExampleLoader.cs" />
-    <Compile Include="Example\TgcExample.cs" />
-    <Compile Include="GuiController.cs" />
+    <Compile Include="Game.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Game.settings</DependentUpon>
+    </Compile>
     <Compile Include="Form\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +111,10 @@
       <DependentUpon>ErrorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Game.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Game.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Media\Fonts\JUNGLEFE.TTF" />
     <None Include="Media\Fonts\spathasans.ttf" />
     <None Include="packages.config" />
@@ -197,61 +203,8 @@
     <Compile Include="Model\Shaders.cs" />
     <Compile Include="Model\Sonidos\GameSounds.cs" />
     <Compile Include="Model\Sonidos\TemporalSound.cs" />
-    <Compile Include="Utils\2D\TgcText2d.cs" />
-    <Compile Include="Utils\Input\TgcCamera.cs" />
     <Compile Include="Utils\Render\TgcDefaultRenderQueue.cs" />
     <Compile Include="Utils\Render\TgcRenderQueue.cs" />
-    <Compile Include="Utils\Sound\Tgc3dSound.cs" />
-    <Compile Include="Utils\Sound\TgcMp3Player.cs" />
-    <Compile Include="Utils\Sound\TgcDirectSound.cs" />
-    <Compile Include="Utils\Sound\TgcStaticSound.cs" />
-    <Compile Include="Utils\Terrain\TgcSkyBox.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcLine.cs" />
-    <Compile Include="Utils\TgcGeometry\FastMath.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcBoundingBox.cs" />
-    <Compile Include="Utils\Input\TgcD3dInput.cs" />
-    <Compile Include="Utils\TgcAxisLines.cs" />
-    <Compile Include="Utils\TgcD3dDevice.cs" />
-    <Compile Include="Utils\HighResolutionTimer.cs" />
-    <Compile Include="Utils\TgcDrawText.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcBoundingSphere.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcBox.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcCollisionUtils.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcFrustum.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcPickingRay.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcRay.cs" />
-    <Compile Include="Utils\TgcGeometry\TgcVectorUtils.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameAnimation.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameAnimationData.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameFrameData.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameLoader.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameMesh.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameMeshData.cs" />
-    <Compile Include="Utils\TgcKeyFrameLoader\TgcKeyFrameParser.cs" />
-    <Compile Include="Utils\TgcSceneLoader\ITransformObject.cs" />
-    <Compile Include="Utils\TgcSceneLoader\IRenderObject.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcMaterialData.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcMesh.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcMeshData.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcParserUtils.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcScene.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcSceneData.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcSceneLoader.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcSceneParser.cs" />
-    <Compile Include="Utils\TgcSceneLoader\TgcTexture.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalAnimation.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalAnimationFrame.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalBoneAttach.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalLoader.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalAnimationBoneData.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalAnimationBoneFrameData.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalAnimationData.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalBone.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalMeshData.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalParser.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalBoneData.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalVertexWeight.cs" />
-    <Compile Include="Utils\TgcSkeletalAnimation\TgcSkeletalMesh.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
@@ -361,11 +314,8 @@
     <Content Include="Media\Piedras\PiedraNormal\PiedraNormal-TgcScene.xml" />
     <Content Include="Media\Piedras\PiedraNormal\Textures\PiedraNormal.jpg" />
     <Content Include="Media\Shaders\efecto_alarma.png" />
-    <Content Include="Media\Shaders\Particles\ParticlesShader.fx" />
     <Content Include="Media\Shaders\Particles\pisada_mono.png" />
     <Content Include="Media\Shaders\Particles\punch_mono.png" />
-    <Content Include="Media\Shaders\PostProcess.fx" />
-    <Content Include="Media\Shaders\StaticMeshShader.fx" />
     <Content Include="Media\Sonidos\alarma_guardias.wav" />
     <Content Include="Media\Sonidos\banana_agarrar.wav" />
     <Content Include="Media\Sonidos\banana_agarrar_varias.wav" />
@@ -390,6 +340,17 @@
     <Content Include="Media\Sonidos\personaje_saltar.wav" />
     <Content Include="Media\Sonidos\piedra_golpear_personaje.wav" />
     <Content Include="Media\Sonidos\piedra_rodando.wav" />
+    <Content Include="Shaders\ParticlesShader.fx" />
+    <Content Include="Shaders\PostProcess.fx" />
+    <Content Include="Shaders\StaticMeshShader.fx" />
+    <Content Include="Shaders\TgcKeyFrameMeshShader.fx" />
+    <Content Include="Shaders\TgcMeshPhongShader.fx" />
+    <Content Include="Shaders\TgcMeshPointLightShader.fx" />
+    <Content Include="Shaders\TgcMeshShader.fx" />
+    <Content Include="Shaders\TgcMeshSpotLightShader.fx" />
+    <Content Include="Shaders\TgcSkeletalMeshPointLightShader.fx" />
+    <Content Include="Shaders\TgcSkeletalMeshShader.fx" />
+    <Content Include="Shaders\Varios.fx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

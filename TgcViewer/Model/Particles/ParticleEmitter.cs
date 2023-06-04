@@ -22,9 +22,10 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using TgcViewer.Utils;
-using System.Collections;
-using TgcViewer.Utils.TgcSceneLoader;
 using System.Collections.Generic;
+using TGC.Core.Direct3D;
+using TGC.Core.Textures;
+using TraficoFauna.Examples;
 
 namespace Examples.TraficoFauna.Particles
 {
@@ -143,7 +144,7 @@ namespace Examples.TraficoFauna.Particles
         /// <param name="particlesCount">cantidad maxima de particlas a generar</param>
         public ParticleEmitter(string texturePath, int particlesCount)
         {
-            Device device = GuiController.Instance.D3dDevice;
+            Device device = D3DDevice.Instance.Device;
 
             //valores default
             enabled = true;
@@ -181,7 +182,7 @@ namespace Examples.TraficoFauna.Particles
         public void changeTexture(string texturePath)
         {
             this.texture.dispose();
-            this.texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice, texturePath);
+            this.texture = TgcTexture.createTexture(D3DDevice.Instance.Device, texturePath);
         }
 
         /// <summary>
@@ -206,14 +207,14 @@ namespace Examples.TraficoFauna.Particles
                 return;
             }
 
-            render();
+            render(GameModel.instance.ElapsedTime);
         }
 
         /// <summary>
         /// Dibujar particulas.
         /// Emite particulas a medida que avanza el tiempo.
         /// </summary>
-        public void render()
+        public void render(float elapsedTime)
         {
             if (!enabled)
             {
@@ -221,7 +222,6 @@ namespace Examples.TraficoFauna.Particles
             }
 
             //Ver si hay que generar nuevas particulas
-            float elapsedTime = GuiController.Instance.ElapsedTime;
             tiempoAcumulado += elapsedTime;
             if (tiempoAcumulado >= this.creationFrecuency && playing)
             {
@@ -234,17 +234,16 @@ namespace Examples.TraficoFauna.Particles
             //Dibujar particulas existentes
             if (this.particlesAlive.Count > 0)
             {
-                Device device = GuiController.Instance.D3dDevice;
-                TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
+                var device = D3DDevice.Instance.Device;
 
                 //Cargar VertexDeclaration
                 device.VertexDeclaration = vertexDeclaration;
 
                 //Fijo la textura actual de la particula.
-                texturesManager.clear(0);
-                texturesManager.clear(1);
-                texturesManager.set(0, texture);
-                device.Material = TgcD3dDevice.DEFAULT_MATERIAL;
+                TexturesManager.Instance.clear(0);
+                TexturesManager.Instance.clear(1);
+                TexturesManager.Instance.set(0, texture);
+                device.Material = D3DDevice.DEFAULT_MATERIAL;
                 device.RenderState.AlphaBlendEnable = true;
                 device.RenderState.ZBufferWriteEnable = false;
                 device.Transform.World = Matrix.Identity;
@@ -341,7 +340,7 @@ namespace Examples.TraficoFauna.Particles
         /// </summary>
         private void renderParticle(Particle p)
         {
-            Device device = GuiController.Instance.D3dDevice;
+            var device = D3DDevice.Instance.Device;
 
             //Variamos el canal Alpha de la particula con efecto Fade-in y Fade-out (hasta 20% Alpha - Normal - desde 60% alpha)
             float currentProgress = 1 - (p.TimeToLive / p.TotalTimeToLive);

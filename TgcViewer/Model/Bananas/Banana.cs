@@ -16,16 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
 using Examples.TraficoFauna.Meshes;
 using Examples.TraficoFauna.ItemsAnimal;
-using TgcViewer.Utils.Sound;
+using TGC.Core.Sound;
+using TGC.Core.SceneLoader;
+using TGC.Core.Geometry;
 
 namespace Examples.TraficoFauna.Bananas
 {
@@ -99,7 +96,7 @@ namespace Examples.TraficoFauna.Bananas
                 //Dibujar si esta en rango visible
                 if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
-                    rotador.rotate(this.mesh);
+                    rotador.rotate(GameModel.instance.ElapsedTime, this.mesh);
                     GameModel.instance.shaders.setCorrectTechnique(mesh);
                     this.mesh.render();
                 }

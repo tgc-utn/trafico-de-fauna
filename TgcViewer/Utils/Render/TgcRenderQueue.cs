@@ -16,10 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 
 namespace TgcViewer.Utils.Render
 {
@@ -39,8 +38,8 @@ namespace TgcViewer.Utils.Render
         /// Agregar un elemento a renderizar a la cola de renderizado
         /// </summary>
         /// <param name="element">Elemento a renderizar</param>
-        /// <param name="hasAlpa">True si tiene translucidez</param>
-        void add(IRenderQueueElement element, bool hasAlpa);
+        /// <param name="hasAlpha">True si tiene translucidez</param>
+        void add(IRenderQueueElement element, bool hasAlpha);
 
         /// <summary>
         /// Agregar un elemento opaco a renderizar a la cola de renderizado
@@ -57,9 +56,7 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Renderizar todos los elementos de la cola de renderizado
         /// </summary>
-        void renderAll();
-
-
+        void renderAll(Device d3dDevice, Vector3 cameraPos);
     }
 
     /// <summary>
@@ -81,7 +78,5 @@ namespace TgcViewer.Utils.Render
         {
             get;
         }
-
     }
-
 }

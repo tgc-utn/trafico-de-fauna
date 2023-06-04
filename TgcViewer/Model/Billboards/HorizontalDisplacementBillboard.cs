@@ -16,15 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcSceneLoader;
-using System.Drawing;
-using TgcViewer;
-using TgcViewer.Utils;
+using TGC.Core.Direct3D;
+using TGC.Core.SceneLoader;
+using TGC.Core.Textures;
+using TGC.Core.Utils;
 using TraficoFauna.Examples;
 
 namespace Examples.TraficoFauna.Billboards
@@ -100,13 +97,11 @@ namespace Examples.TraficoFauna.Billboards
         /// </summary>
         public Vector2 Speed
         {
-          get { return speed; }
-          set { speed = value; }
+            get { return speed; }
+            set { speed = value; }
         }
 
-
-
-        public HorizontalDisplacementBillboard(string texturePath, Vector3 pMin, Vector3 pMax)
+        public HorizontalDisplacementBillboard(Device device, string texturePath, Vector3 pMin, Vector3 pMax)
         {
             this.enabled = true;
             this.alphaBlendEnable = true;
@@ -117,11 +112,10 @@ namespace Examples.TraficoFauna.Billboards
             currentUVsum = new Vector2(0, 0);
 
             //Cargar textura
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-            this.texture = TgcTexture.createTexture(d3dDevice, texturePath);
+            this.texture = TgcTexture.createTexture(device, texturePath);
 
             //Crear vertexBuffer
-            vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionTextured), 6, d3dDevice,
+            vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionTextured), 6, device,
                 Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionTextured.Format, Pool.Default);
 
             CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[6];
@@ -139,33 +133,36 @@ namespace Examples.TraficoFauna.Billboards
             vertexBuffer.SetData(vertices, 0, LockFlags.None);
         }
 
+        public void update(float elapsedTime)
+        {
+            //Actualizar incremento de UV
+            if (playing)
+            {
+                Vector2 addVec = Vector2.Scale(speed, elapsedTime);
+                currentUVsum += addVec;
+                currentUVsum.X %= 1;
+                currentUVsum.Y %= 1;
+            }
+        }
+
         /// <summary>
         /// Dibujar Quad
         /// </summary>
         public void render()
         {
+            var device = D3DDevice.Instance.Device;
+
             if (!enabled)
                 return;
 
-            //Actualizar incremento de UV
-            if (playing)
-            {
-                Vector2 addVec = Vector2.Scale(speed, GuiController.Instance.ElapsedTime);
-                currentUVsum += addVec;
-                currentUVsum.X %= 1;
-                currentUVsum.Y %= 1;
-            }
-
             //Dibujar
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-            TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
             Shaders shaders = GameModel.instance.shaders;
             Effect effect = shaders.effect;
 
             effect.Technique = GameModel.instance.shaders.ANIMATE_UV;
             effect.SetValue("animateUV", TgcParserUtils.vector2ToFloat2Array(currentUVsum));
-            Matrix matWorldView = Matrix.Identity * d3dDevice.Transform.View;
-            Matrix matWorldViewProj = matWorldView * d3dDevice.Transform.Projection;
+            Matrix matWorldView = Matrix.Identity * device.Transform.View;
+            Matrix matWorldViewProj = matWorldView * device.Transform.Projection;
             effect.SetValue("matWorld", Matrix.Identity);
             effect.SetValue("matWorldView", matWorldView);
             effect.SetValue("matWorldViewProj", matWorldViewProj);
@@ -173,32 +170,30 @@ namespace Examples.TraficoFauna.Billboards
             //Activar AlphaBlending
             if (this.alphaBlendEnable)
             {
-                d3dDevice.RenderState.AlphaBlendEnable = true;
-                d3dDevice.RenderState.AlphaTestEnable = true;
+                device.RenderState.AlphaBlendEnable = true;
+                device.RenderState.AlphaTestEnable = true;
             }
 
-            d3dDevice.Material = TgcD3dDevice.DEFAULT_MATERIAL;
-            texturesManager.shaderSet(effect, "diffuseMap_Tex", texture);
-            d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.Material = D3DDevice.DEFAULT_MATERIAL;
+            TexturesManager.Instance.shaderSet(effect, "diffuseMap_Tex", texture);
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
 
             int numPasses = effect.Begin(0);
             for (int n = 0; n < numPasses; n++)
             {
                 //Dibujar cada el unico subset que hay
                 effect.BeginPass(n);
-                d3dDevice.SetStreamSource(0, vertexBuffer, 0);
-                d3dDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+                device.SetStreamSource(0, vertexBuffer, 0);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
                 effect.EndPass();
             }
 
             //Finalizar shader
             effect.End();
 
-            
-
             //Desactivar AlphaBlending
-            d3dDevice.RenderState.AlphaBlendEnable = false;
-            d3dDevice.RenderState.AlphaTestEnable = false;
+            device.RenderState.AlphaBlendEnable = false;
+            device.RenderState.AlphaTestEnable = false;
         }
 
         public void dispose()
@@ -209,8 +204,5 @@ namespace Examples.TraficoFauna.Billboards
                 vertexBuffer.Dispose();
             }
         }
-
-        
-
     }
 }

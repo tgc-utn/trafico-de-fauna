@@ -17,15 +17,14 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcSceneLoader;
 using System.Drawing;
 using TgcViewer;
 using TgcViewer.Utils;
-using TraficoFauna.Examples;
+using TGC.Core.Direct3D;
+using TGC.Core.Textures;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.Billboards
 {
@@ -150,7 +149,7 @@ namespace Examples.TraficoFauna.Billboards
             this.playing = true;
 
             //Crear vertex buffer y textura
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = D3DDevice.Instance.Device;
             this.texture = TgcTexture.createTexture(d3dDevice, texturePath);
             vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionTextured), 6, d3dDevice,
                 Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionTextured.Format, Pool.Default);
@@ -171,7 +170,7 @@ namespace Examples.TraficoFauna.Billboards
         /// <summary>
         /// Actualizar parámetros del plano en base a los valores configurados
         /// </summary>
-        public void updateValues()
+        public void updateValues(float elapsedTime)
         {
             CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[6];
 
@@ -183,7 +182,7 @@ namespace Examples.TraficoFauna.Billboards
             //Avanzar tiempo
             if (playing)
             {
-                currentTime += GuiController.Instance.ElapsedTime;
+                currentTime += elapsedTime;
                 if (currentTime > animationTimeLenght)
                 {
                     //Reiniciar al llegar al final
@@ -218,34 +217,29 @@ namespace Examples.TraficoFauna.Billboards
         /// </summary>
         public void render()
         {
+            var device = D3DDevice.Instance.Device;
+
             if (!enabled)
                 return;
-
-            //Actualizar valores de animacion
-            updateValues();
-
-
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-            TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
 
             //Activar AlphaBlending
             if (this.alphaBlendEnable)
             {
-                d3dDevice.RenderState.AlphaBlendEnable = true;
-                d3dDevice.RenderState.AlphaTestEnable = true;
+                device.RenderState.AlphaBlendEnable = true;
+                device.RenderState.AlphaTestEnable = true;
             }
 
-            texturesManager.set(0, texture);
-            d3dDevice.Material = TgcD3dDevice.DEFAULT_MATERIAL;
-            d3dDevice.Transform.World = Matrix.RotationY(rotationY) * Matrix.Translation(position);
+            TexturesManager.Instance.set(0, texture);
+            device.Material = D3DDevice.DEFAULT_MATERIAL;
+            device.Transform.World = Matrix.RotationY(rotationY) * Matrix.Translation(position);
 
-            d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
-            d3dDevice.SetStreamSource(0, vertexBuffer, 0);
-            d3dDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.SetStreamSource(0, vertexBuffer, 0);
+            device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
 
             //Desactivar AlphaBlending
-            d3dDevice.RenderState.AlphaBlendEnable = false;
-            d3dDevice.RenderState.AlphaTestEnable = false;
+            device.RenderState.AlphaBlendEnable = false;
+            device.RenderState.AlphaTestEnable = false;
         }
 
         /// <summary>

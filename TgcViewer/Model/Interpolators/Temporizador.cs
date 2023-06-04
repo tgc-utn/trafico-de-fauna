@@ -45,9 +45,9 @@ namespace Examples.TraficoFauna.Interpolators
         /// Avanzar el tiempo
         /// </summary>
         /// <returns>True si llego a su fin</returns>
-        public bool update()
+        public bool update(float elapsedTime)
         {
-            current += GuiController.Instance.ElapsedTime;
+            current += elapsedTime;
             if (current > stopSegs)
             {
                 current = stopSegs;

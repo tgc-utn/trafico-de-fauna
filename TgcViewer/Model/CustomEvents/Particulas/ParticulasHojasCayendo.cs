@@ -16,15 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Examples.TraficoFauna.Particles;
 using TraficoFauna.Examples;
-using System.Drawing;
 using Microsoft.DirectX;
 using Examples.TraficoFauna.Meshes;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.CustomEvents.Particulas
 {
@@ -57,7 +53,7 @@ namespace Examples.TraficoFauna.CustomEvents.Particulas
             emitter.Playing = false;
         }
 
-        public override void update()
+        public override void update(float elapsedTime)
         {
         }
 
@@ -72,7 +68,7 @@ namespace Examples.TraficoFauna.CustomEvents.Particulas
 
         public void renderWithAlpha()
         {
-            emitter.render();
+            emitter.render(GameModel.instance.ElapsedTime);
         }
 
         public override void renderDebug()

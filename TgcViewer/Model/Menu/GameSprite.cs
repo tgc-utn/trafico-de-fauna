@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using System.Drawing;
-using TgcViewer.Utils.TgcSceneLoader;
+using TGC.Core.Textures;
 
 namespace Examples.TraficoFauna.Menu
 {

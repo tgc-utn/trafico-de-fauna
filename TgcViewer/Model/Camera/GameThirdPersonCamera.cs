@@ -16,12 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.Input;
 using Microsoft.DirectX;
-using TgcViewer;
+using TGC.Core.Camara;
 
 namespace Examples.TraficoFauna.Camera
 {
@@ -93,26 +89,6 @@ namespace Examples.TraficoFauna.Camera
             set { position = value; }
         }
 
-        bool enable;
-        /// <summary>
-        /// Habilita o no el uso de la camara
-        /// </summary>
-        public bool Enable
-        {
-            get { return enable; }
-            set
-            {
-                enable = value;
-
-                //Si se habilito la camara, cargar como la cámara actual
-                if (value)
-                {
-                    GuiController.Instance.CurrentCamera = this;
-                }
-            }
-        }
-
-
         public GameThirdPersonCamera()
         {
             offsetHeight = 20;
@@ -169,14 +145,8 @@ namespace Examples.TraficoFauna.Camera
             return target;
         }
 
-
         public void updateViewMatrix(Microsoft.DirectX.Direct3D.Device d3dDevice)
         {
-            if (!enable)
-            {
-                return;
-            }
-
             d3dDevice.Transform.View = viewMatrix;
         }
 

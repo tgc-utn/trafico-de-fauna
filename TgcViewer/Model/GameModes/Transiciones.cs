@@ -16,17 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Examples.TraficoFauna.Interpolators;
 using TraficoFauna.Examples;
-using TgcViewer.Utils._2D;
-using System.Drawing;
 using Examples.TraficoFauna.Menu;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer;
-using TgcViewer.Utils.TgcSceneLoader;
+using TGC.Core.Textures;
 
 namespace Examples.TraficoFauna.GameModes
 {
@@ -42,11 +36,11 @@ namespace Examples.TraficoFauna.GameModes
         Drawer2D drawer2D;
         GameSprite backgroundGameOver;
         GameSprite backgroundGameWin;
-        
 
-        public Transiciones()
+
+        public Transiciones(Device device)
         {
-            drawer2D = new Drawer2D();
+            drawer2D = new Drawer2D(device);
             temporizadorLoadingSector = new Temporizador();
             temporizadorGameOver = new Temporizador();
             temporizadorGameWin = new Temporizador();
@@ -55,17 +49,15 @@ namespace Examples.TraficoFauna.GameModes
 
             //Background game over
             backgroundGameOver = new GameSprite();
-            Texture d3dTextureGameOver = TextureLoader.FromFile(
-                GuiController.Instance.D3dDevice, menuPath + "gameover_background.jpg", 1024, 600, 1,
+            Texture d3dTextureGameOver = TextureLoader.FromFile(device, menuPath + "gameover_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundGameOver.Texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice, "gameover_background", menuPath + "gameover_background.jpg", d3dTextureGameOver);
+            backgroundGameOver.Texture = TgcTexture.createTexture(device, "gameover_background", menuPath + "gameover_background.jpg", d3dTextureGameOver);
 
             //Background game win
             backgroundGameWin = new GameSprite();
-            Texture d3dTextureGameWin = TextureLoader.FromFile(
-                GuiController.Instance.D3dDevice, menuPath + "gamewin_background.jpg", 1024, 600, 1,
+            Texture d3dTextureGameWin = TextureLoader.FromFile(device, menuPath + "gamewin_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundGameWin.Texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice, "gamewin_background", menuPath + "gamewin_background.jpg", d3dTextureGameWin);
+            backgroundGameWin.Texture = TgcTexture.createTexture(device, "gamewin_background", menuPath + "gamewin_background.jpg", d3dTextureGameWin);
 
         }
 
@@ -77,7 +69,7 @@ namespace Examples.TraficoFauna.GameModes
 
         public void renderLoadingSector()
         {
-            if (temporizadorLoadingSector.update())
+            if (temporizadorLoadingSector.update(GameModel.instance.ElapsedTime))
             {
                 GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
             }
@@ -96,7 +88,7 @@ namespace Examples.TraficoFauna.GameModes
 
         public void renderGameOver()
         {
-            if (temporizadorGameOver.update())
+            if (temporizadorGameOver.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar desde el primer nivel del juego
                 GameModel.instance.loadFirstLevel();
@@ -115,7 +107,7 @@ namespace Examples.TraficoFauna.GameModes
 
         public void renderGameWin()
         {
-            if (temporizadorGameWin.update())
+            if (temporizadorGameWin.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar desde el primer nivel del juego
                 GameModel.instance.loadFirstLevel();

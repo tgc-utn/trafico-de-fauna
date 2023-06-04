@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcSceneLoader;
+using TGC.Core.Direct3D;
+using TGC.Core.Textures;
 using TgcViewer;
 
 namespace Examples.TraficoFauna.Menu
@@ -134,7 +133,7 @@ namespace Examples.TraficoFauna.Menu
             this.playing = true;
 
             //Crear textura
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = D3DDevice.Instance.Device;
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, texturePath);
 
             //GameSprite
@@ -157,12 +156,12 @@ namespace Examples.TraficoFauna.Menu
         /// <summary>
         /// Actualizar frame de animacion
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             //Avanzar tiempo
             if (playing)
             {
-                currentTime += GuiController.Instance.ElapsedTime;
+                currentTime += elapsedTime;
                 if (currentTime > animationTimeLenght)
                 {
                     //Reiniciar al llegar al final

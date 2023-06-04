@@ -28,43 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel3d = new System.Windows.Forms.Panel();
+            this.panel3D = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
-            // panel3d
+            // panel3D
             // 
-            this.panel3d.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.panel3d.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3d.Location = new System.Drawing.Point(0, 0);
-            this.panel3d.Name = "panel3d";
-            this.panel3d.Size = new System.Drawing.Size(1024, 600);
-            this.panel3d.TabIndex = 0;
+            this.panel3D.BackColor = System.Drawing.SystemColors.Control;
+            this.panel3D.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3D.Location = new System.Drawing.Point(0, 0);
+            this.panel3D.Name = "panel3D";
+            this.panel3D.Size = new System.Drawing.Size(784, 561);
+            this.panel3D.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.ClientSize = new System.Drawing.Size(1024, 600);
-            this.ControlBox = false;
-            this.Controls.Add(this.panel3d);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1024, 600);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.panel3D);
             this.Name = "MainForm";
-            this.ShowIcon = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Text = "Form";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel panel3d;
+        private System.Windows.Forms.Panel panel3D;
     }
 }
 

@@ -18,14 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Examples.TraficoFauna.CustomEvents.Dialogs;
 using Examples.TraficoFauna.CustomEvents.Particulas;
 using Examples.TraficoFauna.CustomEvents.Piedras;
 using Examples.TraficoFauna.CustomEvents.Billboards;
 using Examples.TraficoFauna.CustomEvents.Surfaces;
 using Examples.TraficoFauna.CustomEvents.ZonasEspeciales;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.CustomEvents
 {

@@ -18,18 +18,19 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcSkeletalAnimation;
-using TgcViewer.Utils.TgcGeometry;
 using TgcViewer;
 using TraficoFauna.Examples;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing;
-using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils;
 using Examples.TraficoFauna.Meshes;
 using Examples.TraficoFauna.Enemies.Ataque;
+using TGC.Core.Geometry;
+using TGC.Core.SkeletalAnimation;
+using TGC.Core.Textures;
+using TGC.Core.Utils;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.Enemies
 {
@@ -251,30 +252,30 @@ namespace Examples.TraficoFauna.Enemies
         /// <summary>
         /// Actualizar estado de guardia
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             Vector3 lastPos = mesh.Position;
 
             switch (currentState)
             {
                 case State.Watching:
-                    watching();
+                    watching(elapsedTime);
                     checkCollisionVision(mesh.Position - lastPos);
                     break;
                 case State.Rotating:
-                    rotating();
+                    rotating(elapsedTime);
                     checkCollisionVision(mesh.Position - lastPos);
                     break;
                 case State.RotatingForWatching:
-                    rotatingForWatching();
+                    rotatingForWatching(elapsedTime);
                     checkCollisionVision(mesh.Position - lastPos);
                     break;
                 case State.Walking:
-                    walking();
+                    walking(elapsedTime);
                     checkCollisionVision(mesh.Position - lastPos);
                     break;
                 case State.Chasing:
-                    chasing();
+                    chasing(elapsedTime);
                     break;
                 default:
                     break;
@@ -327,9 +328,9 @@ namespace Examples.TraficoFauna.Enemies
         /// Estado en el que el personaje esta rotando para alinearse al proximo waypoint y, una
         /// vez que queda alineado, empezar a vigilar parado
         /// </summary>
-        private void rotatingForWatching()
+        private void rotatingForWatching(float elapsedTime)
         {
-            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * GuiController.Instance.ElapsedTime;
+            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.rotateY(rotatingAcumRotation);
@@ -359,10 +360,9 @@ namespace Examples.TraficoFauna.Enemies
         /// <summary>
         /// Estado vigilando
         /// </summary>
-        private void watching()
+        private void watching(float elapsedTime)
         {
             GameConfig.Guardia g = GameModel.instance.gameConfig.guardia;
-            float elapsedTime = GuiController.Instance.ElapsedTime;
 
             watchingElapsedTime += elapsedTime;
             if (watchingElapsedTime > g.duracionSegundosVigilancia)
@@ -419,9 +419,9 @@ namespace Examples.TraficoFauna.Enemies
         /// Estado en el que el personaje esta rotando para alinearse al proximo
         /// waypoint y luego empezar a caminar hacia el
         /// </summary>
-        private void rotating()
+        private void rotating(float elapsedTime)
         {
-            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * GuiController.Instance.ElapsedTime;
+            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.rotateY(rotatingAcumRotation);
@@ -476,9 +476,9 @@ namespace Examples.TraficoFauna.Enemies
         /// <summary>
         /// Caminar en la patrulla
         /// </summary>
-        private void walking()
+        private void walking(float elapsedTime)
         {
-            float movement = GameModel.instance.gameConfig.guardia.velocidadCaminar * GuiController.Instance.ElapsedTime;
+            float movement = GameModel.instance.gameConfig.guardia.velocidadCaminar * elapsedTime;
             walkingDistanceToTravel -= movement;
             if (walkingDistanceToTravel < 0)
             {
@@ -674,7 +674,7 @@ namespace Examples.TraficoFauna.Enemies
         /// Rotar hacia el personaje y avanzar.
         /// Si se acerca lo suficiente pierde.
         /// </summary>
-        private void chasing()
+        private void chasing(float elapsedTime)
         {
             //Ver si el personaje esta dentro de la esfera de ataque del guardia
             MainCharacter mainCharacter = GameModel.instance.mainCharacter;
@@ -701,7 +701,7 @@ namespace Examples.TraficoFauna.Enemies
                 mesh.rotateY(angle);
 
                 //Avanzar en esa direccion
-                float movement = -(conf.guardia.velocidadCorrer * GuiController.Instance.ElapsedTime);
+                float movement = -(conf.guardia.velocidadCorrer * elapsedTime);
 
                 Vector3 movementVector = new Vector3(
                     FastMath.Sin(mesh.Rotation.Y) * movement,
@@ -993,12 +993,12 @@ namespace Examples.TraficoFauna.Enemies
         /// <summary>
         /// Render de guardia
         /// </summary>
-        public void render()
+        public void render(float elapsedTime)
         {
             //Dibujar si esta en rango visible
             if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
             {
-                mesh.animateAndRender();
+                mesh.animateAndRender(elapsedTime);
 
 
                 //Debug
@@ -1031,12 +1031,11 @@ namespace Examples.TraficoFauna.Enemies
             visionVertices[2] = new CustomVertex.PositionColored(x - orthonormalScaled, color);
 
 
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-            TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
+            var d3dDevice = D3DDevice.Instance.Device;
 
-            texturesManager.clear(0);
-            texturesManager.clear(1);
-            d3dDevice.Material = TgcD3dDevice.DEFAULT_MATERIAL;
+            TexturesManager.Instance.clear(0);
+            TexturesManager.Instance.clear(1);
+            d3dDevice.Material = D3DDevice.DEFAULT_MATERIAL;
             d3dDevice.Transform.World = Matrix.Identity;
 
             d3dDevice.VertexFormat = CustomVertex.PositionColored.Format;

@@ -16,20 +16,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
 using System.Collections.Generic;
 using System.Text;
 using Examples.TraficoFauna.Menu;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer;
 using TraficoFauna.Examples;
 using Microsoft.DirectX;
-using TgcViewer.Utils._2D;
 using System.Drawing;
-using TgcViewer.Utils.Input;
-using Microsoft.DirectX.Direct3D;
-using Microsoft.DirectX.DirectInput;
 using System.Drawing.Text;
+using TGC.Core.Input;
+using TGC.Core.Textures;
+using TGC.Core.Text;
 
 namespace Examples.TraficoFauna.Dialogs
 {
@@ -43,24 +39,23 @@ namespace Examples.TraficoFauna.Dialogs
 
         Drawer2D drawer2D;
         GameSprite background;
-        TgcText2d text2d;
+        TgcText2D text2d;
         GameSprite nextPageArrow;
         GameSprite closeIcon;
         List<string> pages;
         int currentPage;
 
 
-        public TextDialog()
+        public TextDialog(Microsoft.DirectX.Direct3D.Device device)
         {
             pages = new List<string>();
 
-            int width = GuiController.Instance.Panel3d.Width;
-            int height = GuiController.Instance.Panel3d.Height;
-            Microsoft.DirectX.Direct3D.Device device = GuiController.Instance.D3dDevice;
+            int width = device.Viewport.Width;
+            int height = device.Viewport.Height;
             string dialogPath = GameModel.instance.gameConfig.menuPath + "Dialogs\\";
 
             //Fondo del cuadro de texto
-            drawer2D = new Drawer2D();
+            drawer2D = new Drawer2D(device);
             background = new GameSprite();
             background.Texture = TgcTexture.createTexture(device, dialogPath + "background.png");
             int textureWidth = background.Texture.Width;
@@ -68,7 +63,7 @@ namespace Examples.TraficoFauna.Dialogs
             background.Position = new Vector2(width / 2 - textureWidth / 2, height / 2 - textureHeight / 2);
 
             //Cuadro de texto
-            text2d = new TgcText2d();
+            text2d = new TgcText2D();
             text2d.Color = Color.White;
             PrivateFontCollection privateFontCollection = new PrivateFontCollection();
             privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\spathasans.ttf");
@@ -76,7 +71,7 @@ namespace Examples.TraficoFauna.Dialogs
             System.Drawing.Font font = new System.Drawing.Font(families[0], 20, FontStyle.Regular, GraphicsUnit.Pixel);
             text2d.changeFont(font);
             text2d.Position = new Point((int)background.Position.X + 10, (int)background.Position.Y + 10);
-            text2d.Align = TgcText2d.TextAlign.LEFT;
+            text2d.Align = TgcText2D.TextAlign.LEFT;
             text2d.Color = Color.FromArgb(252, 250, 114);
             text2d.Size = new Size(textureWidth - 20, textureHeight - 20);
             
@@ -153,7 +148,7 @@ namespace Examples.TraficoFauna.Dialogs
         public bool update()
         {
             //Input para pasar de pagina de texto
-            TgcD3dInput input = GuiController.Instance.D3dInput;
+            TgcD3dInput input = GameModel.instance.Input;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
             bool finished = false;
             if (input.keyPressed(keys.enter) || input.keyPressed(keys.action))

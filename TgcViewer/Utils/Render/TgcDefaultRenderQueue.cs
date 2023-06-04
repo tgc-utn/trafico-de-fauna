@@ -18,10 +18,8 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
-using System.Collections;
 
 namespace TgcViewer.Utils.Render
 {
@@ -57,17 +55,17 @@ namespace TgcViewer.Utils.Render
         /// Agregar un elemento a renderizar a la cola de renderizado
         /// </summary>
         /// <param name="element">Elemento a renderizar</param>
-        /// <param name="hasAlpa">True si tiene translucidez</param>
-        public void add(IRenderQueueElement element, bool hasAlpa)
+        /// <param name="hasAlpha">True si tiene translucidez</param>
+        public void add(IRenderQueueElement element, bool hasAlpha)
         {
-            if (!hasAlpa)
+            if (!hasAlpha)
             {
                 addOpaque(element);
             }
             else
             {
                 addAlpha(element);
-            }  
+            }
         }
 
         /// <summary>
@@ -92,25 +90,22 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Renderizar todos los elementos de la cola de renderizado
         /// </summary>
-        public void renderAll()
+        public void renderAll(Device d3dDevice, Vector3 cameraPos)
         {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-
-            renderAlphaElements(d3dDevice);
+            renderAlphaElements(d3dDevice, cameraPos);
             renderOpaqueElements(d3dDevice);
         }
 
         /// <summary>
         /// Renderizar elementos con alpha
         /// </summary>
-        private void renderAlphaElements(Device d3dDevice)
+        private void renderAlphaElements(Device d3dDevice, Vector3 cameraPos)
         {
             if (alphaList.Count == 0)
                 return;
 
-
             //Ordenar por view-distance
-            sortAlphaList();
+            sortAlphaList(cameraPos);
 
             //Activar AlphaBlending
             d3dDevice.RenderState.AlphaBlendEnable = true;
@@ -127,16 +122,14 @@ namespace TgcViewer.Utils.Render
             d3dDevice.RenderState.AlphaTestEnable = false;
         }
 
-        
         /// <summary>
         /// Ordenar elementos con Alpha según view-distance
         /// </summary>
-        private void sortAlphaList()
+        private void sortAlphaList(Vector3 cameraPos)
         {
             this.elementsViewDistance.Clear();
 
             //Calcular la distancia cuadrada de cada elemento hacia la cámara
-            Vector3 cameraPos = GuiController.Instance.CurrentCamera.getPosition();
             foreach (IRenderQueueElement element in alphaList)
             {
                 Vector3 v = cameraPos - element.Position;
@@ -159,7 +152,6 @@ namespace TgcViewer.Utils.Render
             }
         }
 
-
         /// <summary>
         /// Comparardor de view-distance para elementos con Alpha.
         /// </summary>
@@ -174,10 +166,5 @@ namespace TgcViewer.Utils.Render
                 return distX.CompareTo(distY);
             }
         }
-        
-
-
     }
-
-
 }

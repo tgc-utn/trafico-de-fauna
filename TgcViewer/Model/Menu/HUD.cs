@@ -16,21 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Examples.TraficoFauna.ItemsAnimal;
-using TgcViewer.Utils._2D;
 using System.Drawing;
 using TraficoFauna.Examples;
-using TgcViewer;
-using TgcViewer.Utils.Input;
 using Microsoft.DirectX.DirectInput;
 using Examples.TraficoFauna.Menu;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
 using System.Drawing.Text;
 using Examples.TraficoFauna.Interpolators;
+using TGC.Core.Textures;
+using Device = Microsoft.DirectX.Direct3D.Device;
+using TGC.Core.Text;
+using TGC.Core.Input;
 
 namespace Examples.TraficoFauna
 {
@@ -43,9 +40,9 @@ namespace Examples.TraficoFauna
         public readonly Font GAME_FONT;
         readonly Vector2 SCREEN_CENTRAL_POS;
 
-        TgcText2d textoContadorBananas;
-        TgcText2d textoContadorItemsAnimal;
-        TgcText2d textoContadorVidas;
+        TgcText2D textoContadorBananas;
+        TgcText2D textoContadorItemsAnimal;
+        TgcText2D textoContadorVidas;
         GameSprite spriteLlaveRoja;
         GameSprite spriteLlaveVerde;
         GameSprite spriteLlaveAmarilla;
@@ -62,18 +59,17 @@ namespace Examples.TraficoFauna
         Position2dInterpolator interpoladorVariasBananasAgarradas;
         Position2dInterpolator interpoladorLifeAgarrada;
         Position2dInterpolator interpoladorItemAnimalLiberado;
-        TgcText2d textoCurrentSectorName;
+        TgcText2D textoCurrentSectorName;
 
 
-        public HUD()
+        public HUD(Device device)
         {
-            int width = GuiController.Instance.Panel3d.Width;
-            int height = GuiController.Instance.Panel3d.Height;
+            int width = device.Viewport.Width;
+            int height = device.Viewport.Height;
             SCREEN_CENTRAL_POS = new Vector2(width / 2, height / 2);
 
             string hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            drawer2D = new Drawer2D();
+            drawer2D = new Drawer2D(device);
 
             //Cargar fuentes personalizadas
             privateFontCollection = new PrivateFontCollection();
@@ -84,13 +80,13 @@ namespace Examples.TraficoFauna
 
             //Sprite para contador de bananas
             spriteContadorBananas = new GameSprite();
-            spriteContadorBananas.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_bananas.png");
+            spriteContadorBananas.Texture = TgcTexture.createTexture(device, hudPath + "hud_bananas.png");
             spriteContadorBananas.Position = new Vector2(2, 2);
 
             //Contador de bananas
-            textoContadorBananas = new TgcText2d();
+            textoContadorBananas = new TgcText2D();
             textoContadorBananas.Color = Color.White;
-            textoContadorBananas.Align = TgcText2d.TextAlign.LEFT;
+            textoContadorBananas.Align = TgcText2D.TextAlign.LEFT;
             textoContadorBananas.Position = new Point(64 + 5, 20);
             textoContadorBananas.Size = new Size(200, 100);
             textoContadorBananas.Text = ": 0";
@@ -98,13 +94,13 @@ namespace Examples.TraficoFauna
 
             //Sprite items animal liberados
             spriteItemAnimal = new GameSprite();
-            spriteItemAnimal.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_items_animal.png");
+            spriteItemAnimal.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
             spriteItemAnimal.Position = new Vector2(width - 64 - 180, 2);
 
             //Contador de items animal liberados
-            textoContadorItemsAnimal = new TgcText2d();
+            textoContadorItemsAnimal = new TgcText2D();
             textoContadorItemsAnimal.Color = Color.White;
-            textoContadorItemsAnimal.Align = TgcText2d.TextAlign.LEFT;
+            textoContadorItemsAnimal.Align = TgcText2D.TextAlign.LEFT;
             textoContadorItemsAnimal.Position = new Point(width - 160, 20);
             textoContadorItemsAnimal.Size = new Size(150, 100);
             textoContadorItemsAnimal.Text = ": 0";
@@ -112,13 +108,13 @@ namespace Examples.TraficoFauna
 
             //Sprite para vidas
             spriteLife = new GameSprite();
-            spriteLife.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_life.png");
+            spriteLife.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
             spriteLife.Position = new Vector2(width / 2 - 32, 2);
 
             //Contador de vidas del personaje
-            textoContadorVidas = new TgcText2d();
+            textoContadorVidas = new TgcText2D();
             textoContadorVidas.Color = Color.White;
-            textoContadorVidas.Align = TgcText2d.TextAlign.LEFT;
+            textoContadorVidas.Align = TgcText2D.TextAlign.LEFT;
             textoContadorVidas.Position = new Point(width / 2 + 36, 20);
             textoContadorVidas.Size = new Size(100, 100);
             textoContadorVidas.Text = ": 0";
@@ -128,11 +124,11 @@ namespace Examples.TraficoFauna
 
             //Sprite para cuando se agarra una banana
             spriteBananaAgarrada = new GameSprite();
-            spriteBananaAgarrada.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_banana_agarrada.png");
+            spriteBananaAgarrada.Texture = TgcTexture.createTexture(device, hudPath + "hud_banana_agarrada.png");
             spriteBananaAgarrada.Position = spriteContadorBananas.Position;
             spriteBananaAgarrada.Enabled = false;
             spriteVariasBananasAgarradas = new GameSprite();
-            spriteVariasBananasAgarradas.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_varias_bananas_agarradas.png");
+            spriteVariasBananasAgarradas.Texture = TgcTexture.createTexture(device, hudPath + "hud_varias_bananas_agarradas.png");
             spriteVariasBananasAgarradas.Position = spriteContadorBananas.Position;
             spriteVariasBananasAgarradas.Enabled = false;
 
@@ -147,7 +143,7 @@ namespace Examples.TraficoFauna
 
             //Sprite para cuando se agarra una vida
             spriteLifeAgarrada = new GameSprite();
-            spriteLifeAgarrada.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_life.png");
+            spriteLifeAgarrada.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
             spriteLifeAgarrada.Position = spriteLife.Position;
             spriteLifeAgarrada.Enabled = false;
 
@@ -159,7 +155,7 @@ namespace Examples.TraficoFauna
 
             //Sprite para cuando se libera un item animal
             spriteItemAnimalLiberado = new GameSprite();
-            spriteItemAnimalLiberado.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_items_animal.png");
+            spriteItemAnimalLiberado.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
             spriteItemAnimalLiberado.Position = spriteLife.Position;
             spriteItemAnimalLiberado.Enabled = false;
 
@@ -171,25 +167,25 @@ namespace Examples.TraficoFauna
 
             //Sprite de llave roja
             spriteLlaveRoja = new GameSprite();
-            spriteLlaveRoja.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_llave_roja.png");
+            spriteLlaveRoja.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_roja.png");
             spriteLlaveRoja.Position = new Vector2(width - 70, 100);
 
             //Sprite de llave verde
             spriteLlaveVerde = new GameSprite();
-            spriteLlaveVerde.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_llave_verde.png");
+            spriteLlaveVerde.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_verde.png");
             spriteLlaveVerde.Position = new Vector2(width - 70, 140);
 
             //Sprite de llave amarilla
             spriteLlaveAmarilla = new GameSprite();
-            spriteLlaveAmarilla.Texture = TgcTexture.createTexture(d3dDevice, hudPath + "hud_llave_amarilla.png");
+            spriteLlaveAmarilla.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_amarilla.png");
             spriteLlaveAmarilla.Position = new Vector2(width - 70, 180);
 
 
 
             //Texto con el nombre del sector actual
-            textoCurrentSectorName = new TgcText2d();
+            textoCurrentSectorName = new TgcText2D();
             textoCurrentSectorName.Color = Color.White;
-            textoCurrentSectorName.Align = TgcText2d.TextAlign.LEFT;
+            textoCurrentSectorName.Align = TgcText2D.TextAlign.LEFT;
             textoCurrentSectorName.Position = new Point(50, height - 50);
             textoCurrentSectorName.Size = new Size(500, 50);
             textoCurrentSectorName.Text = ": 0";
@@ -199,10 +195,10 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Actualizar estado de HUD
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             //Salir al menu
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             if (d3dInput.keyPressed(Key.Escape))
             {
                 GameModel.instance.currentGameMode = GameModel.GameMode.Menu;
@@ -217,7 +213,7 @@ namespace Examples.TraficoFauna
             //Bananas agarradas
             if (spriteBananaAgarrada.Enabled)
             {
-                spriteBananaAgarrada.Position = interpoladorBananaAgarrada.update();
+                spriteBananaAgarrada.Position = interpoladorBananaAgarrada.update(elapsedTime);
                 if (interpoladorBananaAgarrada.isEnd())
                 {
                     spriteBananaAgarrada.Enabled = false;
@@ -225,7 +221,7 @@ namespace Examples.TraficoFauna
             }
             if (spriteVariasBananasAgarradas.Enabled)
             {
-                spriteVariasBananasAgarradas.Position = interpoladorVariasBananasAgarradas.update();
+                spriteVariasBananasAgarradas.Position = interpoladorVariasBananasAgarradas.update(elapsedTime);
                 if (interpoladorVariasBananasAgarradas.isEnd())
                 {
                     spriteVariasBananasAgarradas.Enabled = false;
@@ -235,7 +231,7 @@ namespace Examples.TraficoFauna
             //Vida agarrada
             if (spriteLifeAgarrada.Enabled)
             {
-                spriteLifeAgarrada.Position = interpoladorLifeAgarrada.update();
+                spriteLifeAgarrada.Position = interpoladorLifeAgarrada.update(elapsedTime);
                 if (interpoladorLifeAgarrada.isEnd())
                 {
                     spriteLifeAgarrada.Enabled = false;
@@ -244,7 +240,7 @@ namespace Examples.TraficoFauna
             //Item animal liberado
             if (spriteItemAnimalLiberado.Enabled)
             {
-                spriteItemAnimalLiberado.Position = interpoladorItemAnimalLiberado.update();
+                spriteItemAnimalLiberado.Position = interpoladorItemAnimalLiberado.update(elapsedTime);
                 if (interpoladorItemAnimalLiberado.isEnd())
                 {
                     spriteItemAnimalLiberado.Enabled = false;
@@ -265,10 +261,8 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Dibujar HUD
         /// </summary>
-        public void render()
+        public void render(Device device)
         {
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-
             //textos
             textoContadorBananas.render();
             textoContadorItemsAnimal.render();

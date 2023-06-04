@@ -56,14 +56,13 @@ namespace Examples.TraficoFauna.Menu
             }
 
             Cursor.Show();
-            this.ShowDialog(GuiController.Instance.MainForm);
+            this.ShowDialog();
             buttonCerrar.Focus();
         }
 
         private void buttonCerrar_Click(object sender, EventArgs e)
         {
-            GuiController.Instance.exitGame();
+            this.Close();
         }
-
     }
 }

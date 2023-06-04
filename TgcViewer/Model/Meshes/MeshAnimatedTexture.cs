@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TgcViewer.Utils.Render;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcSceneLoader;
 using TraficoFauna.Examples;
 using TgcViewer;
+using TGC.Core.SceneLoader;
+using TGC.Core.Utils;
 
 namespace Examples.TraficoFauna.Meshes
 {
@@ -110,7 +109,7 @@ namespace Examples.TraficoFauna.Meshes
         /// <summary>
         /// Se redefine este método para agregar seteo de shader y animacion de uv
         /// </summary>
-        public new void executeRender()
+        public new void executeRender(float elapsedTime)
         {
             Effect effect = GameModel.instance.shaders.effect;
             this.Technique = GameModel.instance.shaders.ANIMATE_UV;
@@ -119,7 +118,7 @@ namespace Examples.TraficoFauna.Meshes
             //Actualizar incremento de UV
             if (playing)
             {
-                Vector2 addVec = Vector2.Scale(speed, GuiController.Instance.ElapsedTime);
+                Vector2 addVec = Vector2.Scale(speed, elapsedTime);
                 currentUVsum += addVec;
                 currentUVsum.X %= 1;
                 currentUVsum.Y %= 1;

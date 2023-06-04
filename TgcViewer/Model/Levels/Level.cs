@@ -18,13 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TraficoFauna.Examples;
 using System.IO;
-using TgcViewer.Utils.Terrain;
 using Microsoft.DirectX;
 using Examples.TraficoFauna.ItemsAnimal;
-using System.Threading;
+using TGC.Core.Geometry;
+using TGC.Core.Terrain;
+using TgcViewer;
 
 namespace Examples.TraficoFauna
 {
@@ -116,10 +116,10 @@ namespace Examples.TraficoFauna
             string[] sectorsDir = Directory.GetDirectories(levelPath, "Sector-*", SearchOption.TopDirectoryOnly);
             foreach (string sectorDir in sectorsDir)
             {
-                //Texture path (en modo produccion salen todas las texturas de un solo lugar para cada nivel)
+                //TODO Texture path (en modo produccion salen todas las texturas de un solo lugar para cada nivel)
                 string texturePath = sectorDir + "\\";
                 string lightmapPath = texturePath;
-                if (/*!Game.instance.debugMode.Enabled*/ true)
+                if (!GameModel.instance.debugMode.Enabled)
                 {
                     texturePath = levelPath + "\\";
                 }
@@ -149,7 +149,8 @@ namespace Examples.TraficoFauna
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxTexturesPath + "Right.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxTexturesPath + "Back.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxTexturesPath + "Front.jpg");
-            skyBox.updateValues();
+            //skyBox.updateValues();
+            skyBox.Init();
 
 
 
@@ -189,21 +190,21 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Actualizar estado del nivel
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
-            currentSector.update();
+            currentSector.update(elapsedTime);
         }
 
         /// <summary>
         /// Renderizar nivel
         /// </summary>
-        public void render()
+        public void render(float elapsedTime, TgcFrustum frustum)
         {
             //Render SkyBox
             skyBox.render();
 
             //render sector
-            currentSector.render();
+            currentSector.render(elapsedTime, frustum);
 
             //Renderizar al final los objetos acumulados con alpha
             foreach (IAlphaObject alphaObj in alphaObjects)

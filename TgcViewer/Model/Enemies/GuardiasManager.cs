@@ -18,12 +18,9 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
+using TGC.Core.SceneLoader;
 using TraficoFauna.Examples;
-using TgcViewer.Utils.TgcGeometry;
-using Examples.TraficoFauna.Meshes;
 
 namespace Examples.TraficoFauna.Enemies
 {
@@ -163,7 +160,7 @@ namespace Examples.TraficoFauna.Enemies
         /// <summary>
         /// Actualizar estados de guardias
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
             if (GameModel.instance.debugMode.Enabled && !GameModel.instance.debugMode.GuardiasEnabled)
                 return;
@@ -172,18 +169,18 @@ namespace Examples.TraficoFauna.Enemies
             {
                 if (g.Activo)
                 {
-                    g.update();
+                    g.update(elapsedTime);
                 }
             }
         }
 
-        public void render()
+        public void render(float elapsedTime)
         {
             foreach (Guardia g in guardias)
             {
                 if (g.Activo)
                 {
-                    g.render();
+                    g.render(elapsedTime);
                 }
             }
         }

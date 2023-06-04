@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using System.Text;
 using Examples.TraficoFauna.Meshes;
 using TraficoFauna.Examples;
-using TgcViewer.Utils.TgcSceneLoader;
 using System.IO;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.Bananas
 {

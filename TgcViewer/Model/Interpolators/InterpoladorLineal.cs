@@ -17,10 +17,6 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcGeometry;
-using TgcViewer;
 
 namespace Examples.TraficoFauna.Interpolators
 {
@@ -53,9 +49,9 @@ namespace Examples.TraficoFauna.Interpolators
         /// <summary>
         /// Interpolar y devolver incremento
         /// </summary>
-        public float update()
+        public float update(float elapsedTime)
         {
-            float n = speed * GuiController.Instance.ElapsedTime;
+            float n = speed * elapsedTime;
             current += n;
             if (speed > 0)
             {

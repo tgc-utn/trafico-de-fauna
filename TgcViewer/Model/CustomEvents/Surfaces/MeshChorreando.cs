@@ -17,19 +17,11 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
-using Examples.TraficoFauna.Dialogs;
-using TgcViewer;
-using Microsoft.DirectX.DirectInput;
-using Examples.TraficoFauna.Billboards;
-using System.Drawing;
 using Examples.TraficoFauna.Interpolators;
 using Examples.TraficoFauna.Meshes;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.CustomEvents.Surfaces
 {
@@ -92,9 +84,9 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
             mesh.Playing = false;
         }
 
-        public override void update()
+        public override void update(float elapsedTime)
         {
-            mesh.Speed = new Vector2(vaiven.update(), speed);
+            mesh.Speed = new Vector2(vaiven.update(elapsedTime), speed);
         }
 
         public override void render()

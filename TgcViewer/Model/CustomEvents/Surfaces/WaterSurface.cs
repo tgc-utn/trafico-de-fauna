@@ -16,20 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
-using Examples.TraficoFauna.Dialogs;
-using TgcViewer;
-using Microsoft.DirectX.DirectInput;
 using Examples.TraficoFauna.Billboards;
-using System.Drawing;
 using Examples.TraficoFauna.Interpolators;
 using Examples.TraficoFauna.Meshes;
+using Microsoft.DirectX.Direct3D;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.CustomEvents.Surfaces
 {
@@ -45,8 +40,9 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
+            var device = D3DDevice.Instance.Device;
             aabb = GameUtils.createBBFromMeshData(meshData);
-            billboard = new HorizontalDisplacementBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
+            billboard = new HorizontalDisplacementBillboard(device, GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
             billboard.Speed = new Vector2(0, 0.3f);
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
@@ -62,9 +58,9 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
             billboard.Playing = false;
         }
 
-        public override void update()
+        public override void update(float elapsedTime)
         {
-            billboard.Speed = new Vector2(vaiven.update(), 0.3f);
+            billboard.Speed = new Vector2(vaiven.update(elapsedTime), 0.3f);
         }
 
         public override void render()
@@ -98,7 +94,7 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
         }
 
 
-        
+
 
     }
 }

@@ -16,11 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Examples.TraficoFauna.Meshes;
+using Microsoft.DirectX.Direct3D;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.CustomEvents
 {
@@ -58,7 +56,7 @@ namespace Examples.TraficoFauna.CustomEvents
         /// <summary>
         /// Actualizar estado del evento en cada cuadro
         /// </summary>
-        public abstract void update();
+        public abstract void update(float elapsedTime);
 
         /// <summary>
         /// Dibujar evento. Se llama luego de update.

@@ -17,15 +17,16 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TgcViewer.Utils;
-using System.Diagnostics;
-using TgcViewer.Example;
+using System.Threading;
+using TGC.Core.Direct3D;
+using TGC.Core.Shaders;
+using TGC.Core.Textures;
+using TraficoFauna.Examples;
+using TGC.Core.Sound;
+using TGC.Core.Input;
+using TGC.Core.Example;
+using Examples.TraficoFauna.Menu;
 
 namespace TgcViewer
 {
@@ -34,90 +35,46 @@ namespace TgcViewer
     /// </summary>
     public partial class MainForm : Form
     {
-        static bool applicationRunning;
+        /// <summary>
+        /// Ejemplo del juego a correr
+        /// </summary>
+        private TgcExample Modelo { get; set; }
+
         /// <summary>
         /// Obtener o parar el estado del RenderLoop.
         /// </summary>
-        public static bool ApplicationRunning
-        {
-            get { return MainForm.applicationRunning; }
-            set { MainForm.applicationRunning = value; }
-        }
+        private bool ApplicationRunning { get; set; }
 
-        //Variables por compatibilidad
-        RichTextBox logConsole;
-        TreeView treeViewExamples;
-        DataGridView dataGridUserVars;
-        Panel flowLayoutPanelModifiers;
-        
+        /// <summary>
+        /// Permite manejar el sonido
+        /// </summary>
+        private TgcDirectSound DirectSound { get; set; }
+
+        /// <summary>
+        /// Permite manejar los inputs de la computadora
+        /// </summary>
+        private TgcD3dInput Input { get; set; }
+
         public MainForm()
         {
             InitializeComponent();
+            //TODO check this.
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
-
-            //Variables por compatibilidad
-            logConsole = new RichTextBox();
-            treeViewExamples = new TreeView();
-            dataGridUserVars = new DataGridView();
-            flowLayoutPanelModifiers = new Panel();
         }
-
-        /// <summary>
-        /// Ejecutar ejemplo fijo
-        /// </summary>
-        private void startExample(GuiController guiController)
-        {
-            TgcExample example = guiController.getExampleByName("TraficoFauna", "TraficoFauna");
-            guiController.executeExample(example);
-        }
-
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //Show the App before we init
-            this.Show();
-            this.panel3d.Focus();
+            //Iniciar graficos
+            InitGraphics();
 
-            MainForm.ApplicationRunning = true;
-            GuiController.newInstance();
-            GuiController guiController = GuiController.Instance;
-            guiController.initGraphics(this, panel3d);
-            this.resetMenuOptions();
+            //Titulo de la ventana principal
+            Text = Modelo.Name + " - " + Modelo.Description;
 
-            startExample(guiController);
+            //Focus panel3D
+            panel3D.Focus();
 
-            while (MainForm.ApplicationRunning)
-            {
-                //Solo renderizamos si la aplicacion tiene foco, para no consumir recursos innecesarios
-                if (this.ContainsFocus)
-                {
-                    guiController.render();
-                }
-                else
-                {
-                    //Si no tenemos el foco, dormir cada tanto para no consumir gran cantida de CPU
-                    System.Threading.Thread.Sleep(100); 
-                }
-                
-                // Process application messages
-                Application.DoEvents();
-            }
-
-            //shutDown();
-        }
-
-        /// <summary>
-        /// Finalizar aplicacion
-        /// </summary>
-        internal void shutDown()
-        {
-            MainForm.ApplicationRunning = false;
-            //GuiController.Instance.shutDown();
-            //Application.Exit();
-
-            //Matar proceso principal a la fuerza
-            Process currentProcess = Process.GetCurrentProcess();
-            currentProcess.Kill();
+            //Inicio el ciclo de Render
+            InitRenderLoop();
         }
 
         /// <summary>
@@ -125,119 +82,152 @@ namespace TgcViewer
         /// </summary>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            shutDown();
-        }
-
-        /// <summary>
-        /// Consola de Log
-        /// </summary>
-        public RichTextBox LogConsole
-        {
-            get { return logConsole; }
-        }
-
-        /// <summary>
-        /// TreeView de ejemplos
-        /// </summary>
-        public TreeView TreeViewExamples
-        {
-            get { return treeViewExamples; }
-        }
-
-        
-
-        /// <summary>
-        /// Texto de ToolStripStatusPosition
-        /// </summary>
-        public void setStatusPosition(string text)
-        {
-        }
-
-        /// <summary>
-        /// Texto de ToolStripStatusCurrentExample
-        /// </summary>
-        /// <param name="text"></param>
-        public void setCurrentExampleStatus(string text)
-        {
-        }
-
-        /// <summary>
-        /// Tabla de variables de usuario
-        /// </summary>
-        /// <returns></returns>
-        public DataGridView getDataGridUserVars()
-        {
-            return dataGridUserVars;
-        }
-
-        /// <summary>
-        /// Panel de Modifiers
-        /// </summary>
-        /// <returns></returns>
-        internal Panel getModifiersPanel()
-        {
-            return flowLayoutPanelModifiers;
-        }
-
-        
-
-
-        private void treeViewExamples_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-        }
-
-        private void treeViewExamples_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (treeViewExamples.SelectedNode != null)
+            if (ApplicationRunning)
             {
-                TreeNode selectedNode = treeViewExamples.SelectedNode;
-                if (selectedNode.Nodes.Count == 0)
-                {
-                    GuiController.Instance.executeSelectedExample(selectedNode, FullScreenEnable);
-                }
+                ShutDown();
             }
         }
 
-        
+        /// <summary>
+        /// Inicio todos los objetos necesarios para cargar el ejemplo y directx
+        /// </summary>
+        public void InitGraphics()
+        {
+            //Se inicio la aplicacion
+            ApplicationRunning = true;
+
+            //Inicio Device
+            D3DDevice.Instance.InitializeD3DDevice(panel3D);
+
+            //Inicio inputs
+            Input = new TgcD3dInput();
+            Input.Initialize(this, panel3D);
+
+            //Inicio sonido
+            DirectSound = new TgcDirectSound();
+            DirectSound.InitializeD3DDevice(panel3D);
+
+            //Directorio actual de ejecucion
+            var currentDirectory = Environment.CurrentDirectory + "\\";
+
+            //Cargar shaders del framework
+            TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
+
+            //Juego a ejecutar
+            Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
+
+            //Cargar juego
+            ExecuteModel();
+        }
 
         /// <summary>
-        /// Setea los valores default de las opciones del menu
+        /// Comienzo el loop del juego
         /// </summary>
-        internal void resetMenuOptions()
+        public void InitRenderLoop()
         {
-
+            try
+            {
+                while (ApplicationRunning)
+                {
+                    //Renderizo si es que hay un ejemplo activo
+                    if (Modelo != null)
+                    {
+                        //Solo renderizamos si la aplicacion tiene foco, para no consumir recursos innecesarios
+                        if (ApplicationActive())
+                        {
+                            Modelo.Update();
+                            Modelo.Render();
+                        }
+                        else
+                        {
+                            //Si no tenemos el foco, dormir cada tanto para no consumir gran cantidad de CPU
+                            Thread.Sleep(100);
+                        }
+                    }
+                    // Process application messages
+                    Application.DoEvents();
+                }
+            }
+            catch (Exception e)
+            {
+                //Error Window
+                new ErrorWindow().showError(e.Message, e);
+                this.ShutDown();
+            }
         }
 
         /// <summary>
-        /// Modo FullScreen
+        ///     Indica si la aplicacion esta activa.
+        ///     Busca si la ventana principal tiene foco o si alguna de sus hijas tiene.
         /// </summary>
-        internal bool FullScreenEnable
+        public bool ApplicationActive()
         {
-            get { return false; }
-            set {  }
-        }
+            if (ContainsFocus)
+            {
+                return true;
+            }
 
-        internal void removePanel3dFromMainForm()
-        {
-        }
+            foreach (var form in OwnedForms)
+            {
+                if (form.ContainsFocus)
+                {
+                    return true;
+                }
+            }
 
-        internal void addPanel3dToMainForm()
-        {
+            return false;
         }
-
 
         /// <summary>
-        /// Mostrar posicion de camara
+        ///     Arranca a ejecutar un ejemplo.
+        ///     Para el ejemplo anterior, si hay alguno.
         /// </summary>
-        internal bool MostrarPosicionDeCamaraEnable
+        public void ExecuteModel()
         {
-            get { return false; }
-            set {  }
+            //Ejecutar Init
+            try
+            {
+                Modelo.ResetDefaultConfig();
+                Modelo.DirectSound = DirectSound;
+                Modelo.Input = Input;
+                Modelo.Init();
+                panel3D.Focus();
+            }
+            catch (Exception e)
+            {
+                //Error Window
+                new ErrorWindow().showError(e.Message, e);
+                this.ShutDown();
+            }
         }
 
+        /// <summary>
+        ///     Deja de ejecutar el ejemplo actual
+        /// </summary>
+        public void StopCurrentExample()
+        {
+            if (Modelo != null)
+            {
+                Modelo.Dispose();
+                Modelo = null;
+            }
+        }
 
+        /// <summary>
+        ///     Finalizar aplicacion
+        /// </summary>
+        public void ShutDown()
+        {
+            ApplicationRunning = false;
 
+            if (Modelo != null)
+            {
+                StopCurrentExample();
+            }
 
-        
+            //Liberar Device al finalizar la aplicacion
+            D3DDevice.Instance.Dispose();
+            TexturesPool.Instance.clearAll();
+        }
     }
 }

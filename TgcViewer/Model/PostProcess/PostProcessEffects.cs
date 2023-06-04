@@ -17,15 +17,13 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using System.Drawing;
 using TraficoFauna.Examples;
-using Microsoft.DirectX;
 using Examples.TraficoFauna.Interpolators;
-using TgcViewer.Utils.TgcSceneLoader;
+using TGC.Core.Textures;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.PostProcess
 {
@@ -45,21 +43,19 @@ namespace Examples.TraficoFauna.PostProcess
         bool alarmMode;
 
 
-        public PostProcessEffects()
+        public PostProcessEffects(Device d3dDevice)
         {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-
             //Se crean 2 triangulos con las dimensiones de la pantalla con sus posiciones ya transformadas
             // x = -1 es el extremo izquiedo de la pantalla, x=1 es el extremo derecho
             // Lo mismo para la Y con arriba y abajo
             // la Z en 1 simpre
             CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[]
-		    {
-    			new CustomVertex.PositionTextured( -1, 1, 1, 0,0), 
-			    new CustomVertex.PositionTextured(1,  1, 1, 1,0),
-			    new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
-			    new CustomVertex.PositionTextured(1,-1, 1, 1,1)
-    		};
+            {
+                new CustomVertex.PositionTextured( -1, 1, 1, 0,0),
+                new CustomVertex.PositionTextured(1,  1, 1, 1,0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
+                new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+            };
             //vertex buffer de los triangulos
             screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
                     4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
@@ -68,14 +64,13 @@ namespace Examples.TraficoFauna.PostProcess
 
             // inicializo el render target
             render_target2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
-                    ,d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
                         Format.X8R8G8B8, Pool.Default);
 
 
             //Cargar Shader de StaticMesh
             string compilationErrors;
-            effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                GameModel.instance.gameConfig.shadersPath + "PostProcess.fx",
+            effect = Effect.FromFile(d3dDevice, GameModel.instance.gameConfig.shadersPath + "PostProcess.fx",
                 null, null, ShaderFlags.None, null, out compilationErrors);
             if (effect == null)
             {
@@ -90,7 +85,7 @@ namespace Examples.TraficoFauna.PostProcess
             temporizadorPlayerDead = new Temporizador();
 
             //Modo alarma
-            alarmTexture = TgcTexture.createTexture(d3dDevice, GameModel.instance.gameConfig.shadersPath + "efecto_alarma.png");
+            alarmTexture = TgcTexture.createTexture(d3dDevice, GameModel.instance.gameConfig.basePath + "Shaders\\efecto_alarma.png");
             intVaivenAlarm = new InterpoladorVaiven(0, 1, 5f);
             alarmMode = false;
         }
@@ -113,7 +108,7 @@ namespace Examples.TraficoFauna.PostProcess
 
         public void set2DRenderTarget()
         {
-            Device device = GuiController.Instance.D3dDevice;
+            Device device = D3DDevice.Instance.Device;
 
             pOldRT = device.GetRenderTarget(0);
             Surface pSurf = render_target2D.GetSurfaceLevel(0);
@@ -125,7 +120,7 @@ namespace Examples.TraficoFauna.PostProcess
 
         public void renderAndRestoreTarget()
         {
-            Device device = GuiController.Instance.D3dDevice;
+            Device device = D3DDevice.Instance.Device;
 
             device.EndScene();
 
@@ -142,9 +137,9 @@ namespace Examples.TraficoFauna.PostProcess
             if (alarmMode)
             {
                 effect.SetValue("textura_alarma", alarmTexture.D3dTexture);
-                effect.SetValue("alarmaScaleFactor", intVaivenAlarm.update());
+                effect.SetValue("alarmaScaleFactor", intVaivenAlarm.update(GameModel.instance.ElapsedTime));
             }
-            
+
 
             device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
             effect.Begin(FX.None);
@@ -168,10 +163,10 @@ namespace Examples.TraficoFauna.PostProcess
         /// </summary>
         public void renderOldFrame()
         {
-            Device device = GuiController.Instance.D3dDevice;
+            var device = D3DDevice.Instance.Device;
 
-            float scaleFactor = intLinealPlayerDead.update();
-            if (temporizadorPlayerDead.update())
+            float scaleFactor = intLinealPlayerDead.update(GameModel.instance.ElapsedTime);
+            if (temporizadorPlayerDead.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar nuevamente en el ultimo sector
                 effect.Technique = "DefaultTechnique";

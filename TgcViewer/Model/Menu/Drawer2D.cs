@@ -23,6 +23,7 @@ using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using Microsoft.DirectX;
 using System.Drawing;
+using TraficoFauna.Examples;
 
 namespace Examples.TraficoFauna.Menu
 {
@@ -32,16 +33,15 @@ namespace Examples.TraficoFauna.Menu
     public class Drawer2D
     {
         Device d3dDevice;
-        Microsoft.DirectX.Direct3D.Sprite DxSprite;
+        Sprite DxSprite;
         Line line;
 
         CustomVertex.PositionColoredTextured[] LineVertexData = new CustomVertex.PositionColoredTextured[2];
 
-        public Drawer2D()
+        public Drawer2D(Device device)
         {
-            this.d3dDevice = GuiController.Instance.D3dDevice;
-            DxSprite = new Microsoft.DirectX.Direct3D.Sprite(d3dDevice);
-            line = new Line(d3dDevice);
+            DxSprite = new Sprite(device);
+            line = new Line(device);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Examples.TraficoFauna.Menu
         {
             if (animatedSprite.Enabled)
             {
-                animatedSprite.update();
+                animatedSprite.update(GameModel.instance.ElapsedTime);
                 DrawSprite(animatedSprite.Sprite);
             }
         }

@@ -16,19 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
 using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSkeletalAnimation;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.SphereCollision;
 using TraficoFauna.Examples;
-using TgcViewer;
-using TgcViewer.Utils.Input;
-using Microsoft.DirectX.DirectInput;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcSceneLoader;
 using Examples.TraficoFauna.ItemsAnimal;
 using Examples.TraficoFauna.Escondites;
 using Examples.TraficoFauna.Meshes;
@@ -38,6 +30,11 @@ using Examples.TraficoFauna.Particles;
 using Examples.TraficoFauna.Sonidos;
 using Examples.TraficoFauna.Billboards;
 using System.Drawing;
+using TGC.Core.SkeletalAnimation;
+using TGC.Core.Geometry;
+using TGC.Core.Utils;
+using TGC.Core.Input;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna
 {
@@ -213,14 +210,14 @@ namespace Examples.TraficoFauna
             //Configurar camara en Tercer Persona personalizada
             GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
             camera = new GameThirdPersonCamera();
-            camera.Enable = true;
+            GameModel.instance.Camara = camera;
             camera.Target = mesh.Position;
             camera.OffsetHeight = camaraConfig.offsetY;
             camera.OffsetForward = camaraConfig.offsetZ;
             camera.TargetDisplacement = new Vector3(0, camaraConfig.displacementY, 0);
 
             //Particulas para las pisadas del personaje
-            stepsEmitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\pisada_mono.png", 4);
+            stepsEmitter = new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\pisada_mono.png", 4);
             stepsEmitter.Dispersion = 400;
             stepsEmitter.ParticleTimeToLive = 0.5f;
             stepsEmitter.CreationFrecuency = 0.1f;
@@ -229,7 +226,7 @@ namespace Examples.TraficoFauna
             stepsEmitter.MaxSizeParticle = 1f;
 
             //Particulas para el punch al romper cajas
-            punchEmitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\punch_mono.png", 2);
+            punchEmitter = new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\punch_mono.png", 2);
             punchEmitter.Dispersion = 100;
             punchEmitter.ParticleTimeToLive = 0.4f;
             punchEmitter.CreationFrecuency = 1f;
@@ -312,13 +309,13 @@ namespace Examples.TraficoFauna
         }
 
 
-        public void render()
+        public void render(float elapsedTime)
         {
             //Hacer que la camara siga al personaje en su nueva posicion
             targetCamera();
 
             //Render personaje
-            mesh.animateAndRender();
+            mesh.animateAndRender(elapsedTime);
 
             //Render pisadas
             GameModel.instance.currentLevel.AlphaObjects.Add(stepsEmitter);
@@ -330,8 +327,8 @@ namespace Examples.TraficoFauna
             //Game.instance.currentLevel.AlphaObjects.Add(punchBillboard);
 
             //Sonidos temporales
-            sonidoPasosCorrer.update();
-            sonidoPasosCaminandoEsconditeMovil.update();
+            sonidoPasosCorrer.update(elapsedTime);
+            sonidoPasosCaminandoEsconditeMovil.update(elapsedTime);
         }
 
         /// <summary>
@@ -423,33 +420,30 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Actualizar estado del personaje
         /// </summary>
-        public void update()
+        public void update(float elapsedTime)
         {
-            float elapsedTime = GuiController.Instance.ElapsedTime;
-
             switch (currentState)
             {
                 case State.Normal:
                     normal(elapsedTime);
                     break;
                 case State.Agachado:
-                    agachado();
+                    agachado(elapsedTime);
                     break;
                 case State.AgachadoEsconditeFijo:
-                    agachadoEsconditeFijo();
+                    agachadoEsconditeFijo(elapsedTime);
                     break;
                 case State.CargandoEsconditeMovil:
                     cargandoEsconditeMovil(elapsedTime);
                     break;
                 case State.AgachadoEsconditeMovil:
-                    agachadoEsconditeMovil();
+                    agachadoEsconditeMovil(elapsedTime);
                     break;
                 case State.SaltandoPlataformas:
-                    saltandoPlataformas();
+                    saltandoPlataformas(elapsedTime);
                     break;
             }
         }
-
 
         /// <summary>
         /// Pasar a estado normal
@@ -476,13 +470,10 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void normal(float elapsedTime)
         {
-            //Leer input
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-
             //obtener velocidades de Modifiers
             GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             Level level = GameModel.instance.currentLevel;
 
             //Crouch
@@ -767,10 +758,10 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Estado agachado del personaje
         /// </summary>
-        private void agachado()
+        private void agachado(float elapsedTime)
         {
             //Sigue agachado mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
@@ -798,7 +789,7 @@ namespace Examples.TraficoFauna
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * GuiController.Instance.ElapsedTime);
+                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.rotateY(rotAngle);
                     camera.rotateY(rotAngle);
 
@@ -844,10 +835,10 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Estado agachado en un escondite fijo
         /// </summary>
-        private void agachadoEsconditeFijo()
+        private void agachadoEsconditeFijo(float elapsedTime)
         {
             //Sigue agachado mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
@@ -875,7 +866,7 @@ namespace Examples.TraficoFauna
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * GuiController.Instance.ElapsedTime);
+                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.rotateY(rotAngle);
                     camera.rotateY(rotAngle);
 
@@ -959,12 +950,12 @@ namespace Examples.TraficoFauna
         private void cargandoEsconditeMovil(float elapsedTime)
         {
             //Leer input
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            var d3dDevice = D3DDevice.Instance.Device;
 
             //obtener velocidades de Modifiers
             GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             Level level = GameModel.instance.currentLevel;
 
             //Crouch, esconderse con el objeto
@@ -1124,10 +1115,10 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Estado agachado escondite movil del personaje
         /// </summary>
-        private void agachadoEsconditeMovil()
+        private void agachadoEsconditeMovil(float elapsedTime)
         {
             //Sigue escondido agachado con el objeto mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            TgcD3dInput d3dInput = GameModel.instance.Input;
             GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
@@ -1155,7 +1146,7 @@ namespace Examples.TraficoFauna
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * GuiController.Instance.ElapsedTime);
+                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.rotateY(rotAngle);
                     camera.rotateY(rotAngle);
                 }
@@ -1211,11 +1202,11 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Estado saltando entre plataformas
         /// </summary>
-        private void saltandoPlataformas()
+        private void saltandoPlataformas(float elapsedTime)
         {
             //Ir avanzando gradualmente
             float speed = GameModel.instance.gameConfig.fisica.velocidadSalto;
-            float movement = speed * GuiController.Instance.ElapsedTime;
+            float movement = speed * elapsedTime;
             jumpDistanceToTravel -= movement;
             if (jumpDistanceToTravel < 0)
             {

@@ -16,30 +16,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Example;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing;
-using Microsoft.DirectX;
-using TgcViewer.Utils.TgcSkeletalAnimation;
-using TgcViewer.Utils.TgcGeometry;
-using TgcViewer.Utils.TgcSceneLoader;
-using TraficoFauna.SphereCollision;
 using Examples.TraficoFauna;
 using Examples.TraficoFauna.Enemies;
 using Examples.TraficoFauna.Debug;
 using Examples.TraficoFauna.PostProcess;
-using TgcViewer.Utils;
 using Examples.TraficoFauna.GameModes;
 using Examples.TraficoFauna.Menu;
 using Examples.TraficoFauna.CustomEvents;
 using Examples.TraficoFauna.Dialogs;
 using Examples.TraficoFauna.Bananas;
-using System.Windows.Forms;
 using Examples.TraficoFauna.Sonidos;
+using TGC.Core.Example;
+using TGC.Core.Direct3D;
+using TGC.Core.Input;
 
 namespace TraficoFauna.Examples
 {
@@ -48,7 +40,6 @@ namespace TraficoFauna.Examples
     /// </summary>
     public class GameModel : TgcExample
     {
-
         public static GameModel instance;
         public GameConfig gameConfig;
         public Level currentLevel;
@@ -67,9 +58,6 @@ namespace TraficoFauna.Examples
         public SimpleMessageDialog simpleMessageDialog;
         public BananasPool bananasPool;
         public CajasBananasPool cajasBananasPool;
-        public ErrorWindow errorWindow;
-
-
 
         /// <summary>
         /// Modos en los que se encuentra el juego
@@ -86,92 +74,77 @@ namespace TraficoFauna.Examples
             GameWin,
         }
 
-
-        public override string getCategory()
+        /// <summary>
+        /// Constructor del juego
+        /// </summary>
+        /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
+        /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
+        public GameModel(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
         {
-            return "TraficoFauna";
+            Category = Game.Default.Category;
+            Name = Game.Default.Name;
+            Description = Game.Default.Description;
         }
 
-        public override string getName()
+        public override void Init()
         {
-            return "TraficoFauna";
-        }
+            //Device de DirectX para crear primitivas
+            var d3dDevice = D3DDevice.Instance.Device;
 
-        public override string getDescription()
-        {
-            return "TraficoFauna";
-        }
+            //BackgroundColor = Color.Black; this is the way in the last version.
+            //BackgroundColor
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
 
-        public override void init()
-        {
-            try
-            {
-                Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-                GuiController.Instance.BackgroundColor = Color.Black;
+            //Singleton trucho
+            GameModel.instance = this;
 
-                //Singleton trucho
-                GameModel.instance = this;
+            //Cargar gameConfig
+            gameConfig = new GameConfig(MediaDir, "config.xml", ShadersDir);
 
-                //Error Window
-                errorWindow = new ErrorWindow();
+            //Debug Mode
+            debugMode = new DebugMode();
+            debugMode.Enabled = gameConfig.debugModeEnabled;
 
-                //Cargar gameConfig
-                string basePath = GuiController.Instance.ExamplesDir + "..\\..\\..\\Media\\";
-                gameConfig = new GameConfig(basePath, "config.xml");
+            //Sonidos
+            sonidos = new GameSounds(DirectSound);
 
-                //Debug Mode
-                debugMode = new DebugMode();
-                debugMode.Enabled = gameConfig.debugModeEnabled;
+            //Shaders
+            shaders = new Shaders(d3dDevice);
 
-                //Sonidos
-                sonidos = new GameSounds();
+            //Cargar personaje principal
+            mainCharacter = new MainCharacter();
+            mainCharacter.loadModel();
 
-                //Shaders
-                shaders = new Shaders();
+            //Cargar pool de enemigos guardias
+            guardiasPool = new GuardiasPool();
+            guardiasPool.loadModels();
 
-                //Cargar personaje principal
-                mainCharacter = new MainCharacter();
-                mainCharacter.loadModel();
+            //Cargar pool de bananas y cajas de bananas
+            bananasPool = new BananasPool();
+            bananasPool.loadModels();
+            cajasBananasPool = new CajasBananasPool();
+            cajasBananasPool.loadModels();
 
-                //Cargar pool de enemigos guardias
-                guardiasPool = new GuardiasPool();
-                guardiasPool.loadModels();
+            //Efectos 2D de PostProcesado y transiciones
+            postProcessEffects = new PostProcessEffects(d3dDevice);
+            transiciones = new Transiciones(d3dDevice);
 
-                //Cargar pool de bananas y cajas de bananas
-                bananasPool = new BananasPool();
-                bananasPool.loadModels();
-                cajasBananasPool = new CajasBananasPool();
-                cajasBananasPool.loadModels();
+            //HUD
+            hud = new HUD(d3dDevice);
 
-                //Efectos 2D de PostProcesado y transiciones
-                postProcessEffects = new PostProcessEffects();
-                transiciones = new Transiciones();
+            //Menu
+            menuPrincipal = new MenuPrincipal(d3dDevice);
 
-                //HUD
-                hud = new HUD();
+            //CustomEventsManager
+            customEventsManager = new CustomEventsManager();
 
-                //Menu
-                menuPrincipal = new MenuPrincipal();
+            //Dialogs
+            textDialog = new TextDialog(d3dDevice);
+            simpleMessageDialog = new SimpleMessageDialog(d3dDevice);
 
-                //CustomEventsManager
-                customEventsManager = new CustomEventsManager();
-
-                //Dialogs
-                textDialog = new TextDialog();
-                simpleMessageDialog = new SimpleMessageDialog();
-
-
-                //Arrancar con el menu
-                menuPrincipal.init();
-                currentGameMode = GameMode.Menu;
-            }
-            catch (Exception e)
-            {
-                errorWindow.showError(e.Message, e);
-                //throw e;
-                GuiController.Instance.exitGame();
-            }
-            
+            //Arrancar con el menu
+            menuPrincipal.init();
+            currentGameMode = GameMode.Menu;
         }
 
         /// <summary>
@@ -200,7 +173,6 @@ namespace TraficoFauna.Examples
                 System.GC.Collect();
                 System.GC.WaitForPendingFinalizers();
             }
-    
 
             //Cargar nuevo nivel
             Level level = new Level();
@@ -216,59 +188,61 @@ namespace TraficoFauna.Examples
             this.currentGameMode = GameMode.Playing;
         }
 
-
-
-
-        
+        public override void Update()
+        {
+            PreUpdate();
+        }
 
         /// <summary>
         /// Render principal del juego
         /// </summary>
-        public override void render(float elapsedTime)
+        public override void Render()
         {
-            try
+            //Inicio el render de la escena
+            PreRender();
+
+            //Device de DirectX para crear primitivas
+            var d3dDevice = D3DDevice.Instance.Device;
+            d3dDevice.EndScene();
+
+            switch (currentGameMode)
             {
-                switch (currentGameMode)
-                {
-                    case GameMode.Menu:
-                        doMenu();
-                        break;
-                    case GameMode.Intro:
-                        doIntro();
-                        break;
-                    case GameMode.LoadingLevel:
-                        doLoadingLevel();
-                        break;
-                    case GameMode.LoadingSector:
-                        doLoadingSector();
-                        break;
-                    case GameMode.Playing:
-                        doPlaying(elapsedTime);
-                        break;
-                    case GameMode.PlayerDead:
-                        doPlayerDead(elapsedTime);
-                        break;
-                    case GameMode.GameOver:
-                        doGameOver(elapsedTime);
-                        break;
-                    case GameMode.GameWin:
-                        doGameWin(elapsedTime);
-                        break;
-                    default:
-                        break;
-                } 
+                case GameMode.Menu:
+                    doMenu(d3dDevice, Input);
+                    break;
+                case GameMode.Intro:
+                    doIntro();
+                    break;
+                case GameMode.LoadingLevel:
+                    doLoadingLevel();
+                    break;
+                case GameMode.LoadingSector:
+                    doLoadingSector();
+                    break;
+                case GameMode.Playing:
+                    doPlaying(d3dDevice, ElapsedTime);
+                    break;
+                case GameMode.PlayerDead:
+                    doPlayerDead(ElapsedTime);
+                    break;
+                case GameMode.GameOver:
+                    doGameOver(ElapsedTime);
+                    break;
+                case GameMode.GameWin:
+                    doGameWin(ElapsedTime);
+                    break;
+                default:
+                    break;
             }
-            catch (Exception e)
-            {
-                errorWindow.showError(e.Message, e);
-                //throw e;
-                GuiController.Instance.exitGame();
-            }
+
+            d3dDevice.BeginScene();
+            //Finaliza el render
+            PostRender();
         }
 
-        private void doMenu()
+        private void doMenu(Device device, TgcD3dInput input)
         {
-            menuPrincipal.render();
+            menuPrincipal.render(device, input);
         }
 
         private void doIntro()
@@ -278,7 +252,7 @@ namespace TraficoFauna.Examples
 
         private void doLoadingLevel()
         {
-            
+
         }
 
         private void doLoadingSector()
@@ -286,43 +260,36 @@ namespace TraficoFauna.Examples
             transiciones.renderLoadingSector();
         }
 
-
         /// <summary>
         /// Estado normal, en el que el jugador esta jugando (99% del tiempo)
         /// </summary>
-        private void doPlaying(float elapsedTime)
+        private void doPlaying(Device device, float elapsedTime)
         {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-
             //Renderizar todo al RenderTarget secundario
             postProcessEffects.set2DRenderTarget();
 
             //update
-            mainCharacter.update();
-            currentLevel.update();
-            hud.update();
+            //mainCharacter.update(elapsedTime);
+            currentLevel.update(elapsedTime);
+            hud.update(elapsedTime);
 
             //render
             currentLevel.AlphaObjects.Clear();
-            mainCharacter.render();
-            currentLevel.render();
-            hud.render();
-
+            //mainCharacter.render(elapsedTime);
+            currentLevel.render(elapsedTime, Frustum);
+            hud.render(device);
 
             //Modo debug
             debugMode.render();
-            
 
             postProcessEffects.renderAndRestoreTarget();
 
-            
             //Si termino el juego y ya cambido de modo, esconder sector actual
             if (currentGameMode == GameMode.GameWin)
             {
-                GameModel.instance.currentLevel.CurrentSector.hideSector();
+               currentLevel.CurrentSector.hideSector();
             }
         }
-
 
         /// <summary>
         /// Estado cuando el jugador fue atrapado y pierde
@@ -348,14 +315,12 @@ namespace TraficoFauna.Examples
             transiciones.renderGameWin();
         }
 
-
-        public override void close()
+        public override void Dispose()
         {
             //TODO: hacer dispose de todo
 
             this.currentLevel.unloadLevel();
             this.textDialog.dispose();
         }
-
     }
 }

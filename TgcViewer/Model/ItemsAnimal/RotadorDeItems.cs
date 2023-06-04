@@ -16,12 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer;
-using TgcViewer.Utils.TgcGeometry;
+using TGC.Core.SceneLoader;
+using TGC.Core.Utils;
 
 namespace Examples.TraficoFauna.ItemsAnimal
 {
@@ -76,10 +72,8 @@ namespace Examples.TraficoFauna.ItemsAnimal
             yawSpeed = YAW;
         }
 
-        public void rotate(TgcMesh mesh)
+        public void rotate(float elapsedTime, TgcMesh mesh)
         {
-            float elapsedTime = GuiController.Instance.ElapsedTime;
-
             float move = ySpeed * elapsedTime * signY;
             acumY += move;
             if (FastMath.Abs(acumY) > limitY)

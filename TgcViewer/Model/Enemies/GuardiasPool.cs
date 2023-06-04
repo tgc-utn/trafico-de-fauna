@@ -18,8 +18,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSkeletalAnimation;
+using TGC.Core.SkeletalAnimation;
 using TraficoFauna.Examples;
 
 namespace Examples.TraficoFauna.Enemies

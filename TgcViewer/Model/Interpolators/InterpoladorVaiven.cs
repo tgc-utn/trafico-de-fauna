@@ -45,9 +45,9 @@ namespace Examples.TraficoFauna.Interpolators
         /// <summary>
         /// Interpolar y devolver incremento
         /// </summary>
-        public float update()
+        public float update(float elapsedTime)
         {
-            float n = speed * GuiController.Instance.ElapsedTime;
+            float n = speed * elapsedTime;
             current += n;
             if (current > max)
             {

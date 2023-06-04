@@ -16,19 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
-using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
-using Examples.TraficoFauna.Dialogs;
-using TgcViewer;
-using Microsoft.DirectX.DirectInput;
 using Examples.TraficoFauna.Billboards;
 using System.Drawing;
 using Examples.TraficoFauna.Meshes;
+using Microsoft.DirectX.Direct3D;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.CustomEvents.Billboards
 {
@@ -43,7 +38,8 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            billboard = new HorizontalAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
+            var device = D3DDevice.Instance.Device;
+            billboard = new HorizontalAnimatedBillboard(device, GameModel.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
             aabb = GameUtils.createBBFromMeshData(meshData);
             billboard.PMin = aabb.PMin;
             billboard.PMax = aabb.PMax;
@@ -59,8 +55,13 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
             billboard.Playing = false;
         }
 
-        public override void update()
+        public override void update(float elapsedTime)
         {
+            //Actualizar valores de animacion si esta en rango visible
+            if (GameModel.instance.mainCharacter.isInProximityRange(billboard.PMin))
+            {
+                billboard.updateValues(elapsedTime);
+            }
         }
 
         public override void render()

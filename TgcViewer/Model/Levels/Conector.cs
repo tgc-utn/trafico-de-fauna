@@ -17,13 +17,11 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
 using Microsoft.DirectX;
 using TraficoFauna.Examples;
 using Examples.TraficoFauna.Dialogs;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna
 {

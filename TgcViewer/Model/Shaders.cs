@@ -23,6 +23,7 @@ using TraficoFauna.Examples;
 using Microsoft.DirectX.Direct3D;
 using TgcViewer;
 using Examples.TraficoFauna.Meshes;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna
 {
@@ -37,7 +38,7 @@ namespace Examples.TraficoFauna
         public readonly string RESALTADO = "ResaltadoTechnique";
         public readonly string ONLY_COLOR = "OnlyColorTechnique";
         public readonly string ANIMATE_UV = "AnimateUVTechnique";
-        
+
 
         /// <summary>
         /// Shader principal
@@ -50,12 +51,11 @@ namespace Examples.TraficoFauna
         public ParticlesShaders particles;
 
 
-        public Shaders()
+        public Shaders(Device device)
         {
             //Cargar Shader de StaticMesh
             string compilationErrors;
-            this.effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                GameModel.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
+            this.effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
                 null, null, ShaderFlags.None, null, out compilationErrors);
             if (effect == null)
             {
@@ -76,13 +76,13 @@ namespace Examples.TraficoFauna
         {
             switch (mesh.RenderType)
             {
-                case TgcViewer.Utils.TgcSceneLoader.TgcMesh.MeshRenderType.VERTEX_COLOR:
+                case TgcMesh.MeshRenderType.VERTEX_COLOR:
                     mesh.Technique = ONLY_COLOR;
                     break;
-                case TgcViewer.Utils.TgcSceneLoader.TgcMesh.MeshRenderType.DIFFUSE_MAP:
+                case TgcMesh.MeshRenderType.DIFFUSE_MAP:
                     mesh.Technique = DEFAULT;
                     break;
-                case TgcViewer.Utils.TgcSceneLoader.TgcMesh.MeshRenderType.DIFFUSE_MAP_AND_LIGHTMAP:
+                case TgcMesh.MeshRenderType.DIFFUSE_MAP_AND_LIGHTMAP:
                     mesh.Technique = LIGHTMAP;
                     break;
             }
@@ -101,12 +101,11 @@ namespace Examples.TraficoFauna
             /// </summary>
             public Effect effect;
 
-            public ParticlesShaders()
+            public ParticlesShaders(Device device)
             {
                 //Cargar Shader de StaticMesh
                 string compilationErrors;
-                this.effect = Effect.FromFile(GuiController.Instance.D3dDevice,
-                    GameModel.instance.gameConfig.shadersPath + "ParticlesShader.fx",
+                this.effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "ParticlesShader.fx",
                     null, null, ShaderFlags.None, null, out compilationErrors);
                 if (effect == null)
                 {

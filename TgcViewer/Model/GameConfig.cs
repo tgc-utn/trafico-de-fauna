@@ -18,13 +18,11 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.IO;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcGeometry;
 using Microsoft.DirectX.DirectInput;
+using TGC.Core.Utils;
 
 namespace Examples.TraficoFauna
 {
@@ -49,14 +47,14 @@ namespace Examples.TraficoFauna
         public Keys keys;
         public bool debugModeEnabled;
 
-        public GameConfig(string basePath, string fileName)
+        public GameConfig(string mediaPath, string fileName, string shaderPath)
         {
             //paths
-            this.basePath = basePath;
-            this.levelsPath = basePath + "Levels\\";
-            this.shadersPath = basePath + "Shaders\\";
-            this.sonidosPath = basePath + "Sonidos\\";
-            this.menuPath = basePath + "Menu\\";
+            this.basePath = mediaPath;
+            this.levelsPath = mediaPath + "Levels\\";
+            this.shadersPath = shaderPath;
+            this.sonidosPath = mediaPath + "Sonidos\\";
+            this.menuPath = mediaPath + "Menu\\";
 
             //init
             levels = new List<Level>();
@@ -66,7 +64,7 @@ namespace Examples.TraficoFauna
             keys = new Keys();
 
             //Parsear xml
-            string xmlString = File.ReadAllText(basePath + fileName);
+            string xmlString = File.ReadAllText(mediaPath + fileName);
             XmlDocument dom = new XmlDocument();
             dom.LoadXml(xmlString);
             XmlElement root = dom.DocumentElement;

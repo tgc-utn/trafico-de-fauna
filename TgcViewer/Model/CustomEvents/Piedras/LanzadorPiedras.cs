@@ -17,17 +17,14 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
 using Microsoft.DirectX;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
-using Examples.TraficoFauna.Dialogs;
 using TgcViewer;
-using Microsoft.DirectX.DirectInput;
 using Examples.TraficoFauna.Meshes;
 using Examples.TraficoFauna.Interpolators;
+using TGC.Core.SceneLoader;
+using TGC.Core.Utils;
+using TGC.Core.Geometry;
 
 namespace Examples.TraficoFauna.CustomEvents.Piedras
 {
@@ -55,7 +52,6 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
         bool axisX;
         float rotAngle;
         TgcBoundingBox boundingBox;
-
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -123,16 +119,13 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
             acumTime = 0;
             mesh.Enabled = false;
         }
-
         public override void end()
         {
             GameModel.instance.sonidos.piedra_rodando.stop();
         }
 
-        public override void update()
+        public override void update(float elapsedTime)
         {
-            float elapsedTime = GuiController.Instance.ElapsedTime;
-
             //Mover piedra actual
             if (lanzando)
             {
@@ -162,7 +155,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
                     //Desplazar en XZ y mover en Y con vaiven 
                     Vector3 move = Vector3.Scale(movementDir, movement);
                     Vector3 newPos = mesh.Position + move;
-                    newPos.Y = meshOriginalPosY + vaiven.update();
+                    newPos.Y = meshOriginalPosY + vaiven.update(elapsedTime);
                     mesh.Position = newPos;
                 }
 
@@ -196,7 +189,6 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
                     GameModel.instance.sonidos.piedra_rodando.play(true);
                 }
             }
-            
         }
 
         public override void render()

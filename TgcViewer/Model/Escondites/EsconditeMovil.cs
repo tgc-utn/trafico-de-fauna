@@ -16,16 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Examples.TraficoFauna.Meshes;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
 using TraficoFauna.Examples;
 using Microsoft.DirectX;
 using System.Drawing;
 using Examples.TraficoFauna.Interpolators;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.Escondites
 {
@@ -109,7 +106,7 @@ namespace Examples.TraficoFauna.Escondites
                 Shaders shaders = GameModel.instance.shaders;
                 mesh.Technique = shaders.RESALTADO;
                 shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
-                shaders.effect.SetValue("scaleFactor", interpolador.update());
+                shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
                 mesh.executeRender();
             }
             else
@@ -120,7 +117,7 @@ namespace Examples.TraficoFauna.Escondites
                     Shaders shaders = GameModel.instance.shaders;
                     mesh.Technique = shaders.RESALTADO;
                     shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
-                    shaders.effect.SetValue("scaleFactor", interpolador.update());
+                    shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
                     mesh.executeRender();
                 }
             }

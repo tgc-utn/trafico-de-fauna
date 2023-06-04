@@ -16,12 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Text;
 using Microsoft.DirectX;
-using System.Collections;
 using System.Collections.Generic;
-using TgcViewer.Utils.TgcGeometry;
+using TGC.Core.Geometry;
 
 namespace Examples.TraficoFauna.Enemies
 {

@@ -18,9 +18,8 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
+using TGC.Core.Geometry;
+using TGC.Core.SceneLoader;
 
 namespace Examples.TraficoFauna.Saltos
 {

@@ -16,15 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX.Direct3D;
-using TgcViewer.Utils.TgcSceneLoader;
 using System.Drawing;
-using TgcViewer.Utils;
-using TgcViewer;
 using Microsoft.DirectX;
+using TGC.Core.Textures;
+using TGC.Core.Direct3D;
 
 namespace Examples.TraficoFauna.Billboards
 {
@@ -82,25 +78,22 @@ namespace Examples.TraficoFauna.Billboards
             this.texture = texture;
 
 
-            Device device = GuiController.Instance.D3dDevice;
+            var device = D3DDevice.Instance.Device;
             vertexDeclaration = new VertexDeclaration(device, SpriteVertexVertexElements);
             spriteVertexArray = new SpriteVertexVertex[1];
             spriteVertexArray[0] = vertex;
         }
 
-        public void render()
+        public void render(Device device)
         {
-            Device device = GuiController.Instance.D3dDevice;
-            TgcTexture.Manager texturesManager = GuiController.Instance.TexturesManager;
-
             //Cargar VertexDeclaration
             device.VertexDeclaration = vertexDeclaration;
 
             //Fijo la textura actual de la particula.
-            texturesManager.clear(0);
-            texturesManager.clear(1);
-            texturesManager.set(0, texture);
-            device.Material = TgcD3dDevice.DEFAULT_MATERIAL;
+            TexturesManager.Instance.clear(0);
+            TexturesManager.Instance.clear(1);
+            TexturesManager.Instance.set(0, texture);
+            device.Material = D3DDevice.DEFAULT_MATERIAL;
             device.RenderState.AlphaBlendEnable = true;
             device.RenderState.ZBufferWriteEnable = false;
             device.Transform.World = Matrix.Identity;

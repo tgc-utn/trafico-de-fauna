@@ -79,9 +79,9 @@ namespace Examples.TraficoFauna.Interpolators
         /// Actualizar estado del interpolador
         /// </summary>
         /// <returns>Nueva posicion</returns>
-        public Vector2 update()
+        public Vector2 update(float elapsedTime)
         {
-            float movement = speed * GuiController.Instance.ElapsedTime;
+            float movement = speed * elapsedTime;
             distanceToTravel -= movement;
             if (distanceToTravel < 0)
             {
