@@ -24,6 +24,7 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 using TGC.Core.Direct3D;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.CustomEvents.Billboards
 {
@@ -34,7 +35,7 @@ namespace Examples.TraficoFauna.CustomEvents.Billboards
     public class WaterEffect : CustomEvent
     {
         HorizontalAnimatedBillboard billboard;
-        TgcBoundingBox aabb;
+        TgcBoundingAxisAlignBox aabb;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {

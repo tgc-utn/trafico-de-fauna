@@ -23,6 +23,7 @@ using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.ItemsAnimal
 {
@@ -87,6 +88,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
             string meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
+            mesh.AutoTransformEnable = true;
             mesh.Position = new Vector3(nodeCenter.X, 0, nodeCenter.Z);
 
             //bSphereProximidad de proximidad

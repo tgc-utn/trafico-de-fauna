@@ -23,6 +23,7 @@ using System.Drawing;
 using Examples.TraficoFauna.Interpolators;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.Escondites
 {
@@ -38,7 +39,7 @@ namespace Examples.TraficoFauna.Escondites
         static readonly int COLOR_RESALTADO = Color.FromArgb(0, 0, 0, 255).ToArgb();
         static readonly int COLOR_RESALTADO_HIDDEN = Color.FromArgb(0, 255, 0, 0).ToArgb();
 
-        public TgcBoundingBox BoundingBox
+        public TgcBoundingAxisAlignBox BoundingBox
         {
             get { return mesh.BoundingBox; }
         }

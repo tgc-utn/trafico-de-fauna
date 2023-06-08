@@ -32,6 +32,7 @@ using Examples.TraficoFauna.Sonidos;
 using TGC.Core.Example;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
+using Examples.TraficoFauna.Camera;
 
 namespace TraficoFauna.Examples
 {
@@ -191,6 +192,9 @@ namespace TraficoFauna.Examples
         public override void Update()
         {
             PreUpdate();
+            //TODO
+            ((GameThirdPersonCamera)this.Camara).updateViewMatrix(D3DDevice.Instance.Device);
+
         }
 
         /// <summary>
@@ -269,13 +273,13 @@ namespace TraficoFauna.Examples
             postProcessEffects.set2DRenderTarget();
 
             //update
-            //mainCharacter.update(elapsedTime);
+            mainCharacter.update(elapsedTime);
             currentLevel.update(elapsedTime);
             hud.update(elapsedTime);
 
             //render
             currentLevel.AlphaObjects.Clear();
-            //mainCharacter.render(elapsedTime);
+            mainCharacter.render(elapsedTime);
             currentLevel.render(elapsedTime, Frustum);
             hud.render(device);
 

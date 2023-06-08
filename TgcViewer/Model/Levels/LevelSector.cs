@@ -35,6 +35,8 @@ using Examples.TraficoFauna.Sonidos;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
+using TGC.Core.BoundingVolumes;
+using TGC.Core.Collision;
 
 namespace Examples.TraficoFauna
 {
@@ -117,11 +119,11 @@ namespace Examples.TraficoFauna
             get { return esconditesMoviles; }
         }
 
-        private List<TgcBoundingBox> colisionesLogicas;
+        private List<TgcBoundingAxisAlignBox> colisionesLogicas;
         /// <summary>
         /// Objetos invisibles pero que igual se usan para colision en el sector
         /// </summary>
-        public List<TgcBoundingBox> ColisionesLogicas
+        public List<TgcBoundingAxisAlignBox> ColisionesLogicas
         {
             get { return colisionesLogicas; }
         }
@@ -220,7 +222,7 @@ namespace Examples.TraficoFauna
             conectores = new List<Conector>();
             objetosColisionables = new List<ColliderObject>();
             guardiasManager = new GuardiasManager(this);
-            colisionesLogicas = new List<TgcBoundingBox>();
+            colisionesLogicas = new List<TgcBoundingAxisAlignBox>();
             llaves = new List<Llave>();
             itemsAnimal = new List<ItemAnimal>();
             esconditesFijos = new List<EsconditeFijo>();
@@ -355,7 +357,7 @@ namespace Examples.TraficoFauna
             }
 
             //Agregar colisiones logicas
-            foreach (TgcBoundingBox collider in colisionesLogicas)
+            foreach (TgcBoundingAxisAlignBox collider in colisionesLogicas)
             {
                 objetosColisionables.Add(new ColliderObject(collider));
             }
@@ -398,6 +400,7 @@ namespace Examples.TraficoFauna
             staticMeshes = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
+                mesh.AutoTransformEnable = true;
                 staticMeshes.Add((TgcMeshShader)mesh);
             }
         }
@@ -415,6 +418,7 @@ namespace Examples.TraficoFauna
             meshesSinColision = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
+                mesh.AutoTransformEnable = true;
                 meshesSinColision.Add((TgcMeshShader)mesh);
             }
         }
@@ -474,7 +478,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         private void loadColisionesLogicas(TgcMeshData meshData)
         {
-            TgcBoundingBox boundingBox = GameUtils.createBBFromMeshData(meshData);
+            TgcBoundingAxisAlignBox boundingBox = GameUtils.createBBFromMeshData(meshData);
             colisionesLogicas.Add(boundingBox);
         }
 
@@ -1060,7 +1064,7 @@ namespace Examples.TraficoFauna
             currentConector = null;
 
             //colisionesLogicas
-            foreach (TgcBoundingBox colLogicas in colisionesLogicas)
+            foreach (TgcBoundingAxisAlignBox colLogicas in colisionesLogicas)
             {
                 colLogicas.dispose();
             }

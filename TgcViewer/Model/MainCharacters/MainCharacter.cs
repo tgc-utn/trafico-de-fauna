@@ -35,6 +35,8 @@ using TGC.Core.Geometry;
 using TGC.Core.Utils;
 using TGC.Core.Input;
 using TGC.Core.Direct3D;
+using TGC.Core.BoundingVolumes;
+using TGC.Core.Collision;
 
 namespace Examples.TraficoFauna
 {
@@ -190,7 +192,7 @@ namespace Examples.TraficoFauna
                     meshPath + "Jumping-TgcSkeletalAnim.xml",
                     meshPath + "Punch-TgcSkeletalAnim.xml"
                 });
-
+            mesh.AutoTransformEnable = true;
             mesh.rotateY(Geometry.DegreeToRadian(180f));
             origAngleRot = FastMath.PI;
             origPosY = 0;
@@ -342,7 +344,7 @@ namespace Examples.TraficoFauna
         /// <summary>
         /// Colision de un AABB con el BoundingSphere del personaje
         /// </summary>
-        public bool collideWithAABB(TgcBoundingBox aabb)
+        public bool collideWithAABB(TgcBoundingAxisAlignBox aabb)
         {
             return TgcCollisionUtils.testSphereAABB(characterSphere, aabb);
         }

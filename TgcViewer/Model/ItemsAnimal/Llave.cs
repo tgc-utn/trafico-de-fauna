@@ -22,6 +22,7 @@ using TraficoFauna.Examples;
 using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.ItemsAnimal
 {
@@ -99,6 +100,7 @@ namespace Examples.TraficoFauna.ItemsAnimal
             string meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
+            mesh.AutoTransformEnable = true;
             mesh.Position = new Vector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
 
             Vector3 sphereCenter = new Vector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);

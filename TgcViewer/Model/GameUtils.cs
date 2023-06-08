@@ -22,6 +22,7 @@ using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna
 {
@@ -42,9 +43,9 @@ namespace Examples.TraficoFauna
             Oeste,
         }
 
-        public static TgcBoundingBox createBBFromMeshData(TgcMeshData meshData)
+        public static TgcBoundingAxisAlignBox createBBFromMeshData(TgcMeshData meshData)
         {
-            return new TgcBoundingBox(
+            return new TgcBoundingAxisAlignBox(
                         TgcParserUtils.float3ArrayToVector3(meshData.pMin),
                         TgcParserUtils.float3ArrayToVector3(meshData.pMax)
                         );
@@ -52,7 +53,7 @@ namespace Examples.TraficoFauna
 
         public static Vector3 getBBCenterFromMeshData(TgcMeshData meshData)
         {
-            TgcBoundingBox aabb= new TgcBoundingBox(
+            TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
                         TgcParserUtils.float3ArrayToVector3(meshData.pMin),
                         TgcParserUtils.float3ArrayToVector3(meshData.pMax)
                         );
@@ -61,7 +62,7 @@ namespace Examples.TraficoFauna
 
         public static Vector3 getBBLowerCenterFromMeshData(TgcMeshData meshData)
         {
-            TgcBoundingBox aabb = new TgcBoundingBox(
+            TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
                         TgcParserUtils.float3ArrayToVector3(meshData.pMin),
                         TgcParserUtils.float3ArrayToVector3(meshData.pMax)
                         );
@@ -116,6 +117,7 @@ namespace Examples.TraficoFauna
             TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshDataNode);
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             TgcMeshShader mesh = (TgcMeshShader)scene.Meshes[0];
+            mesh.AutoTransformEnable = true;
             return mesh;
         }
 
@@ -133,7 +135,7 @@ namespace Examples.TraficoFauna
         /// </summary>
         public static bool getBBExtremeCentersXZ(TgcMeshData meshData, out Vector3 extreme1, out Vector3 extreme2)
         {
-            TgcBoundingBox bb = createBBFromMeshData(meshData);
+            TgcBoundingAxisAlignBox bb = createBBFromMeshData(meshData);
             Vector3 size = bb.calculateSize();
             Vector3 center = bb.calculateBoxCenter();
 

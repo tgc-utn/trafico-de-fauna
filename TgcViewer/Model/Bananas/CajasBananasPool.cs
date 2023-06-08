@@ -64,23 +64,25 @@ namespace Examples.TraficoFauna.Bananas
             //Cargar varios modelos con bananas para el pool
             for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
-                TgcKeyFrameMesh m = loader.loadMesh(meshDataConBananas, mediaPath);
+                TgcKeyFrameMesh mesh = loader.loadMesh(meshDataConBananas, mediaPath);
+                mesh.AutoTransformEnable = true;
                 for (int j = 0; j < animData.Length; j++)
                 {
-                    loader.loadAnimation(m, animData[j]);
+                    loader.loadAnimation(mesh, animData[j]);
                 }
-                meshesConBanana.Add(m);
+                meshesConBanana.Add(mesh);
             }
 
             //Cargar varios modelos sin bananas para el pool
             for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
-                TgcKeyFrameMesh m = loader.loadMesh(meshDataSinBananas, mediaPath);
+                TgcKeyFrameMesh mesh = loader.loadMesh(meshDataSinBananas, mediaPath);
+                mesh.AutoTransformEnable = true;
                 for (int j = 0; j < animData.Length; j++)
                 {
-                    loader.loadAnimation(m, animData[j]);
+                    loader.loadAnimation(mesh, animData[j]);
                 }
-                meshesSinBanana.Add(m);
+                meshesSinBanana.Add(mesh);
             }
 
             freeAllMeshes();

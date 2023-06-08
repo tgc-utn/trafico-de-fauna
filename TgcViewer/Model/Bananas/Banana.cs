@@ -23,6 +23,7 @@ using Examples.TraficoFauna.ItemsAnimal;
 using TGC.Core.Sound;
 using TGC.Core.SceneLoader;
 using TGC.Core.Geometry;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.Bananas
 {
@@ -67,7 +68,7 @@ namespace Examples.TraficoFauna.Bananas
         {
             name = meshData.name;
             enable = true;
-            TgcBoundingBox boundingBox = GameUtils.createBBFromMeshData(meshData);
+            TgcBoundingAxisAlignBox boundingBox = GameUtils.createBBFromMeshData(meshData);
             center = boundingBox.calculateBoxCenter();
 
             boundingSphere = new TgcBoundingSphere(new Vector3(center.X, center.Y + BSPHERE_RADIUS / 2, center.Z), BSPHERE_RADIUS);

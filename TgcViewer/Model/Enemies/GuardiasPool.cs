@@ -53,7 +53,7 @@ namespace Examples.TraficoFauna.Enemies
                     meshPath+ "StandBy-TgcSkeletalAnim.xml",
                     meshPath+ "Run-TgcSkeletalAnim.xml"
                 });
-
+                mesh.AutoTransformEnable = true;
                 meshes.Add(mesh);
             }
 

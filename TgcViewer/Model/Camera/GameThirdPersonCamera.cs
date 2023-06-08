@@ -120,7 +120,7 @@ namespace Examples.TraficoFauna.Camera
             return Matrix.LookAtLH(pos, targetCenter, UP_VECTOR);
         }
 
-        public void updateCamera()
+        public override void UpdateCamera(float elapsedTime)
         {
             Vector3 targetCenter;
             viewMatrix = generateViewMatrix(out position, out targetCenter); 

@@ -18,6 +18,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using Microsoft.DirectX;
 using System.Collections.Generic;
+using TGC.Core.BoundingVolumes;
 using TGC.Core.Geometry;
 
 namespace Examples.TraficoFauna.Enemies

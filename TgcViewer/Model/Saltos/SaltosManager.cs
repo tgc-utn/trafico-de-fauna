@@ -18,6 +18,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 using System.Collections.Generic;
+using TGC.Core.BoundingVolumes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 
@@ -132,7 +133,7 @@ namespace Examples.TraficoFauna.Saltos
         /// </summary>
         class SaltoNode
         {
-            public TgcBoundingBox mesh;
+            public TgcBoundingAxisAlignBox mesh;
             public string name;
             public int index;
         }

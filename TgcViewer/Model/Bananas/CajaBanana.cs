@@ -23,6 +23,7 @@ using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.KeyFrameLoader;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.Bananas
 {
@@ -33,7 +34,7 @@ namespace Examples.TraficoFauna.Bananas
     {
         const float RADIO_SPHERE = 28f;
 
-        TgcBoundingBox boundingBox;
+        TgcBoundingAxisAlignBox boundingBox;
         TgcBoundingSphere boundingSphere;
         Vector3 meshPos;
         TgcKeyFrameMesh mesh;

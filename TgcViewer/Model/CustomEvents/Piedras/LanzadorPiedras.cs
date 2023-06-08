@@ -25,6 +25,7 @@ using Examples.TraficoFauna.Interpolators;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TGC.Core.Geometry;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.CustomEvents.Piedras
 {
@@ -51,7 +52,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
         float meshOriginalPosY;
         bool axisX;
         float rotAngle;
-        TgcBoundingBox boundingBox;
+        TgcBoundingAxisAlignBox boundingBox;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -61,6 +62,7 @@ namespace Examples.TraficoFauna.CustomEvents.Piedras
             string meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
+            mesh.AutoTransformEnable = true;
 
             //Extremos y direccion de movimiento
             axisX = GameUtils.getBBExtremeCentersXZ(meshData, out posOrigen, out posFinal);

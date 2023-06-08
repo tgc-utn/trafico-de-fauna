@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 using Microsoft.DirectX;
+using TGC.Core.BoundingVolumes;
 using TGC.Core.Geometry;
 using TraficoFauna.Examples;
 
@@ -29,7 +30,7 @@ namespace Examples.TraficoFauna.Saltos
     {
         Plataforma[] plataformas;
 
-        public Salto(TgcBoundingBox bbPlataforma1, TgcBoundingBox bbPlataforma2)
+        public Salto(TgcBoundingAxisAlignBox bbPlataforma1, TgcBoundingAxisAlignBox bbPlataforma2)
         {
             plataformas = new Plataforma[2];
 
@@ -98,7 +99,7 @@ namespace Examples.TraficoFauna.Saltos
         /// </summary>
         public class Plataforma
         {
-            public Plataforma(TgcBoundingBox boundingBox, Salto salto, int index)
+            public Plataforma(TgcBoundingAxisAlignBox boundingBox, Salto salto, int index)
             {
                 this.boundingBox = boundingBox;
                 this.salto = salto;
@@ -117,8 +118,8 @@ namespace Examples.TraficoFauna.Saltos
                 get { return position; }
             }
 
-            TgcBoundingBox boundingBox;
-            public TgcBoundingBox BoundingBox
+            TgcBoundingAxisAlignBox boundingBox;
+            public TgcBoundingAxisAlignBox BoundingBox
             {
                 get { return boundingBox; }
             }

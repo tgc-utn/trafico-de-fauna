@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using TGC.Core.BoundingVolumes;
 using TGC.Core.Geometry;
 
 namespace Examples.TraficoFauna.Meshes
@@ -33,18 +34,18 @@ namespace Examples.TraficoFauna.Meshes
             this.enable = true;
         }
 
-        public ColliderObject(TgcBoundingBox boundingBox)
+        public ColliderObject(TgcBoundingAxisAlignBox boundingBox)
         {
             this.mesh = null;
             this.boundingBox = boundingBox;
             this.enable = true;
         }
 
-        TgcBoundingBox boundingBox;
+        TgcBoundingAxisAlignBox boundingBox;
         /// <summary>
         /// AABB
         /// </summary>
-        public TgcBoundingBox BoundingBox
+        public TgcBoundingAxisAlignBox BoundingBox
         {
             get { return boundingBox; }
             set { boundingBox = value; }

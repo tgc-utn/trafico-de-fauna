@@ -35,6 +35,7 @@ using TGC.Core.Geometry;
 using TGC.Core.Input;
 using TGC.Core;
 using TGC.Core.Textures;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.Debug
 {

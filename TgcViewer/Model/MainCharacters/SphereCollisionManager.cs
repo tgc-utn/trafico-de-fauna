@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using Microsoft.DirectX;
 using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
+using TGC.Core.BoundingVolumes;
+using TGC.Core.Collision;
 
 namespace TraficoFauna.SphereCollision
 {
@@ -69,7 +71,7 @@ namespace TraficoFauna.SphereCollision
         }
 
 
-        List<TgcBoundingBox> objetosCandidatos = new List<TgcBoundingBox>();
+        List<TgcBoundingAxisAlignBox> objetosCandidatos = new List<TgcBoundingAxisAlignBox>();
 
         public SphereCollisionManager()
         {
@@ -134,7 +136,7 @@ namespace TraficoFauna.SphereCollision
 
 
             //Manejo de error. No deberiamos colisionar con nadie si todo salio bien
-            foreach (TgcBoundingBox obstaculo in objetosCandidatos)
+            foreach (TgcBoundingAxisAlignBox obstaculo in objetosCandidatos)
             {
                 if (TgcCollisionUtils.testSphereAABB(characterSphere, obstaculo))
                 {
@@ -150,7 +152,7 @@ namespace TraficoFauna.SphereCollision
         /// <summary>
         /// Detección de colisiones recursiva
         /// </summary>
-        public void doCollideWithWorld(TgcBoundingSphere characterSphere, Vector3 movementVector, List<TgcBoundingBox> obstaculos, int recursionDepth)
+        public void doCollideWithWorld(TgcBoundingSphere characterSphere, Vector3 movementVector, List<TgcBoundingAxisAlignBox> obstaculos, int recursionDepth)
         {
             //Limitar recursividad
             if (recursionDepth > 5)
@@ -172,15 +174,15 @@ namespace TraficoFauna.SphereCollision
             //Buscar el punto de colision mas cercano de todos los objetos candidatos
             float minCollisionDistSq = float.MaxValue;
             Vector3 realMovementVector = movementVector;
-            TgcBoundingBox.Face collisionFace = null;
-            TgcBoundingBox collisionObstacle = null;
+            TgcBoundingAxisAlignBox.Face collisionFace = null;
+            TgcBoundingAxisAlignBox collisionObstacle = null;
             Vector3 nearestPolygonIntersectionPoint = Vector3.Empty;
-            foreach (TgcBoundingBox obstaculoBB in obstaculos)
+            foreach (TgcBoundingAxisAlignBox obstaculoBB in obstaculos)
             {
                 //Obtener los polígonos que conforman las 6 caras del BoundingBox
-                TgcBoundingBox.Face[] bbFaces = obstaculoBB.computeFaces();
+                TgcBoundingAxisAlignBox.Face[] bbFaces = obstaculoBB.computeFaces();
 
-                foreach (TgcBoundingBox.Face bbFace in bbFaces)
+                foreach (TgcBoundingAxisAlignBox.Face bbFace in bbFaces)
                 {
                     Vector3 pNormal = TgcCollisionUtils.getPlaneNormal(bbFace.Plane);
 
@@ -332,7 +334,7 @@ namespace TraficoFauna.SphereCollision
         /// Ver si un punto pertenece a una cara de un BoundingBox
         /// </summary>
         /// <returns>True si pertenece</returns>
-        private bool pointInBounbingBoxFace(Vector3 p, TgcBoundingBox.Face bbFace)
+        private bool pointInBounbingBoxFace(Vector3 p, TgcBoundingAxisAlignBox.Face bbFace)
         {
             Vector3 min = bbFace.Extremes[0];
             Vector3 max = bbFace.Extremes[3];

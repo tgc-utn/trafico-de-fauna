@@ -31,6 +31,8 @@ using TGC.Core.SkeletalAnimation;
 using TGC.Core.Textures;
 using TGC.Core.Utils;
 using TGC.Core.Direct3D;
+using TGC.Core.BoundingVolumes;
+using TGC.Core.Collision;
 
 namespace Examples.TraficoFauna.Enemies
 {
@@ -641,7 +643,7 @@ namespace Examples.TraficoFauna.Enemies
         /// Indica si la vista directa del enemigo choca con el objeto indicado al mirar hacia el jugador.
         /// Devuelve true si la vista choca contra el objeto.
         /// </summary>
-        private bool viewCollideWithOccluder(Vector3 enemyPos, Vector3 mainCharacterPos, TgcBoundingBox objectAabb, float visionY)
+        private bool viewCollideWithOccluder(Vector3 enemyPos, Vector3 mainCharacterPos, TgcBoundingAxisAlignBox objectAabb, float visionY)
         {
             Vector3 q;
             if (TgcCollisionUtils.intersectSegmentAABB(

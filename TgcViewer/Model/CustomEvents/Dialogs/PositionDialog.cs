@@ -22,6 +22,7 @@ using Examples.TraficoFauna.Dialogs;
 using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.CustomEvents.Dialogs
 {
@@ -41,7 +42,7 @@ namespace Examples.TraficoFauna.CustomEvents.Dialogs
             GOING_OUT,
         }
 
-        TgcBoundingBox boundingBox;
+        TgcBoundingAxisAlignBox boundingBox;
         bool onlyOnce;
         string text;
         State currentState;

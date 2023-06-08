@@ -20,6 +20,7 @@ using TraficoFauna.Examples;
 using Examples.TraficoFauna.Meshes;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.CustomEvents.ZonasEspeciales
 {
@@ -30,7 +31,7 @@ namespace Examples.TraficoFauna.CustomEvents.ZonasEspeciales
     public class ZonaDeMuerte : CustomEvent
     {
 
-        TgcBoundingBox boundingBox;
+        TgcBoundingAxisAlignBox boundingBox;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {

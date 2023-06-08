@@ -44,6 +44,7 @@ namespace Examples.TraficoFauna.CustomEvents.Surfaces
             TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshData);
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             mesh = (MeshAnimatedTexture)scene.Meshes[0];
+            mesh.AutoTransformEnable = true;
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
 

@@ -22,6 +22,7 @@ using System.Drawing;
 using Examples.TraficoFauna.Interpolators;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna.Escondites
 {

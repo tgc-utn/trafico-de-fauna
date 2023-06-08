@@ -53,8 +53,9 @@ namespace Examples.TraficoFauna.Bananas
             //Cargar varios para el pool
             for (int i = 0; i < MAX_BANANAS; i++)
             {
-                TgcMeshShader m = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
-                meshes.Add(m);
+                TgcMeshShader mesh = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
+                mesh.AutoTransformEnable = true;
+                meshes.Add(mesh);
             }
 
             freeAllMeshes();

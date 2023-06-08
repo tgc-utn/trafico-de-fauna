@@ -25,6 +25,7 @@ using Examples.TraficoFauna.ItemsAnimal;
 using TGC.Core.Geometry;
 using TGC.Core.Terrain;
 using TgcViewer;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna
 {

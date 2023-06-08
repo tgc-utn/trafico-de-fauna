@@ -22,6 +22,7 @@ using TraficoFauna.Examples;
 using Examples.TraficoFauna.Dialogs;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
+using TGC.Core.BoundingVolumes;
 
 namespace Examples.TraficoFauna
 {
@@ -62,8 +63,8 @@ namespace Examples.TraficoFauna
             get { return sector; }
         }
 
-        TgcBoundingBox boundingBox;
-        public TgcBoundingBox BoundingBox
+        TgcBoundingAxisAlignBox boundingBox;
+        public TgcBoundingAxisAlignBox BoundingBox
         {
             get { return boundingBox; }
         }
