@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.Camara;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Model.Camera
+namespace Trafico.De.Fauna.Model.Camera
 {
     public class GameThirdPersonCamera : TgcCamera
     {

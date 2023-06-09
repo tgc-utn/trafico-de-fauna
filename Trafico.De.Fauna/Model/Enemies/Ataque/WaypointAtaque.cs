@@ -18,10 +18,9 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Model.Enemies.Ataque
+namespace Trafico.De.Fauna.Model.Enemies.Ataque
 {
     /// <summary>
     /// Waypoint para que el Guardia navegue por el sector en modo ataque

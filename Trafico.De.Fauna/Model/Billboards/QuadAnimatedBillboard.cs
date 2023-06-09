@@ -19,15 +19,14 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Billboards
+namespace Trafico.De.Fauna.Model.Billboards
 {
     /// <summary>
     /// Herramienta para crear Billboards animados.

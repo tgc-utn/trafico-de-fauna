@@ -22,9 +22,9 @@ using System.Drawing;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Textures;
-using TgcViewer.Model.Interpolators;
+using Trafico.De.Fauna.Model.Interpolators;
 
-namespace TgcViewer.Model.PostProcess
+namespace Trafico.De.Fauna.Model.PostProcess
 {
     /// <summary>
     /// Efectos de post procesado

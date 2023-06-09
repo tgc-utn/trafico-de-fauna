@@ -18,11 +18,10 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Model.Enemies
+namespace Trafico.De.Fauna.Model.Enemies
 {
     public class GuardiaWaypoint
     {

@@ -20,7 +20,6 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
@@ -28,12 +27,11 @@ using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
 using TGC.Core.Textures;
-using TGC.Core.Utils;
-using TgcViewer.Model.Enemies.Ataque;
-using TgcViewer.Model.MainCharacters;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Enemies.Ataque;
+using Trafico.De.Fauna.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Enemies
+namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
     /// Enemigo Guardia

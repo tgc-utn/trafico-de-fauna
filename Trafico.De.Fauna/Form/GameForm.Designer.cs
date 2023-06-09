@@ -1,4 +1,4 @@
-﻿namespace TgcViewer.Form
+﻿namespace Trafico.De.Fauna.Form
 {
     partial class GameForm
     {

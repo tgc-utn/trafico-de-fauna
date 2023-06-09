@@ -17,16 +17,15 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Billboards;
-using TgcViewer.Model.Interpolators;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Billboards;
+using Trafico.De.Fauna.Model.Interpolators;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.CustomEvents.Surfaces
+namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
 {
 
     /// <summary>

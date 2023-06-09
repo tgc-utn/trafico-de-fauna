@@ -6,11 +6,11 @@ using System.Resources;
 // La información general sobre un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos atributos para modificar la información
 // asociada con un ensamblado.
-[assembly: AssemblyTitle("Trafico de Fauna")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Tráfico de fauna")]
+[assembly: AssemblyDescription("Videojuego sobre tráfico de fauna diseñado por tgcutn.com.ar y educ.ar")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Educ.ar")]
-[assembly: AssemblyProduct("Trafico de Fauna")]
+[assembly: AssemblyCompany("TGC - UTN.BA - Educ.ar")]
+[assembly: AssemblyProduct("Tráfico de fauna")]
 [assembly: AssemblyCopyright("© Educ.ar 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -30,6 +30,6 @@ using System.Resources;
 //      Número de versión de compilación
 //      Revisión
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("")]

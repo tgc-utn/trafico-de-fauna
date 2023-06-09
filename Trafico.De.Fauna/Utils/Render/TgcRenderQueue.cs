@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Utils.Render
+namespace Trafico.De.Fauna.Utils.Render
 {
     /// <summary>
     /// Herramienta para administrar todos los elementos que se quieren renderizar

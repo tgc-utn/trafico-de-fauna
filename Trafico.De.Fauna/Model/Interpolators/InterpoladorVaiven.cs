@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace TgcViewer.Model.Interpolators
+namespace Trafico.De.Fauna.Model.Interpolators
 {
     /// <summary>
     /// Utilidad para interpolar un valor entre un MIN y un MAX, variando en forma de vaiven (subi y baja)

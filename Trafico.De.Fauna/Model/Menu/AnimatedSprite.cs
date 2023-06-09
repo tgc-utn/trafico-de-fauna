@@ -19,12 +19,11 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Drawing;
-using Microsoft.DirectX;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
-namespace TgcViewer.Model.Menu
+namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
     /// Utilidad para Sprites 2D animados en forma de tile dentro de una textura

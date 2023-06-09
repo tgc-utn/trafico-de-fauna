@@ -26,7 +26,7 @@ using Microsoft.DirectX.DirectInput;
 using TGC.Core.Mathematica;
 using TGC.Core.Utils;
 
-namespace TgcViewer.Model
+namespace Trafico.De.Fauna.Model
 {
     /// <summary>
     /// Configuracion de todo el juego

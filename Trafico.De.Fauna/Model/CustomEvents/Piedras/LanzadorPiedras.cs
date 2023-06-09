@@ -18,15 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TGC.Core.Utils;
-using TgcViewer.Model.Interpolators;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Interpolators;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.CustomEvents.Piedras
+namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
 {
 
     /// <summary>

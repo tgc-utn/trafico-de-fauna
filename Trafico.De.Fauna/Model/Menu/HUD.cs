@@ -19,19 +19,18 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Drawing;
 using System.Drawing.Text;
-using Microsoft.DirectX;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
-using TgcViewer.Model.Interpolators;
-using TgcViewer.Model.ItemsAnimal;
-using TgcViewer.Model.Levels;
-using TgcViewer.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Interpolators;
+using Trafico.De.Fauna.Model.ItemsAnimal;
+using Trafico.De.Fauna.Model.Levels;
+using Trafico.De.Fauna.Model.MainCharacters;
 using Device = Microsoft.DirectX.Direct3D.Device;
 
-namespace TgcViewer.Model.Menu
+namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
     /// Controles visuales del juego

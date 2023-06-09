@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
-using TgcViewer.Model.MainCharacters;
+using Trafico.De.Fauna.Model.MainCharacters;
 
-namespace TgcViewer.Model.Saltos
+namespace Trafico.De.Fauna.Model.Saltos
 {
     /// <summary>
     /// Salto entre dos plataformas

@@ -19,7 +19,6 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
@@ -27,18 +26,17 @@ using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
-using TGC.Core.Utils;
-using TgcViewer.Model.Billboards;
-using TgcViewer.Model.Camera;
-using TgcViewer.Model.Escondites;
-using TgcViewer.Model.ItemsAnimal;
-using TgcViewer.Model.Levels;
-using TgcViewer.Model.Meshes;
-using TgcViewer.Model.Particles;
-using TgcViewer.Model.Saltos;
-using TgcViewer.Model.Sonidos;
+using Trafico.De.Fauna.Model.Billboards;
+using Trafico.De.Fauna.Model.Camera;
+using Trafico.De.Fauna.Model.Escondites;
+using Trafico.De.Fauna.Model.ItemsAnimal;
+using Trafico.De.Fauna.Model.Levels;
+using Trafico.De.Fauna.Model.Meshes;
+using Trafico.De.Fauna.Model.Particles;
+using Trafico.De.Fauna.Model.Saltos;
+using Trafico.De.Fauna.Model.Sonidos;
 
-namespace TgcViewer.Model.MainCharacters
+namespace Trafico.De.Fauna.Model.MainCharacters
 {
     /// <summary>
     /// Personaje principal del juego

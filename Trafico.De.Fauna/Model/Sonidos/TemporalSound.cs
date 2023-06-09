@@ -19,7 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using TGC.Core.Sound;
 
-namespace TgcViewer.Model.Sonidos
+namespace Trafico.De.Fauna.Model.Sonidos
 {
     /// <summary>
     /// Sonido sin loop que se ejecuta con una cierta frecuencia

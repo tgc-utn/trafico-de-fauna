@@ -18,14 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Mathematica;
+using TGC.Core.MeshFactory;
 using TGC.Core.SceneLoader;
-using TGC.Core.Utils;
-using TgcViewer.Utils.Render;
+using Trafico.De.Fauna.Utils.Render;
 
-namespace TgcViewer.Model.Meshes
+namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
     /// Mesh que permite que se animen sus coordenadas UV en base a una velocidad especificada.
@@ -134,7 +133,7 @@ namespace TgcViewer.Model.Meshes
         /// <summary>
         /// Factory customizado 
         /// </summary>
-        public class MeshAnimatedTextureFactory : TgcSceneLoader.IMeshFactory
+        public class MeshAnimatedTextureFactory : IMeshFactory
         {
             public TgcMesh createNewMesh(Mesh d3dMesh, string meshName, TgcMesh.MeshRenderType renderType)
             {

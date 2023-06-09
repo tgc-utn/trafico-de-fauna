@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using TGC.Core.KeyFrameLoader;
 
-namespace TgcViewer.Model.Bananas
+namespace Trafico.De.Fauna.Model.Bananas
 {
     /// <summary>
     /// Pool con modelos de cajas de bananas para reutilizar

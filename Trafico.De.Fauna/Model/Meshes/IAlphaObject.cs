@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace TgcViewer.Model.Meshes
+namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
     /// Objeto que se renderiza con AlphaBlendng

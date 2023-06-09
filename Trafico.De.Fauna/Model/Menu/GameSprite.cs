@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
-using Microsoft.DirectX;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
-namespace TgcViewer.Model.Menu
+namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
     /// Utilidad para dibujar texturas con transformaciones 2D

@@ -18,14 +18,12 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TGC.Core.Utils;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model
+namespace Trafico.De.Fauna.Model
 {
     /// <summary>
     /// Utilidades generales del juego

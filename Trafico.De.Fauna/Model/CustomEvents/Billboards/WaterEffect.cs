@@ -21,10 +21,10 @@ using System.Drawing;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Billboards;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Billboards;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.CustomEvents.Billboards
+namespace Trafico.De.Fauna.Model.CustomEvents.Billboards
 {
 
     /// <summary>

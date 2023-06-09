@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Bananas
+namespace Trafico.De.Fauna.Model.Bananas
 {
     /// <summary>
     /// Pool con modelos de bananas para reutilizar

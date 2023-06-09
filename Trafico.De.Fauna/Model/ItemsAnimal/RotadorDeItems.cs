@@ -19,9 +19,8 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TGC.Core.Utils;
 
-namespace TgcViewer.Model.ItemsAnimal
+namespace Trafico.De.Fauna.Model.ItemsAnimal
 {
     /// <summary>
     /// Utilidad para rotar items que flotan en el suelo

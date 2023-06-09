@@ -21,7 +21,7 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TgcViewer.Model.Menu.Error
+namespace Trafico.De.Fauna.Model.Menu.Error
 {
     /// <summary>
     /// Ventana de errores

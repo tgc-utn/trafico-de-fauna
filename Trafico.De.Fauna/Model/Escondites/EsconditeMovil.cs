@@ -18,14 +18,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Drawing;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Interpolators;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Interpolators;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Escondites
+namespace Trafico.De.Fauna.Model.Escondites
 {
     /// <summary>
     /// Objetos 3D para agarrar y esconderse

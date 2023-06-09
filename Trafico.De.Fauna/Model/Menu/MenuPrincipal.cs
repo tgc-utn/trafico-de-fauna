@@ -18,16 +18,15 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Windows.Forms;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
-using TgcViewer.Model.Interpolators;
+using Trafico.De.Fauna.Model.Interpolators;
 using Device = Microsoft.DirectX.Direct3D.Device;
 
-namespace TgcViewer.Model.Menu
+namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
     /// Menu principal del juego

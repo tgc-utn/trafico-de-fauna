@@ -26,10 +26,10 @@ using TGC.Core.Input;
 using TGC.Core.Shaders;
 using TGC.Core.Sound;
 using TGC.Core.Textures;
-using TgcViewer.Model;
-using TgcViewer.Model.Menu.Error;
+using Trafico.De.Fauna.Model;
+using Trafico.De.Fauna.Model.Menu.Error;
 
-namespace TgcViewer.Form
+namespace Trafico.De.Fauna.Form
 {
     /// <summary>
     /// Formulario principal de la aplicación

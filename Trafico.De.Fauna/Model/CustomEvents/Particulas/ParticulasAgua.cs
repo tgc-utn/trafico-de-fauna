@@ -17,13 +17,12 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Meshes;
-using TgcViewer.Model.Particles;
+using Trafico.De.Fauna.Model.Meshes;
+using Trafico.De.Fauna.Model.Particles;
 
-namespace TgcViewer.Model.CustomEvents.Particulas
+namespace Trafico.De.Fauna.Model.CustomEvents.Particulas
 {
     /// <summary>
     /// Efecto de agua salpicando

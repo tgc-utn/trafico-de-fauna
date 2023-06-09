@@ -21,14 +21,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
-using Microsoft.DirectX;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
-using TgcViewer.Model.Menu;
+using Trafico.De.Fauna.Model.Menu;
 
-namespace TgcViewer.Model.Dialogs
+namespace Trafico.De.Fauna.Model.Dialogs
 {
     /// <summary>
     /// Herramienta para mostrar un cuadro de dialogo con varias paginas de texto que se

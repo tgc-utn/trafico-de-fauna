@@ -22,20 +22,20 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Example;
 using TGC.Core.Input;
-using TgcViewer.Model.Bananas;
-using TgcViewer.Model.Camera;
-using TgcViewer.Model.CustomEvents;
-using TgcViewer.Model.Debug;
-using TgcViewer.Model.Dialogs;
-using TgcViewer.Model.Enemies;
-using TgcViewer.Model.GameModes;
-using TgcViewer.Model.Levels;
-using TgcViewer.Model.MainCharacters;
-using TgcViewer.Model.Menu;
-using TgcViewer.Model.PostProcess;
-using TgcViewer.Model.Sonidos;
+using Trafico.De.Fauna.Model.Bananas;
+using Trafico.De.Fauna.Model.Camera;
+using Trafico.De.Fauna.Model.CustomEvents;
+using Trafico.De.Fauna.Model.Debug;
+using Trafico.De.Fauna.Model.Dialogs;
+using Trafico.De.Fauna.Model.Enemies;
+using Trafico.De.Fauna.Model.GameModes;
+using Trafico.De.Fauna.Model.Levels;
+using Trafico.De.Fauna.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Menu;
+using Trafico.De.Fauna.Model.PostProcess;
+using Trafico.De.Fauna.Model.Sonidos;
 
-namespace TgcViewer.Model
+namespace Trafico.De.Fauna.Model
 {
     /// <summary>
     /// Clase principal del juego

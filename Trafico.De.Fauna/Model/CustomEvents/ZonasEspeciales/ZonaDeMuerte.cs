@@ -19,9 +19,9 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using TGC.Core.BoundingVolumes;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.CustomEvents.ZonasEspeciales
+namespace Trafico.De.Fauna.Model.CustomEvents.ZonasEspeciales
 {
 
     /// <summary>

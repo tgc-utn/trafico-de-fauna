@@ -19,7 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using TGC.Core.BoundingVolumes;
 
-namespace TgcViewer.Model.Meshes
+namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
     /// Objeto con el que se puede colisionar

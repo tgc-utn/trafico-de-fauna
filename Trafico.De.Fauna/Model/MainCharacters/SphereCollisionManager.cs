@@ -18,14 +18,12 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
-using TGC.Core.Geometry;
 using TGC.Core.Mathematica;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.MainCharacters
+namespace Trafico.De.Fauna.Model.MainCharacters
 {
     /// <summary>
     /// Herramienta para realizar el movimiento de una Esfera con detección de colisiones,

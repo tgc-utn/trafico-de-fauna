@@ -20,14 +20,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Particles
+namespace Trafico.De.Fauna.Model.Particles
 {
     /// <summary>
     /// Emisor de particulas para generar efectos de particulas

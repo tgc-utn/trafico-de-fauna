@@ -17,16 +17,15 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
-using TgcViewer.Model.ItemsAnimal;
-using TgcViewer.Model.MainCharacters;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.ItemsAnimal;
+using Trafico.De.Fauna.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Bananas
+namespace Trafico.De.Fauna.Model.Bananas
 {
     /// <summary>
     /// Item de Banana en un sector

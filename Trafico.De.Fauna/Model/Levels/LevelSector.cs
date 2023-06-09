@@ -20,25 +20,23 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TGC.Core.Utils;
-using TgcViewer.Model.Bananas;
-using TgcViewer.Model.Camera;
-using TgcViewer.Model.CustomEvents;
-using TgcViewer.Model.Enemies;
-using TgcViewer.Model.Enemies.Ataque;
-using TgcViewer.Model.Escondites;
-using TgcViewer.Model.ItemsAnimal;
-using TgcViewer.Model.MainCharacters;
-using TgcViewer.Model.Meshes;
-using TgcViewer.Model.Saltos;
-using TgcViewer.Model.Sonidos;
+using Trafico.De.Fauna.Model.Bananas;
+using Trafico.De.Fauna.Model.Camera;
+using Trafico.De.Fauna.Model.CustomEvents;
+using Trafico.De.Fauna.Model.Enemies;
+using Trafico.De.Fauna.Model.Enemies.Ataque;
+using Trafico.De.Fauna.Model.Escondites;
+using Trafico.De.Fauna.Model.ItemsAnimal;
+using Trafico.De.Fauna.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Meshes;
+using Trafico.De.Fauna.Model.Saltos;
+using Trafico.De.Fauna.Model.Sonidos;
 
-namespace TgcViewer.Model.Levels
+namespace Trafico.De.Fauna.Model.Levels
 {
     /// <summary>
     /// Representa un sector de un nivel

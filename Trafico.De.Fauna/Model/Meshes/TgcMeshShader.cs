@@ -17,15 +17,15 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
+using TGC.Core.MeshFactory;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
-using TgcViewer.Utils.Render;
+using Trafico.De.Fauna.Utils.Render;
 
-namespace TgcViewer.Model.Meshes
+namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
     /// Extendemos de TgcMesh para poder redefinir el método executeRender() y agregar renderizado de Shaders. 
@@ -308,7 +308,7 @@ namespace TgcViewer.Model.Meshes
     /// <summary>
     /// Factory customizado para poder crear clase TgcMeshShader
     /// </summary>
-    public class TgcMeshShaderFactory : TgcSceneLoader.IMeshFactory
+    public class TgcMeshShaderFactory : IMeshFactory
     {
         public TgcMesh createNewMesh(Mesh d3dMesh, string meshName, TgcMesh.MeshRenderType renderType)
         {

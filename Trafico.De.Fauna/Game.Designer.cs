@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TgcViewer {
+namespace Trafico.De.Fauna {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

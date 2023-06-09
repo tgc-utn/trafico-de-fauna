@@ -17,10 +17,9 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Microsoft.DirectX;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Model.Interpolators
+namespace Trafico.De.Fauna.Model.Interpolators
 {
     /// <summary>
     /// Interpolador lineal de posicion en 2D.

@@ -20,14 +20,14 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.CustomEvents.Billboards;
-using TgcViewer.Model.CustomEvents.Dialogs;
-using TgcViewer.Model.CustomEvents.Particulas;
-using TgcViewer.Model.CustomEvents.Piedras;
-using TgcViewer.Model.CustomEvents.Surfaces;
-using TgcViewer.Model.CustomEvents.ZonasEspeciales;
+using Trafico.De.Fauna.Model.CustomEvents.Billboards;
+using Trafico.De.Fauna.Model.CustomEvents.Dialogs;
+using Trafico.De.Fauna.Model.CustomEvents.Particulas;
+using Trafico.De.Fauna.Model.CustomEvents.Piedras;
+using Trafico.De.Fauna.Model.CustomEvents.Surfaces;
+using Trafico.De.Fauna.Model.CustomEvents.ZonasEspeciales;
 
-namespace TgcViewer.Model.CustomEvents
+namespace Trafico.De.Fauna.Model.CustomEvents
 {
     /// <summary>
     /// Herramienta para manejar la carga de CustomEvents

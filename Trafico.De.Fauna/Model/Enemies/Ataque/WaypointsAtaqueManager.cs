@@ -19,12 +19,11 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.Collision;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 
-namespace TgcViewer.Model.Enemies.Ataque
+namespace Trafico.De.Fauna.Model.Enemies.Ataque
 {
     /// <summary>
     /// Utilidad para manejar todos los Waypoints que se usan para cuando los Guardias atacan

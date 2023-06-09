@@ -18,13 +18,12 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
-namespace TgcViewer.Model.Billboards
+namespace Trafico.De.Fauna.Model.Billboards
 {
     public class PointSpriteBillboard
     {

@@ -18,11 +18,10 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Drawing;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Mathematica;
 
-namespace TgcViewer.Model.Particles
+namespace Trafico.De.Fauna.Model.Particles
 {
     /// <summary>
     /// Particula a ser emitida por el emisor de particulas

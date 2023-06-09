@@ -1,4 +1,4 @@
-﻿namespace TgcViewer.Model.Menu.Error
+﻿namespace Trafico.De.Fauna.Model.Menu.Error
 {
     partial class ErrorWindow
     {

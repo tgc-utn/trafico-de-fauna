@@ -19,12 +19,11 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Levels;
+using Trafico.De.Fauna.Model.Levels;
 
-namespace TgcViewer.Model.Enemies
+namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
     /// Utilidad para manejar a los Guardias

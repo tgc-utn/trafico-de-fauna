@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.MainCharacters;
+using Trafico.De.Fauna.Model.MainCharacters;
 
-namespace TgcViewer.Model.Saltos
+namespace Trafico.De.Fauna.Model.Saltos
 {
     public class SaltosManager
     {

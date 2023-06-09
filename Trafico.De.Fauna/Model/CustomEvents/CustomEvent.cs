@@ -18,9 +18,9 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.CustomEvents
+namespace Trafico.De.Fauna.Model.CustomEvents
 {
     /// <summary>
     /// Evento personalizado que se ejecuta en un sector bajo sus propias condiciones.

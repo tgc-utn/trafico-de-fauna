@@ -19,14 +19,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Drawing;
 using System.Drawing.Text;
-using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
-using TgcViewer.Model.Menu;
+using Trafico.De.Fauna.Model.Menu;
 
-namespace TgcViewer.Model.Dialogs
+namespace Trafico.De.Fauna.Model.Dialogs
 {
     /// <summary>
     /// Herramienta para mostrar un cuadro de texto simple, con poco texto y sin opciones.

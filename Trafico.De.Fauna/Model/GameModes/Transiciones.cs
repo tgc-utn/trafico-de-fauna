@@ -19,10 +19,10 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Textures;
-using TgcViewer.Model.Interpolators;
-using TgcViewer.Model.Menu;
+using Trafico.De.Fauna.Model.Interpolators;
+using Trafico.De.Fauna.Model.Menu;
 
-namespace TgcViewer.Model.GameModes
+namespace Trafico.De.Fauna.Model.GameModes
 {
     /// <summary>
     /// Utilidad para manejar transiciones especiales del juego: loading de nivel, loading de sector, etc

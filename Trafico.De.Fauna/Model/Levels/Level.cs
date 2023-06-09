@@ -20,15 +20,14 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.Terrain;
-using TgcViewer.Model.ItemsAnimal;
-using TgcViewer.Model.MainCharacters;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.ItemsAnimal;
+using Trafico.De.Fauna.Model.MainCharacters;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model.Levels
+namespace Trafico.De.Fauna.Model.Levels
 {
     /// <summary>
     /// Un nivel del juego

@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using TGC.Core.SkeletalAnimation;
 
-namespace TgcViewer.Model.Enemies
+namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
     /// Pool con modelos de guardias para reutilizar

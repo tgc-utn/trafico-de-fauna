@@ -20,9 +20,9 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.SceneLoader;
-using TgcViewer.Model.Meshes;
+using Trafico.De.Fauna.Model.Meshes;
 
-namespace TgcViewer.Model
+namespace Trafico.De.Fauna.Model
 {
     /// <summary>
     /// Utilidad para shaders del juego
