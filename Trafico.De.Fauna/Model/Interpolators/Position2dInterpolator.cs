@@ -18,6 +18,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Interpolators
 {
@@ -26,8 +27,8 @@ namespace TgcViewer.Model.Interpolators
     /// </summary>
     public class Position2dInterpolator
     {
-        Vector2 current;
-        Vector2 dir;
+        TGCVector2 current;
+        TGCVector2 dir;
         float distanceToTravel;
 
         float speed;
@@ -40,21 +41,21 @@ namespace TgcViewer.Model.Interpolators
             set { speed = value; }
         }
 
-        Vector2 init;
+        TGCVector2 init;
         /// <summary>
         /// Posicion inicial
         /// </summary>
-        public Vector2 Init
+        public TGCVector2 Init
         {
             get { return init; }
             set { init = value; }
         }
 
-        Vector2 end;
+        TGCVector2 end;
         /// <summary>
         /// Posicion final
         /// </summary>
-        public Vector2 End
+        public TGCVector2 End
         {
             get { return end; }
             set { end = value; }
@@ -76,7 +77,7 @@ namespace TgcViewer.Model.Interpolators
         /// Actualizar estado del interpolador
         /// </summary>
         /// <returns>Nueva posicion</returns>
-        public Vector2 update(float elapsedTime)
+        public TGCVector2 update(float elapsedTime)
         {
             float movement = speed * elapsedTime;
             distanceToTravel -= movement;
@@ -87,7 +88,7 @@ namespace TgcViewer.Model.Interpolators
             }
             else
             {
-                current += Vector2.Scale(dir, movement);
+                current += TGCVector2.Scale(dir, movement);
             }
             return current;
         }

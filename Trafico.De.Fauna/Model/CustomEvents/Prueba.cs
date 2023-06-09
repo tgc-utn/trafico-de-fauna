@@ -62,7 +62,7 @@ namespace TgcViewer.Model.CustomEvents
 
         public override void renderDebug()
         {
-            boundingBox.render();
+            boundingBox.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -72,7 +72,7 @@ namespace TgcViewer.Model.CustomEvents
 
         public override void dispose()
         {
-            boundingBox.dispose();
+            boundingBox.Dispose();
         }
     }
 }

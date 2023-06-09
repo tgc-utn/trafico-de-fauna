@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Billboards;
 using TgcViewer.Model.Interpolators;
@@ -42,7 +43,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
             var device = D3DDevice.Instance.Device;
             aabb = GameUtils.createBBFromMeshData(meshData);
             billboard = new HorizontalDisplacementBillboard(device, GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
-            billboard.Speed = new Vector2(0, 0.3f);
+            billboard.Speed = new TGCVector2(0, 0.3f);
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
         }
@@ -59,7 +60,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public override void update(float elapsedTime)
         {
-            billboard.Speed = new Vector2(vaiven.update(elapsedTime), 0.3f);
+            billboard.Speed = new TGCVector2(vaiven.update(elapsedTime), 0.3f);
         }
 
         public override void render()
@@ -73,12 +74,12 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public void renderWithAlpha()
         {
-            billboard.render();
+            billboard.Render();
         }
 
         public override void renderDebug()
         {
-            aabb.render();
+            aabb.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -88,8 +89,8 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public override void dispose()
         {
-            billboard.dispose();
-            aabb.dispose();
+            billboard.Dispose();
+            aabb.Dispose();
         }
 
 

@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TgcViewer.Model.Interpolators;
@@ -37,13 +38,13 @@ namespace TgcViewer.Model.CustomEvents.Piedras
         readonly float ROTACION_VELOCIDAD = FastMath.PI;
 
         TgcMeshShader mesh;
-        Vector3 posOrigen;
-        Vector3 posFinal;
+        TGCVector3 posOrigen;
+        TGCVector3 posFinal;
         float frecuencia;
         float velocidad;
         bool lanzando;
         float acumTime;
-        Vector3 movementDir;
+        TGCVector3 movementDir;
         float origDistanceToTravel;
         float distanceToTravel;
         InterpoladorVaiven vaiven;
@@ -60,12 +61,12 @@ namespace TgcViewer.Model.CustomEvents.Piedras
             string meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransformEnable = true;
+            mesh.AutoTransform = true;
 
             //Extremos y direccion de movimiento
             axisX = GameUtils.getBBExtremeCentersXZ(meshData, out posOrigen, out posFinal);
             boundingBox = GameUtils.createBBFromMeshData(meshData);
-            Vector3 axisRadius = mesh.BoundingBox.calculateAxisRadius();
+            TGCVector3 axisRadius = mesh.BoundingBox.calculateAxisRadius();
             meshOriginalPosY = axisRadius.Y;
             posOrigen.Y = meshOriginalPosY;
             posFinal.Y = meshOriginalPosY;
@@ -145,16 +146,16 @@ namespace TgcViewer.Model.CustomEvents.Piedras
                     //Rotar segun orientacion
                     if (axisX)
                     {
-                        mesh.rotateZ(rotAngle * elapsedTime);
+                        mesh.RotateZ(rotAngle * elapsedTime);
                     }
                     else
                     {
-                        mesh.rotateX(rotAngle * elapsedTime);
+                        mesh.RotateX(rotAngle * elapsedTime);
                     }
 
                     //Desplazar en XZ y mover en Y con vaiven 
-                    Vector3 move = Vector3.Scale(movementDir, movement);
-                    Vector3 newPos = mesh.Position + move;
+                    TGCVector3 move = TGCVector3.Scale(movementDir, movement);
+                    TGCVector3 newPos = mesh.Position + move;
                     newPos.Y = meshOriginalPosY + vaiven.update(elapsedTime);
                     mesh.Position = newPos;
                 }
@@ -183,7 +184,7 @@ namespace TgcViewer.Model.CustomEvents.Piedras
                     mesh.Enabled = true;
                     mesh.Position = posOrigen;
                     distanceToTravel = origDistanceToTravel;
-                    mesh.Rotation = new Vector3(0, 0, 0);
+                    mesh.Rotation = new TGCVector3(0, 0, 0);
 
                     //Activar sonido de rodando
                     GameModel.instance.sonidos.piedra_rodando.play(true);
@@ -203,7 +204,7 @@ namespace TgcViewer.Model.CustomEvents.Piedras
 
         public override void renderDebug()
         {
-            boundingBox.render();
+            boundingBox.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -213,9 +214,9 @@ namespace TgcViewer.Model.CustomEvents.Piedras
 
         public override void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
             mesh = null;
-            boundingBox.dispose();
+            boundingBox.Dispose();
             boundingBox = null;
         }
     }

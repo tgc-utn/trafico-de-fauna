@@ -19,12 +19,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.DirectX;
 using TGC.Core.Camara;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Camera
 {
     public class GameThirdPersonCamera : TgcCamera
     {
-        static readonly Vector3 UP_VECTOR = new Vector3(0, 1, 0);
+        static readonly TGCVector3 UP_VECTOR = new TGCVector3(0, 1, 0);
 
         float offsetHeight;
         /// <summary>
@@ -47,18 +48,18 @@ namespace TgcViewer.Model.Camera
             set { offsetForward = value; }
         }
 
-        Vector3 targetDisplacement;
+        TGCVector3 targetDisplacement;
         /// <summary>
         /// Desplazamiento final que se le hace al target para acomodar la camara en un cierto
         /// rincon de la pantalla
         /// </summary>
-        public Vector3 TargetDisplacement
+        public TGCVector3 TargetDisplacement
         {
             get { return targetDisplacement; }
             set { targetDisplacement = value; }
         }
 
-        Matrix viewMatrix;
+        TGCMatrix viewTGCMatrix;
 
         float rotationY;
         /// <summary>
@@ -70,21 +71,21 @@ namespace TgcViewer.Model.Camera
             set { rotationY = value; }
         }
 
-        Vector3 target;
+        TGCVector3 target;
         /// <summary>
         /// Objetivo al cual la camara tiene que apuntar
         /// </summary>
-        public Vector3 Target
+        public TGCVector3 Target
         {
             get { return target; }
             set { target = value; }
         }
 
-        Vector3 position;
+        TGCVector3 position;
         /// <summary>
         /// Posicion del ojo de la camara
         /// </summary>
-        public Vector3 Position
+        public TGCVector3 Position
         {
             get { return position; }
             set { position = value; }
@@ -95,9 +96,9 @@ namespace TgcViewer.Model.Camera
             offsetHeight = 20;
             offsetForward = -120;
             rotationY = 0;
-            targetDisplacement = Vector3.Empty;
-            target = Vector3.Empty;
-            position = Vector3.Empty;
+            targetDisplacement = TGCVector3.Empty;
+            target = TGCVector3.Empty;
+            position = TGCVector3.Empty;
         }
 
         /// <summary>
@@ -106,25 +107,23 @@ namespace TgcViewer.Model.Camera
         /// <param name="pos">Futura posicion de camara generada</param>
         /// <param name="pos">Futuro centro de camara a generada</param>
         /// <returns>Futura matriz de view generada</returns>
-        public Matrix generateViewMatrix(out Vector3 pos, out Vector3 targetCenter)
+        public TGCMatrix generateViewMatrix(out TGCVector3 pos, out TGCVector3 targetCenter)
         {
             //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            targetCenter = Vector3.Add(target, targetDisplacement);
-            Matrix m = Matrix.Translation(0, offsetHeight, offsetForward) * Matrix.RotationY(rotationY) * Matrix.Translation(targetCenter);
+            targetCenter = TGCVector3.Add(target, targetDisplacement);
+            TGCMatrix m = TGCMatrix.Translation(0, offsetHeight, offsetForward) * TGCMatrix.RotationY(rotationY) * TGCMatrix.Translation(targetCenter);
 
             //Extraer la posicion final de la matriz de transformacion
-            pos.X = m.M41;
-            pos.Y = m.M42;
-            pos.Z = m.M43;
+            pos = new TGCVector3(m.M41, m.M42, m.M43);
 
-            //Obtener ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
-            return Matrix.LookAtLH(pos, targetCenter, UP_VECTOR);
+            //Obtener ViewTGCMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
+            return TGCMatrix.LookAtLH(pos, targetCenter, UP_VECTOR);
         }
 
         public override void UpdateCamera(float elapsedTime)
         {
-            Vector3 targetCenter;
-            viewMatrix = generateViewMatrix(out position, out targetCenter); 
+            TGCVector3 targetCenter;
+            viewTGCMatrix = generateViewMatrix(out position, out targetCenter); 
         }
 
         /// <summary>
@@ -136,19 +135,19 @@ namespace TgcViewer.Model.Camera
             rotationY += angle;
         }
 
-        public Vector3 getPosition()
+        public TGCVector3 getPosition()
         {
             return position;
         }
 
-        public Vector3 getLookAt()
+        public TGCVector3 getLookAt()
         {
             return target;
         }
 
         public void updateViewMatrix(Microsoft.DirectX.Direct3D.Device d3dDevice)
         {
-            d3dDevice.Transform.View = viewMatrix;
+            d3dDevice.Transform.View = viewTGCMatrix;
         }
 
     }

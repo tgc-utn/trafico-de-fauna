@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Interpolators;
 using TgcViewer.Model.Meshes;
@@ -44,7 +45,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
             TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshData);
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             mesh = (MeshAnimatedTexture)scene.Meshes[0];
-            mesh.AutoTransformEnable = true;
+            mesh.AutoTransform = true;
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
 
@@ -87,7 +88,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public override void update(float elapsedTime)
         {
-            mesh.Speed = new Vector2(vaiven.update(elapsedTime), speed);
+            mesh.Speed = new TGCVector2(vaiven.update(elapsedTime), speed);
         }
 
         public override void render()
@@ -101,7 +102,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public override void renderDebug()
         {
-            mesh.BoundingBox.render();
+            mesh.BoundingBox.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -111,7 +112,7 @@ namespace TgcViewer.Model.CustomEvents.Surfaces
 
         public override void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
         }
 
 

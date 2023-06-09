@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.Terrain;
 using TgcViewer.Model.ItemsAnimal;
 using TgcViewer.Model.MainCharacters;
@@ -142,8 +143,8 @@ namespace TgcViewer.Model.Levels
             //Load skybox
             string skyboxTexturesPath = levelPath + "SkyBox\\";
             skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 0, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
+            skyBox.Center = new TGCVector3(0, 0, 0);
+            skyBox.Size = new TGCVector3(10000, 10000, 10000);
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxTexturesPath + "Up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxTexturesPath + "Down.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxTexturesPath + "Left.jpg");
@@ -202,7 +203,7 @@ namespace TgcViewer.Model.Levels
         public void render(float elapsedTime, TgcFrustum frustum)
         {
             //Render SkyBox
-            skyBox.render();
+            skyBox.Render();
 
             //render sector
             currentSector.render(elapsedTime, frustum);
@@ -345,7 +346,7 @@ namespace TgcViewer.Model.Levels
             currentSector = null;
 
             //Eliminar skybox
-            skyBox.dispose();
+            skyBox.Dispose();
             skyBox = null;
 
             //Eliminar conectores

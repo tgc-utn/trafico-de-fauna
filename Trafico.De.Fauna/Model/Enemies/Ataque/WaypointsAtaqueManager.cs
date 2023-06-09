@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.DirectX;
 using TGC.Core.Collision;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 
 namespace TgcViewer.Model.Enemies.Ataque
@@ -63,7 +64,7 @@ namespace TgcViewer.Model.Enemies.Ataque
             }
 
             int index = int.Parse(split[1]);
-            Vector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
+            TGCVector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
             nodeCenter.Y = 0;
 
             //Crear waypoint
@@ -124,16 +125,16 @@ namespace TgcViewer.Model.Enemies.Ataque
         /// Obtener la arista mas cercana al punto indicado.
         /// Devuelve tambien el punto en esa arista que esta mas cerca.
         /// </summary>
-        public WaypointAtaqueArista getAristaMasCercana(Vector3 pos, out Vector3 aristaPos)
+        public WaypointAtaqueArista getAristaMasCercana(TGCVector3 pos, out TGCVector3 aristaPos)
         {
             float t;
-            Vector3 minQ = Vector3.Empty;
+            TGCVector3 minQ = TGCVector3.Empty;
             float minDistSq = float.MaxValue;
             WaypointAtaqueArista minArista = null;
             foreach (WaypointAtaqueArista arista in aristas)
             {
-                Vector3 q = TgcCollisionUtils.closestPointSegment(pos, arista.W1.Position, arista.W2.Position, out t);
-                float lengthSq = Vector3.Subtract(q, pos).LengthSq();
+                TGCVector3 q = TgcCollisionUtils.closestPointSegment(pos, arista.W1.Position, arista.W2.Position, out t);
+                float lengthSq = TGCVector3.Subtract(q, pos).LengthSq();
                 if (lengthSq < minDistSq)
                 {
                     minDistSq = lengthSq;

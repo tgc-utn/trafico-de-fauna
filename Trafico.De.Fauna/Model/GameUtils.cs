@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TgcViewer.Model.Meshes;
@@ -46,27 +47,27 @@ namespace TgcViewer.Model
         public static TgcBoundingAxisAlignBox createBBFromMeshData(TgcMeshData meshData)
         {
             return new TgcBoundingAxisAlignBox(
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMin),
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToVector3(meshData.pMax)
                         );
         }
 
-        public static Vector3 getBBCenterFromMeshData(TgcMeshData meshData)
+        public static TGCVector3 getBBCenterFromMeshData(TgcMeshData meshData)
         {
             TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMin),
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToVector3(meshData.pMax)
                         );
             return aabb.calculateBoxCenter();
         }
 
-        public static Vector3 getBBLowerCenterFromMeshData(TgcMeshData meshData)
+        public static TGCVector3 getBBLowerCenterFromMeshData(TgcMeshData meshData)
         {
             TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMin),
-                        TgcParserUtils.float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToVector3(meshData.pMax)
                         );
-            Vector3 center = aabb.calculateBoxCenter();
+            TGCVector3 center = aabb.calculateBoxCenter();
             center.Y = aabb.PMin.Y;
             return center;
         }
@@ -117,15 +118,15 @@ namespace TgcViewer.Model
             TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshDataNode);
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             TgcMeshShader mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransformEnable = true;
+            mesh.AutoTransform = true;
             return mesh;
         }
 
 
-        public static void findExtremeVertices(TgcMeshData meshData, out Vector3 extreme1, out Vector3 extreme2)
+        public static void findExtremeVertices(TgcMeshData meshData, out TGCVector3 extreme1, out TGCVector3 extreme2)
         {
-            extreme1 = new Vector3();
-            extreme2 = new Vector3();
+            extreme1 = new TGCVector3();
+            extreme2 = new TGCVector3();
         }
 
 
@@ -133,22 +134,22 @@ namespace TgcViewer.Model
         /// Devuelve los extremos en X o en Z del Bounding, dependiendo que lado es mas largo (X o Z).
         /// Devuelve true si el lado mas largo es el X
         /// </summary>
-        public static bool getBBExtremeCentersXZ(TgcMeshData meshData, out Vector3 extreme1, out Vector3 extreme2)
+        public static bool getBBExtremeCentersXZ(TgcMeshData meshData, out TGCVector3 extreme1, out TGCVector3 extreme2)
         {
             TgcBoundingAxisAlignBox bb = createBBFromMeshData(meshData);
-            Vector3 size = bb.calculateSize();
-            Vector3 center = bb.calculateBoxCenter();
+            TGCVector3 size = bb.calculateSize();
+            TGCVector3 center = bb.calculateBoxCenter();
 
             if (size.X > size.Z)
             {
-                extreme1 = new Vector3(bb.PMin.X, bb.PMin.Y, center.Z);
-                extreme2 = new Vector3(bb.PMax.X, bb.PMin.Y, center.Z);
+                extreme1 = new TGCVector3(bb.PMin.X, bb.PMin.Y, center.Z);
+                extreme2 = new TGCVector3(bb.PMax.X, bb.PMin.Y, center.Z);
                 return true;
             }
             else
             {
-                extreme1 = new Vector3(center.X, bb.PMin.Y, bb.PMin.Z);
-                extreme2 = new Vector3(center.X, bb.PMin.Y, bb.PMax.Z);
+                extreme1 = new TGCVector3(center.X, bb.PMin.Y, bb.PMin.Z);
+                extreme2 = new TGCVector3(center.X, bb.PMin.Y, bb.PMax.Z);
                 return false;
             }
         }

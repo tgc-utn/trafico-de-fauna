@@ -22,6 +22,7 @@ using System.Drawing.Text;
 using Microsoft.DirectX;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Input;
+using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
 using TgcViewer.Model.Interpolators;
@@ -39,7 +40,7 @@ namespace TgcViewer.Model.Menu
     {
         static readonly Font FONT_COMIC_SANS_24 = new Font("Comic Sans MS", 24, FontStyle.Bold, GraphicsUnit.Pixel);
         public readonly Font GAME_FONT;
-        readonly Vector2 SCREEN_CENTRAL_POS;
+        readonly TGCVector2 SCREEN_CENTRAL_POS;
 
         TgcText2D textoContadorBananas;
         TgcText2D textoContadorItemsAnimal;
@@ -67,7 +68,7 @@ namespace TgcViewer.Model.Menu
         {
             int width = device.Viewport.Width;
             int height = device.Viewport.Height;
-            SCREEN_CENTRAL_POS = new Vector2(width / 2, height / 2);
+            SCREEN_CENTRAL_POS = new TGCVector2(width / 2, height / 2);
 
             string hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
             drawer2D = new Drawer2D(device);
@@ -82,7 +83,7 @@ namespace TgcViewer.Model.Menu
             //Sprite para contador de bananas
             spriteContadorBananas = new GameSprite();
             spriteContadorBananas.Texture = TgcTexture.createTexture(device, hudPath + "hud_bananas.png");
-            spriteContadorBananas.Position = new Vector2(2, 2);
+            spriteContadorBananas.Position = new TGCVector2(2, 2);
 
             //Contador de bananas
             textoContadorBananas = new TgcText2D();
@@ -96,7 +97,7 @@ namespace TgcViewer.Model.Menu
             //Sprite items animal liberados
             spriteItemAnimal = new GameSprite();
             spriteItemAnimal.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
-            spriteItemAnimal.Position = new Vector2(width - 64 - 180, 2);
+            spriteItemAnimal.Position = new TGCVector2(width - 64 - 180, 2);
 
             //Contador de items animal liberados
             textoContadorItemsAnimal = new TgcText2D();
@@ -110,7 +111,7 @@ namespace TgcViewer.Model.Menu
             //Sprite para vidas
             spriteLife = new GameSprite();
             spriteLife.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
-            spriteLife.Position = new Vector2(width / 2 - 32, 2);
+            spriteLife.Position = new TGCVector2(width / 2 - 32, 2);
 
             //Contador de vidas del personaje
             textoContadorVidas = new TgcText2D();
@@ -169,17 +170,17 @@ namespace TgcViewer.Model.Menu
             //Sprite de llave roja
             spriteLlaveRoja = new GameSprite();
             spriteLlaveRoja.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_roja.png");
-            spriteLlaveRoja.Position = new Vector2(width - 70, 100);
+            spriteLlaveRoja.Position = new TGCVector2(width - 70, 100);
 
             //Sprite de llave verde
             spriteLlaveVerde = new GameSprite();
             spriteLlaveVerde.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_verde.png");
-            spriteLlaveVerde.Position = new Vector2(width - 70, 140);
+            spriteLlaveVerde.Position = new TGCVector2(width - 70, 140);
 
             //Sprite de llave amarilla
             spriteLlaveAmarilla = new GameSprite();
             spriteLlaveAmarilla.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_amarilla.png");
-            spriteLlaveAmarilla.Position = new Vector2(width - 70, 180);
+            spriteLlaveAmarilla.Position = new TGCVector2(width - 70, 180);
 
 
 

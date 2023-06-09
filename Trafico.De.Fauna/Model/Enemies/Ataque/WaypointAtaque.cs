@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Enemies.Ataque
 {
@@ -36,11 +37,11 @@ namespace TgcViewer.Model.Enemies.Ataque
             get { return name; }
         }
 
-        Vector3 position;
+        TGCVector3 position;
         /// <summary>
         /// Posicion del Waypoint
         /// </summary>
-        public Vector3 Position
+        public TGCVector3 Position
         {
             get { return position; }
         }
@@ -55,7 +56,7 @@ namespace TgcViewer.Model.Enemies.Ataque
             get { return index; }
         }
 
-        public WaypointAtaque(string name, Vector3 position, int index)
+        public WaypointAtaque(string name, TGCVector3 position, int index)
         {
             this.name = name;
             this.position = position;

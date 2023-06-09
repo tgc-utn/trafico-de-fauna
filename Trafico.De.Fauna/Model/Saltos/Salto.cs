@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TgcViewer.Model.MainCharacters;
 
 namespace TgcViewer.Model.Saltos
@@ -69,9 +70,9 @@ namespace TgcViewer.Model.Saltos
             if (mainCharacter.collideWithAABB(p1.BoundingBox))
             {
                 //Ver si el personaje esa mirando en un angulo tolerable hacia la prox plataforma
-                Vector3 currentVecRot = mainCharacter.getCurrentVecRot();
-                Vector3 plataformaDir = Vector3.Normalize(Vector3.Subtract(p2.Position, p1.Position));
-                float dotAngle = Vector3.Dot(currentVecRot, plataformaDir);
+                TGCVector3 currentVecRot = mainCharacter.getCurrentVecRot();
+                TGCVector3 plataformaDir = TGCVector3.Normalize(TGCVector3.Subtract(p2.Position, p1.Position));
+                float dotAngle = TGCVector3.Dot(currentVecRot, plataformaDir);
                 if (dotAngle > GameModel.instance.gameConfig.fisica.anguloSaltoDotValue)
                 {
                     return true;
@@ -90,8 +91,8 @@ namespace TgcViewer.Model.Saltos
 
         public void renderDebug()
         {
-            plataformas[0].BoundingBox.render();
-            plataformas[1].BoundingBox.render();
+            plataformas[0].BoundingBox.Render();
+            plataformas[1].BoundingBox.Render();
         }
 
         /// <summary>
@@ -109,11 +110,11 @@ namespace TgcViewer.Model.Saltos
                 this.position.Y = boundingBox.PMin.Y;
             }
 
-            Vector3 position;
+            TGCVector3 position;
             /// <summary>
             /// Posicion central en el piso de la plataforma
             /// </summary>
-            public Vector3 Position
+            public TGCVector3 Position
             {
                 get { return position; }
             }
@@ -150,7 +151,7 @@ namespace TgcViewer.Model.Saltos
             {
                 if (boundingBox != null)
                 {
-                    boundingBox.dispose();
+                    boundingBox.Dispose();
                     boundingBox = null;
                 }
 

@@ -22,6 +22,7 @@ using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 
@@ -65,22 +66,22 @@ namespace TgcViewer.Model.Billboards
             set { playing = value; }
         }
 
-        Vector3 pMin;
+        TGCVector3 pMin;
         /// <summary>
         /// Punto minimo del Billboard
         /// </summary>
-        public Vector3 PMin
+        public TGCVector3 PMin
         {
             get { return pMin; }
             set { pMin = value; }
         }
 
-        Vector3 pMax;
+        TGCVector3 pMax;
         /// <summary>
         /// Punto maximo del Billboard.
         /// El valor de Y no se considera. Se toma siempre el de PMin.
         /// </summary>
-        public Vector3 PMax
+        public TGCVector3 PMax
         {
             get { return pMax; }
             set { pMax = value; }
@@ -189,7 +190,7 @@ namespace TgcViewer.Model.Billboards
         /// <summary>
         /// Dibujar Quad
         /// </summary>
-        public void render()
+        public void Render()
         {
             var device = D3DDevice.Instance.Device;
 
@@ -205,7 +206,7 @@ namespace TgcViewer.Model.Billboards
 
             TexturesManager.Instance.set(0, texture);
             device.Material = D3DDevice.DEFAULT_MATERIAL;
-            device.Transform.World = Matrix.Identity;
+            device.Transform.World = TGCMatrix.Identity;
 
             device.VertexFormat = CustomVertex.PositionTextured.Format;
             device.SetStreamSource(0, vertexBuffer, 0);
@@ -216,7 +217,7 @@ namespace TgcViewer.Model.Billboards
             device.RenderState.AlphaTestEnable = false;
         }
 
-        public void dispose()
+        public void Dispose()
         {
             texture.dispose();
             if (vertexBuffer != null && !vertexBuffer.Disposed)

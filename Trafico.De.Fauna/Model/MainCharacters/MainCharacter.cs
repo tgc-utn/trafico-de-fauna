@@ -25,6 +25,7 @@ using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
+using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
 using TGC.Core.Utils;
 using TgcViewer.Model.Billboards;
@@ -69,7 +70,7 @@ namespace TgcViewer.Model.MainCharacters
         //Salto
         float origPosY;
         float origAngleRot;
-        Vector3 jumpDir;
+        TGCVector3 jumpDir;
         float jumpDistanceToTravel;
         float jumpPosY;
         bool jumpYPositive;
@@ -89,7 +90,7 @@ namespace TgcViewer.Model.MainCharacters
         /// Posicion actual
         /// Varia segun si ya se aplico el moveWithCollisions()
         /// </summary>
-        public Vector3 CurrentPos
+        public TGCVector3 CurrentPos
         {
             get { return mesh.Position; }
         }
@@ -191,8 +192,8 @@ namespace TgcViewer.Model.MainCharacters
                     meshPath + "Jumping-TgcSkeletalAnim.xml",
                     meshPath + "Punch-TgcSkeletalAnim.xml"
                 });
-            mesh.AutoTransformEnable = true;
-            mesh.rotateY(Geometry.DegreeToRadian(180f));
+            mesh.AutoTransform = true;
+            mesh.RotateY(Geometry.DegreeToRadian(180f));
             origAngleRot = FastMath.PI;
             origPosY = 0;
             mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
@@ -200,12 +201,12 @@ namespace TgcViewer.Model.MainCharacters
             //BoundingSphere que va a usar el mesh
             mesh.AutoUpdateBoundingBox = false;
             GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            characterSphere = new TgcBoundingSphere(new Vector3(0, fisica.boundingSphereCenterY, 0), fisica.boundingSphereRadio);
+            characterSphere = new TgcBoundingSphere(new TGCVector3(0, fisica.boundingSphereCenterY, 0), fisica.boundingSphereRadio);
 
             //Crear manejador de colisiones
             collisionManager = new SphereCollisionManager();
             collisionManager.GravityEnabled = false;
-            collisionManager.GravityForce = new Vector3(0f, fisica.gravedad, 0f);
+            collisionManager.GravityForce = new TGCVector3(0f, fisica.gravedad, 0f);
             collisionManager.SlideFactor = fisica.slideFactor;
 
             //Configurar camara en Tercer Persona personalizada
@@ -215,14 +216,14 @@ namespace TgcViewer.Model.MainCharacters
             camera.Target = mesh.Position;
             camera.OffsetHeight = camaraConfig.offsetY;
             camera.OffsetForward = camaraConfig.offsetZ;
-            camera.TargetDisplacement = new Vector3(0, camaraConfig.displacementY, 0);
+            camera.TargetDisplacement = new TGCVector3(0, camaraConfig.displacementY, 0);
 
             //Particulas para las pisadas del personaje
             stepsEmitter = new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\pisada_mono.png", 4);
             stepsEmitter.Dispersion = 400;
             stepsEmitter.ParticleTimeToLive = 0.5f;
             stepsEmitter.CreationFrecuency = 0.1f;
-            stepsEmitter.Speed = new Vector3(5, 5, 5);
+            stepsEmitter.Speed = new TGCVector3(5, 5, 5);
             stepsEmitter.MinSizeParticle = 2f;
             stepsEmitter.MaxSizeParticle = 1f;
 
@@ -231,12 +232,12 @@ namespace TgcViewer.Model.MainCharacters
             punchEmitter.Dispersion = 100;
             punchEmitter.ParticleTimeToLive = 0.4f;
             punchEmitter.CreationFrecuency = 1f;
-            punchEmitter.Speed = new Vector3(0, 10, 0);
+            punchEmitter.Speed = new TGCVector3(0, 10, 0);
             punchEmitter.MinSizeParticle = 40f;
             punchEmitter.MaxSizeParticle = 40f;
 
             punchBillboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\personaje_punch_effect.png", new Size(64, 64), 16, 16);
-            punchBillboard.Size = new Vector2(50, 50);
+            punchBillboard.Size = new TGCVector2(50, 50);
             punchBillboard.Position = mesh.Position;
             punchBillboard.Enabled = false;
 
@@ -276,16 +277,16 @@ namespace TgcViewer.Model.MainCharacters
         /// <summary>
         /// Configurar personaje para arrancar en un sector
         /// </summary>
-        public void initInConectorPos(Vector3 conectorPos, GameUtils.Orientacion orientacion)
+        public void initInConectorPos(TGCVector3 conectorPos, GameUtils.Orientacion orientacion)
         {
             //Posicionar
-            Vector3 diffPos = Vector3.Subtract(conectorPos, mesh.Position);
-            mesh.move(diffPos);
+            TGCVector3 diffPos = TGCVector3.Subtract(conectorPos, mesh.Position);
+            mesh.Move(diffPos);
             characterSphere.moveCenter(diffPos);
 
             //Rotar hacia la orientacion indicada
             restoreFaceForward();
-            mesh.Rotation = new Vector3(0, origAngleRot, 0);
+            mesh.Rotation = new TGCVector3(0, origAngleRot, 0);
             float angleRot = 0;
             switch (orientacion)
             {
@@ -302,7 +303,7 @@ namespace TgcViewer.Model.MainCharacters
                     angleRot = -FastMath.PI_HALF;
                     break;
             }
-            mesh.rotateY(angleRot);
+            mesh.RotateY(angleRot);
             camera.RotationY = angleRot;
 
             //Pasar a estado normal
@@ -360,10 +361,10 @@ namespace TgcViewer.Model.MainCharacters
         /// Indica si un objeto ubicado en la posicion especificada se encuentra dentro del
         /// radio de alcance visible por el personaje
         /// </summary>
-        public bool isInProximityRange(Vector3 pos)
+        public bool isInProximityRange(TGCVector3 pos)
         {
             //Ver si esta dentro del radio de vision
-            return Vector3.Subtract(pos, this.CurrentPos).LengthSq() < GameModel.instance.gameConfig.camara.distanciaVisualSq;
+            return TGCVector3.Subtract(pos, this.CurrentPos).LengthSq() < GameModel.instance.gameConfig.camara.distanciaVisualSq;
         }
 
 
@@ -605,13 +606,13 @@ namespace TgcViewer.Model.MainCharacters
             {
                 //Rotar mesh y camara
                 float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                mesh.rotateY(rotAngle);
+                mesh.RotateY(rotAngle);
                 camera.rotateY(rotAngle);
             }
 
 
             //Vector de movimiento
-            Vector3 movementVector = Vector3.Empty;
+            TGCVector3 movementVector = TGCVector3.Empty;
             if (moving)
             {
                 if (!punching)
@@ -626,7 +627,7 @@ namespace TgcViewer.Model.MainCharacters
                 moveForward *= elapsedTime;
 
                 //Aplicar movimiento, desplazarse en base a la rotacion actual del mesh
-                movementVector = new Vector3(
+                movementVector = new TGCVector3(
                     FastMath.Sin(mesh.Rotation.Y) * moveForward,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * moveForward
@@ -650,7 +651,7 @@ namespace TgcViewer.Model.MainCharacters
             }
 
             //Deteccion de colisiones con meshes estaticos del Sector
-            Vector3 newPosition = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
+            TGCVector3 newPosition = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
 
             //Colision con llaves del sector
             level.CurrentSector.checkLlaves(this);
@@ -675,7 +676,7 @@ namespace TgcViewer.Model.MainCharacters
                 punchEmitter.Position = CurrentPos;
 
                 //Ubicar billboard de punch un poco adelante del personaje
-                punchBillboard.Position = CurrentPos + Vector3.Scale(getCurrentVecRot(), PUNCH_BILLBOARD_POS_SCALE);
+                punchBillboard.Position = CurrentPos + TGCVector3.Scale(getCurrentVecRot(), PUNCH_BILLBOARD_POS_SCALE);
                 punchBillboard.RotationY = camera.RotationY;
             }
         }
@@ -685,10 +686,10 @@ namespace TgcViewer.Model.MainCharacters
         /// <summary>
         /// Mover al personaje con deteccion de colisiones por el escenario
         /// </summary>
-        public Vector3 moveWithCollisions(List<ColliderObject> objetosColisionables, Vector3 movementVector)
+        public TGCVector3 moveWithCollisions(List<ColliderObject> objetosColisionables, TGCVector3 movementVector)
         {
-            Vector3 realMovement = collisionManager.moveCharacter(characterSphere, movementVector, objetosColisionables);
-            mesh.move(realMovement);
+            TGCVector3 realMovement = collisionManager.moveCharacter(characterSphere, movementVector, objetosColisionables);
+            mesh.Move(realMovement);
             return realMovement;
         }
 
@@ -710,7 +711,7 @@ namespace TgcViewer.Model.MainCharacters
         /// </summary>
         private void faceBackward()
         {
-            mesh.rotateY(FastMath.PI);
+            mesh.RotateY(FastMath.PI);
             facingBackward = true;
             currentCameraOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardOffsetZ;
             currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardMinOffsetZ;
@@ -724,7 +725,7 @@ namespace TgcViewer.Model.MainCharacters
         {
             if (facingBackward)
             {
-                mesh.rotateY(FastMath.PI);
+                mesh.RotateY(FastMath.PI);
                 facingBackward = false;
                 currentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
                 currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
@@ -791,7 +792,7 @@ namespace TgcViewer.Model.MainCharacters
                 {
                     //Rotar mesh y camara
                     float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                    mesh.rotateY(rotAngle);
+                    mesh.RotateY(rotAngle);
                     camera.rotateY(rotAngle);
 
                     //Animacion
@@ -868,7 +869,7 @@ namespace TgcViewer.Model.MainCharacters
                 {
                     //Rotar mesh y camara
                     float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                    mesh.rotateY(rotAngle);
+                    mesh.RotateY(rotAngle);
                     camera.rotateY(rotAngle);
 
                     //Animacion
@@ -897,7 +898,7 @@ namespace TgcViewer.Model.MainCharacters
         {
             GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             characterSphere.setValues(
-                new Vector3(characterSphere.Center.X, fisica.boundingSphereAgachadoCenterY, characterSphere.Center.Z),
+                new TGCVector3(characterSphere.Center.X, fisica.boundingSphereAgachadoCenterY, characterSphere.Center.Z),
                 fisica.boundingSphereRadioAgachado);
         }
 
@@ -908,7 +909,7 @@ namespace TgcViewer.Model.MainCharacters
         {
             GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
             characterSphere.setValues(
-                new Vector3(characterSphere.Center.X, fisica.boundingSphereCenterY, characterSphere.Center.Z),
+                new TGCVector3(characterSphere.Center.X, fisica.boundingSphereCenterY, characterSphere.Center.Z),
                 fisica.boundingSphereRadio);
         }
 
@@ -932,11 +933,11 @@ namespace TgcViewer.Model.MainCharacters
             setBoundingSphereParado();
 
             //Mover escondite arriba del personaje
-            Vector3 objCenter = esconditeMovil.BoundingBox.calculateBoxCenter();
+            TGCVector3 objCenter = esconditeMovil.BoundingBox.calculateBoxCenter();
             objCenter.Y = esconditeMovil.BoundingBox.PMin.Y;
-            Vector3 objDiff = characterSphere.Center - objCenter;
+            TGCVector3 objDiff = characterSphere.Center - objCenter;
             objDiff.Y += characterSphere.Radius;
-            this.esconditeMovil.Mesh.move(objDiff);
+            this.esconditeMovil.Mesh.Move(objDiff);
 
             //Marcar como que no esta escondido
             this.esconditeMovil.Escondido = false;
@@ -970,8 +971,8 @@ namespace TgcViewer.Model.MainCharacters
             if (d3dInput.keyPressed(keys.action))
             {
                 //Dejar escondite en el piso
-                Vector3 objSize = esconditeMovil.BoundingBox.calculateSize();
-                esconditeMovil.Mesh.move(0, -objSize.Y, 0);
+                TGCVector3 objSize = esconditeMovil.BoundingBox.calculateSize();
+                esconditeMovil.Mesh.Move(0, -objSize.Y, 0);
                 esconditeMovil.Agarrado = false;
                 esconditeMovil.Escondido = false;
                 esconditeMovil = null;
@@ -1022,7 +1023,7 @@ namespace TgcViewer.Model.MainCharacters
             {
                 //Rotar mesh y camara
                 float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                mesh.rotateY(rotAngle);
+                mesh.RotateY(rotAngle);
                 camera.rotateY(rotAngle);
             }
 
@@ -1046,14 +1047,14 @@ namespace TgcViewer.Model.MainCharacters
 
 
             //Vector de movimiento
-            Vector3 movementVector = Vector3.Empty;
+            TGCVector3 movementVector = TGCVector3.Empty;
             if (moving)
             {
                 //Ajustar por el tiempo transcurrido
                 moveForward *= elapsedTime;
 
                 //Aplicar movimiento, desplazarse en base a la rotacion actual del mesh
-                movementVector = new Vector3(
+                movementVector = new TGCVector3(
                     FastMath.Sin(mesh.Rotation.Y) * moveForward,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * moveForward
@@ -1067,10 +1068,10 @@ namespace TgcViewer.Model.MainCharacters
             }
 
             //Deteccion de colisiones con meshes estaticos del Sector
-            Vector3 realMovement = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
+            TGCVector3 realMovement = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
 
             //Mover tambien escondite movil
-            this.esconditeMovil.Mesh.move(realMovement);
+            this.esconditeMovil.Mesh.Move(realMovement);
 
             //Colision con llaves del sector
             level.CurrentSector.checkLlaves(this);
@@ -1103,8 +1104,8 @@ namespace TgcViewer.Model.MainCharacters
             setBoundingSphereAgachado();
 
             //Poner escondite en el piso
-            Vector3 objSize = esconditeMovil.BoundingBox.calculateSize();
-            esconditeMovil.Mesh.move(0, -objSize.Y, 0);
+            TGCVector3 objSize = esconditeMovil.BoundingBox.calculateSize();
+            esconditeMovil.Mesh.Move(0, -objSize.Y, 0);
 
             //Marcar escondite como escondido
             this.esconditeMovil.Escondido = true;
@@ -1148,7 +1149,7 @@ namespace TgcViewer.Model.MainCharacters
                 {
                     //Rotar mesh y camara
                     float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                    mesh.rotateY(rotAngle);
+                    mesh.RotateY(rotAngle);
                     camera.rotateY(rotAngle);
                 }
             }
@@ -1174,13 +1175,13 @@ namespace TgcViewer.Model.MainCharacters
             punchBillboard.Enabled = false;
             sonidoPasosCorrer.Enabled = false;
             sonidoPasosCaminandoEsconditeMovil.Enabled = false;
-            
+
             //No restauramos la orientacion a proposito, asi sigue saltando para atras mirando a la camara
             //restoreFaceForward();
 
             //Posicion deseada
-            Vector3 initPos = mesh.Position;
-            Vector3 destPos = this.plataformaSalto.NextPlatform.Position;
+            TGCVector3 initPos = mesh.Position;
+            TGCVector3 destPos = this.plataformaSalto.NextPlatform.Position;
 
             //Direccion hacia la que hay que saltar
             jumpDir = destPos - initPos;
@@ -1194,9 +1195,9 @@ namespace TgcViewer.Model.MainCharacters
 
             //Rotar personaje hacia esa direccion
             beforeJumpRotY = getCurrentRotAngle();
-            Vector3 currentVecRot = getCurrentVecRot();
+            TGCVector3 currentVecRot = getCurrentVecRot();
             float angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(jumpDir.Z, jumpDir.X);
-            mesh.rotateY(angle);
+            mesh.RotateY(angle);
             camera.rotateY(angle);
         }
 
@@ -1212,10 +1213,10 @@ namespace TgcViewer.Model.MainCharacters
             if (jumpDistanceToTravel < 0)
             {
                 //llego a la siguiente plataforma, volver a acomodar a posicion y orientacion correcta
-                Vector3 pos = this.plataformaSalto.NextPlatform.Position;
+                TGCVector3 pos = this.plataformaSalto.NextPlatform.Position;
                 pos.Y = origPosY;
                 mesh.Position = pos;
-                //Vector3 beforeJumpRot = new Vector3(0, beforeJumpRotY, 0);
+                //TGCVector3 beforeJumpRot = new TGCVector3(0, beforeJumpRotY, 0);
                 //mesh.Rotation = beforeJumpRot;
                 //camera.RotationY = beforeJumpRot.Y + origAngleRot;
                 this.plataformaSalto = null;
@@ -1223,7 +1224,7 @@ namespace TgcViewer.Model.MainCharacters
                 //acomodar bounding sphere
                 GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
                 characterSphere.setValues(
-                    new Vector3(pos.X, fisica.boundingSphereCenterY, pos.Z),
+                    new TGCVector3(pos.X, fisica.boundingSphereCenterY, pos.Z),
                     fisica.boundingSphereRadio);
 
                 //pasar a estado normal
@@ -1232,7 +1233,7 @@ namespace TgcViewer.Model.MainCharacters
             else
             {
                 //Movimiento en XZ
-                Vector3 move = Vector3.Scale(jumpDir, movement);
+                TGCVector3 move = TGCVector3.Scale(jumpDir, movement);
 
                 //Movimiento vertical a la mitad de velocidad
                 float movementJump = movement / 2; 
@@ -1252,7 +1253,7 @@ namespace TgcViewer.Model.MainCharacters
                 
 
                 //Avanzar
-                mesh.move(move);
+                mesh.Move(move);
                 characterSphere.moveCenter(move);
             }
         }
@@ -1260,10 +1261,10 @@ namespace TgcViewer.Model.MainCharacters
         /// <summary>
         /// Devuelve el vector de orientacion actual del personaje, respecto de su orientacion inicial.
         /// </summary>
-        public Vector3 getCurrentVecRot()
+        public TGCVector3 getCurrentVecRot()
         {
             float currentAngle = getCurrentRotAngle();
-            Vector3 currentVecRot = new Vector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
+            TGCVector3 currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
             return currentVecRot;
         }
 

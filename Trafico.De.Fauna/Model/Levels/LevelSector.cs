@@ -23,6 +23,7 @@ using System.IO;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TgcViewer.Model.Bananas;
@@ -399,7 +400,7 @@ namespace TgcViewer.Model.Levels
             staticMeshes = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 staticMeshes.Add((TgcMeshShader)mesh);
             }
         }
@@ -417,7 +418,7 @@ namespace TgcViewer.Model.Levels
             meshesSinColision = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 meshesSinColision.Add((TgcMeshShader)mesh);
             }
         }
@@ -791,18 +792,19 @@ namespace TgcViewer.Model.Levels
             MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             camera.OffsetForward = mainCharacter.CurrentCameraOffsetForward;
             camera.OffsetHeight = camaraConfig.offsetY;
-            Vector3 segmentA;
-            Vector3 segmentB;
+            //TODO change Vector3 to TGCVector3 in the camera.
+            TGCVector3 segmentA;
+            TGCVector3 segmentB;
             camera.generateViewMatrix(out segmentA, out segmentB);
-            Vector3 q;
+            TGCVector3 q;
             float minDistSq = FastMath.Pow2(camera.OffsetForward);
             foreach (ColliderObject collObj in objetosColisionables)
             {
                 if (collObj.Enabled)
                 {
-                    if (TgcCollisionUtils.intersectSegmentAABB(segmentB, segmentA, collObj.BoundingBox, out q))
+                    if (TgcCollisionUtils.intersectSegmentAABB(TGCVector3.FromVector3(segmentB), TGCVector3.FromVector3(segmentA), collObj.BoundingBox, out q))
                     {
-                        float distSq = (Vector3.Subtract(q, segmentB)).LengthSq();
+                        float distSq = (TGCVector3.Subtract(q, TGCVector3.FromVector3(segmentB))).LengthSq();
                         if (distSq < minDistSq)
                         {
                             minDistSq = distSq;
@@ -1008,7 +1010,7 @@ namespace TgcViewer.Model.Levels
             //staticMeshes
             foreach (TgcMeshShader mesh in staticMeshes)
             {
-                mesh.dispose();
+                mesh.Dispose();
             }
             staticMeshes.Clear();
             staticMeshes = null;
@@ -1016,7 +1018,7 @@ namespace TgcViewer.Model.Levels
             //meshesSinColision
             foreach (TgcMeshShader mesh in meshesSinColision)
             {
-                mesh.dispose();
+                mesh.Dispose();
             }
             meshesSinColision.Clear();
             meshesSinColision = null;
@@ -1065,7 +1067,7 @@ namespace TgcViewer.Model.Levels
             //colisionesLogicas
             foreach (TgcBoundingAxisAlignBox colLogicas in colisionesLogicas)
             {
-                colLogicas.dispose();
+                colLogicas.Dispose();
             }
             colisionesLogicas.Clear();
             colisionesLogicas = null;

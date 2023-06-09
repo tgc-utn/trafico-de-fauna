@@ -61,7 +61,7 @@ namespace TgcViewer.Model.CustomEvents.ZonasEspeciales
 
         public override void renderDebug()
         {
-            boundingBox.render();
+            boundingBox.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -71,7 +71,7 @@ namespace TgcViewer.Model.CustomEvents.ZonasEspeciales
 
         public override void dispose()
         {
-            boundingBox.dispose();
+            boundingBox.Dispose();
             boundingBox = null;
         }
     }

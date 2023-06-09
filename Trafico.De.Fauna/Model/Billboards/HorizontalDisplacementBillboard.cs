@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 using TGC.Core.Utils;
@@ -35,7 +36,7 @@ namespace TgcViewer.Model.Billboards
     {
         VertexBuffer vertexBuffer;
         TgcTexture texture;
-        Vector2 currentUVsum;
+        TGCVector2 currentUVsum;
 
 
         private bool enabled;
@@ -58,22 +59,22 @@ namespace TgcViewer.Model.Billboards
             set { playing = value; }
         }
 
-        Vector3 pMin;
+        TGCVector3 pMin;
         /// <summary>
         /// Punto minimo del Billboard
         /// </summary>
-        public Vector3 PMin
+        public TGCVector3 PMin
         {
             get { return pMin; }
             set { pMin = value; }
         }
 
-        Vector3 pMax;
+        TGCVector3 pMax;
         /// <summary>
         /// Punto maximo del Billboard.
         /// El valor de Y no se considera. Se toma siempre el de PMin.
         /// </summary>
-        public Vector3 PMax
+        public TGCVector3 PMax
         {
             get { return pMax; }
             set { pMax = value; }
@@ -91,25 +92,25 @@ namespace TgcViewer.Model.Billboards
             set { alphaBlendEnable = value; }
         }
 
-        private Vector2 speed;
+        private TGCVector2 speed;
         /// <summary>
         /// Velocidad de desplazamiento de las coordenadas UV
         /// </summary>
-        public Vector2 Speed
+        public TGCVector2 Speed
         {
             get { return speed; }
             set { speed = value; }
         }
 
-        public HorizontalDisplacementBillboard(Device device, string texturePath, Vector3 pMin, Vector3 pMax)
+        public HorizontalDisplacementBillboard(Device device, string texturePath, TGCVector3 pMin, TGCVector3 pMax)
         {
             this.enabled = true;
             this.alphaBlendEnable = true;
-            this.speed = new Vector2(0, 1);
+            this.speed = new TGCVector2(0, 1);
             this.playing = true;
             this.pMin = pMin;
             this.pMax = pMax;
-            currentUVsum = new Vector2(0, 0);
+            currentUVsum = new TGCVector2(0, 0);
 
             //Cargar textura
             this.texture = TgcTexture.createTexture(device, texturePath);
@@ -138,7 +139,7 @@ namespace TgcViewer.Model.Billboards
             //Actualizar incremento de UV
             if (playing)
             {
-                Vector2 addVec = Vector2.Scale(speed, elapsedTime);
+                TGCVector2 addVec = TGCVector2.Scale(speed, elapsedTime);
                 currentUVsum += addVec;
                 currentUVsum.X %= 1;
                 currentUVsum.Y %= 1;
@@ -148,7 +149,7 @@ namespace TgcViewer.Model.Billboards
         /// <summary>
         /// Dibujar Quad
         /// </summary>
-        public void render()
+        public void Render()
         {
             var device = D3DDevice.Instance.Device;
 
@@ -160,10 +161,10 @@ namespace TgcViewer.Model.Billboards
             Effect effect = shaders.effect;
 
             effect.Technique = GameModel.instance.shaders.ANIMATE_UV;
-            effect.SetValue("animateUV", TgcParserUtils.vector2ToFloat2Array(currentUVsum));
-            Matrix matWorldView = Matrix.Identity * device.Transform.View;
-            Matrix matWorldViewProj = matWorldView * device.Transform.Projection;
-            effect.SetValue("matWorld", Matrix.Identity);
+            effect.SetValue("animateUV", TGCVector2.Vector2ToFloat2Array(currentUVsum));
+            TGCMatrix matWorldView = TGCMatrix.Identity * TGCMatrix.FromMatrix(device.Transform.View);
+            TGCMatrix matWorldViewProj = matWorldView * TGCMatrix.FromMatrix(device.Transform.Projection);
+            effect.SetValue("matWorld", TGCMatrix.Identity);
             effect.SetValue("matWorldView", matWorldView);
             effect.SetValue("matWorldViewProj", matWorldViewProj);
 
@@ -196,7 +197,7 @@ namespace TgcViewer.Model.Billboards
             device.RenderState.AlphaTestEnable = false;
         }
 
-        public void dispose()
+        public void Dispose()
         {
             texture.dispose();
             if (vertexBuffer != null && !vertexBuffer.Disposed)

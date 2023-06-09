@@ -53,7 +53,7 @@ namespace TgcViewer.Model.Enemies
                     meshPath+ "StandBy-TgcSkeletalAnim.xml",
                     meshPath+ "Run-TgcSkeletalAnim.xml"
                 });
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 meshes.Add(mesh);
             }
 

@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Dialogs;
 using TgcViewer.Model.Meshes;
@@ -40,8 +41,8 @@ namespace TgcViewer.Model.Levels
             get { return activo; }
         }
 
-        Vector3 center;
-        public Vector3 Center
+        TGCVector3 center;
+        public TGCVector3 Center
         {
             get { return center; }
         }
@@ -177,7 +178,7 @@ namespace TgcViewer.Model.Levels
             sector = null;
             if (boundingBox != null)
             {
-                boundingBox.dispose();
+                boundingBox.Dispose();
                 boundingBox = null;
             }
         }

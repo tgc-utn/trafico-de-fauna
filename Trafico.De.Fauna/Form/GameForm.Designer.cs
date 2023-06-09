@@ -1,6 +1,6 @@
 ﻿namespace TgcViewer.Form
 {
-    partial class MainForm
+    partial class GameForm
     {
         /// <summary>
         /// Variable del diseñador requerida.

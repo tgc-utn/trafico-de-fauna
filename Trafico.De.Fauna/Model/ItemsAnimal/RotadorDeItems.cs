@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 
@@ -84,9 +85,9 @@ namespace TgcViewer.Model.ItemsAnimal
             }
             else
             {
-                mesh.move(0, move, 0); 
+                mesh.Move(0, move, 0); 
             }
-            mesh.rotateY(yawSpeed * elapsedTime);
+            mesh.RotateY(yawSpeed * elapsedTime);
         }
 
     }

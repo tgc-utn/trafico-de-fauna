@@ -21,6 +21,7 @@ using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
 namespace TgcViewer.Model.Billboards
@@ -37,7 +38,7 @@ namespace TgcViewer.Model.Billboards
         /// </summary>
         public struct SpriteVertexVertex
         {
-            public Vector3 Position;
+            public TGCVector3 Position;
             public float PointSize;
         }
 
@@ -75,7 +76,7 @@ namespace TgcViewer.Model.Billboards
             currentFrame = 0;
             SpriteVertexVertex vertex = new SpriteVertexVertex();
             vertex.PointSize = 10;
-            vertex.Position = new Vector3(0, 50, 0);
+            vertex.Position = new TGCVector3(0, 50, 0);
             this.texture = texture;
 
 
@@ -97,7 +98,7 @@ namespace TgcViewer.Model.Billboards
             device.Material = D3DDevice.DEFAULT_MATERIAL;
             device.RenderState.AlphaBlendEnable = true;
             device.RenderState.ZBufferWriteEnable = false;
-            device.Transform.World = Matrix.Identity;
+            device.Transform.World = TGCMatrix.Identity;
 
             device.DrawUserPrimitives(PrimitiveType.PointList, 1, spriteVertexArray);
 

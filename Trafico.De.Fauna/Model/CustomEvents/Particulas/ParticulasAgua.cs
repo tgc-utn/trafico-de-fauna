@@ -18,6 +18,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Meshes;
 using TgcViewer.Model.Particles;
@@ -38,7 +39,7 @@ namespace TgcViewer.Model.CustomEvents.Particulas
             emitter.Dispersion = 100;
             emitter.ParticleTimeToLive = 3f;
             emitter.CreationFrecuency = 0.4f;
-            emitter.Speed = new Vector3(5f, 5f, 5f);
+            emitter.Speed = new TGCVector3(5f, 5f, 5f);
             emitter.MinSizeParticle = 8f;
             emitter.MaxSizeParticle = 10f;
         }

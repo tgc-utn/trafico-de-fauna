@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Meshes;
 
@@ -93,16 +94,16 @@ namespace TgcViewer.Model.ItemsAnimal
             this.color = getColorType(name);
 
             //Cargar Mesh
-            Vector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
+            TGCVector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
             string meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransformEnable = true;
-            mesh.Position = new Vector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
+            mesh.AutoTransform = true;
+            mesh.Position = new TGCVector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
 
-            Vector3 sphereCenter = new Vector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);
+            TGCVector3 sphereCenter = new TGCVector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);
             boundingSphere = new TgcBoundingSphere(sphereCenter, BSPHERE_RADIUS);
 
             rotador = new RotadorDeItems();
@@ -126,7 +127,7 @@ namespace TgcViewer.Model.ItemsAnimal
                 //Debug render
                 if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
-                    boundingSphere.render();
+                    boundingSphere.Render();
                 }
             }
         }
@@ -163,9 +164,9 @@ namespace TgcViewer.Model.ItemsAnimal
 
         public void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
             mesh = null;
-            boundingSphere.dispose();
+            boundingSphere.Dispose();
             boundingSphere = null;
             
         }

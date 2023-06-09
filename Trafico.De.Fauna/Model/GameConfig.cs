@@ -23,6 +23,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
+using TGC.Core.Mathematica;
 using TGC.Core.Utils;
 
 namespace TgcViewer.Model

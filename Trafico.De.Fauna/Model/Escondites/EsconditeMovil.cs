@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System.Drawing;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Interpolators;
 using TgcViewer.Model.Meshes;
@@ -63,7 +64,7 @@ namespace TgcViewer.Model.Escondites
             set { escondido = value; }
         }
 
-        Vector3 originalPos;
+        TGCVector3 originalPos;
         InterpoladorVaiven interpolador;
 
         TgcMeshShader mesh;
@@ -134,7 +135,7 @@ namespace TgcViewer.Model.Escondites
 
         public void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
             mesh = null;
         }
     }

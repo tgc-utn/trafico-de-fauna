@@ -111,9 +111,9 @@ namespace TgcViewer.Model.Escondites
 
         public void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
             mesh = null;
-            bSphere.dispose();
+            bSphere.Dispose();
             bSphere = null;
         }
     }

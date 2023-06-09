@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Enemies
 {
@@ -31,8 +32,8 @@ namespace TgcViewer.Model.Enemies
             get { return guardia; }
         }
 
-        Vector3 center;
-        public Vector3 Center
+        TGCVector3 center;
+        public TGCVector3 Center
         {
             get { return center; }
         }
@@ -59,7 +60,7 @@ namespace TgcViewer.Model.Enemies
             set { bsphere = value; }
         }
 
-        public GuardiaWaypoint(Guardia guardia, Vector3 center, int index, Dictionary<string, string> userProperties)
+        public GuardiaWaypoint(Guardia guardia, TGCVector3 center, int index, Dictionary<string, string> userProperties)
         {
             this.guardia = guardia;
             this.center = center;
@@ -91,7 +92,7 @@ namespace TgcViewer.Model.Enemies
 
         public void dispose()
         {
-            bsphere.dispose();
+            bsphere.Dispose();
         }
 
     }

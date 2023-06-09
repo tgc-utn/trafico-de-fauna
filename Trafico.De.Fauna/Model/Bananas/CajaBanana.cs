@@ -21,6 +21,7 @@ using System;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.KeyFrameLoader;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.MainCharacters;
 using TgcViewer.Model.Meshes;
@@ -36,7 +37,7 @@ namespace TgcViewer.Model.Bananas
 
         TgcBoundingAxisAlignBox boundingBox;
         TgcBoundingSphere boundingSphere;
-        Vector3 meshPos;
+        TGCVector3 meshPos;
         TgcKeyFrameMesh mesh;
         int cantidadBananas;
         int golpes;
@@ -71,8 +72,8 @@ namespace TgcViewer.Model.Bananas
             name = meshData.name;
             enable = true;
             boundingBox = GameUtils.createBBFromMeshData(meshData);
-            Vector3 center = boundingBox.calculateBoxCenter();
-            meshPos = new Vector3(center.X, 0, center.Z);
+            TGCVector3 center = boundingBox.calculateBoxCenter();
+            meshPos = new TGCVector3(center.X, 0, center.Z);
             boundingSphere = new TgcBoundingSphere(center, RADIO_SPHERE);
 
             //Collider
@@ -149,7 +150,7 @@ namespace TgcViewer.Model.Bananas
 
                     if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                     {
-                        boundingSphere.render();
+                        boundingSphere.Render();
                     }
                 }
             }
@@ -191,9 +192,9 @@ namespace TgcViewer.Model.Bananas
         public void dispose()
         {
             mesh = null;
-            boundingBox.dispose();
+            boundingBox.Dispose();
             boundingBox = null;
-            boundingSphere.dispose();
+            boundingSphere.Dispose();
             boundingSphere = null;
         }
 
@@ -218,9 +219,9 @@ namespace TgcViewer.Model.Bananas
             if (mainCharacter.collideWithBSphere(boundingSphere))
             {
                 //Solo rompe si el personaje esta mirando en un angulo correcto
-                Vector3 currentVecRot = mainCharacter.getCurrentVecRot();
-                Vector3 dir = Vector3.Subtract(meshPos, mainCharacter.CurrentPos);
-                float dotAngle = Vector3.Dot(currentVecRot, dir);
+                TGCVector3 currentVecRot = mainCharacter.getCurrentVecRot();
+                TGCVector3 dir = TGCVector3.Subtract(meshPos, mainCharacter.CurrentPos);
+                float dotAngle = TGCVector3.Dot(currentVecRot, dir);
                 if (dotAngle > GameModel.instance.gameConfig.fisica.anguloGolpeDotValue)
                 {
                     golpes--;

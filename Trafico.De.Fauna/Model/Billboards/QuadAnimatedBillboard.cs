@@ -22,6 +22,7 @@ using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 using TgcViewer.Model.Meshes;
@@ -66,12 +67,12 @@ namespace TgcViewer.Model.Billboards
             set { playing = value; }
         }
 
-        Vector3 position;
+        TGCVector3 position;
         /// <summary>
         /// Posicion del billboard.
         /// El eje Y se toma desde abajo
         /// </summary>
-        public Vector3 Position
+        public TGCVector3 Position
         {
             get { return position; }
             set { position = value; }
@@ -88,11 +89,11 @@ namespace TgcViewer.Model.Billboards
         }
 
 
-        Vector2 size;
+        TGCVector2 size;
         /// <summary>
         /// Tamaño del billboard en XY
         /// </summary>
-        public Vector2 Size
+        public TGCVector2 Size
         {
             get { return size; }
             set { size = value; }
@@ -175,9 +176,9 @@ namespace TgcViewer.Model.Billboards
             CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[6];
 
             //Crear un Quad con dos triángulos sobre XY
-            Vector2 halfSize = Vector2.Scale(size, 0.5f);
-            Vector3 min = new Vector3(-halfSize.X, 0, 0);
-            Vector3 max = new Vector3(halfSize.X, size.Y, 0);
+            TGCVector2 halfSize = TGCVector2.Scale(size, 0.5f);
+            TGCVector3 min = new TGCVector3(-halfSize.X, 0, 0);
+            TGCVector3 max = new TGCVector3(halfSize.X, size.Y, 0);
 
             //Avanzar tiempo
             if (playing)
@@ -215,7 +216,7 @@ namespace TgcViewer.Model.Billboards
         /// <summary>
         /// Dibujar Quad
         /// </summary>
-        public void render()
+        public void Render()
         {
             var device = D3DDevice.Instance.Device;
 
@@ -231,7 +232,7 @@ namespace TgcViewer.Model.Billboards
 
             TexturesManager.Instance.set(0, texture);
             device.Material = D3DDevice.DEFAULT_MATERIAL;
-            device.Transform.World = Matrix.RotationY(rotationY) * Matrix.Translation(position);
+            device.Transform.World = TGCMatrix.RotationY(rotationY) * TGCMatrix.Translation(position);
 
             device.VertexFormat = CustomVertex.PositionTextured.Format;
             device.SetStreamSource(0, vertexBuffer, 0);
@@ -250,10 +251,10 @@ namespace TgcViewer.Model.Billboards
             if (!enabled)
                 return;
 
-            render();
+            Render();
         }
 
-        public void dispose()
+        public void Dispose()
         {
             texture.dispose();
             if (vertexBuffer != null && !vertexBuffer.Disposed)

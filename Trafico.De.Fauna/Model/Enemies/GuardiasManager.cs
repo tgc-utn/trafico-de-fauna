@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Levels;
 
@@ -51,7 +52,7 @@ namespace TgcViewer.Model.Enemies
 
         public void addNode(TgcMeshData meshDataNode)
         {
-            Vector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
+            TGCVector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
 
             //Nombre: Guardia_XXX o Guardia_XXX_1 o Guardia_XXX_2
             string[] split = meshDataNode.name.Split('_');

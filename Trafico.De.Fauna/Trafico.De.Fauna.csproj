@@ -33,7 +33,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -74,8 +74,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TGC.Core, Version=2.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TGC.Core.2.2.3\lib\net452\TGC.Core.dll</HintPath>
+    <Reference Include="TGC.Core, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TGC.Core.2.3.1\lib\net471\TGC.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -84,18 +84,18 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Game.settings</DependentUpon>
     </Compile>
-    <Compile Include="Form\MainForm.cs">
+    <Compile Include="Form\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="Form\GameForm.Designer.cs">
+      <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form\MainForm.resx">
+    <EmbeddedResource Include="Form\GameForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>MainForm.cs</DependentUpon>
+      <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

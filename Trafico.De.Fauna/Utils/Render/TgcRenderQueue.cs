@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Utils.Render
 {
@@ -56,7 +57,7 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Renderizar todos los elementos de la cola de renderizado
         /// </summary>
-        void renderAll(Device d3dDevice, Vector3 cameraPos);
+        void renderAll(Device d3dDevice, TGCVector3 cameraPos);
     }
 
     /// <summary>
@@ -74,7 +75,7 @@ namespace TgcViewer.Utils.Render
         /// Tiene que indicar de alguna forma donde se encuentra el elemento.
         /// Puede ser el centro del objeto o algún punto relevante del elemento.
         /// </summary>
-        Vector3 Position
+        TGCVector3 Position
         {
             get;
         }

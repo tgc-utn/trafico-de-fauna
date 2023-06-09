@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Particles
 {
@@ -33,7 +34,7 @@ namespace TgcViewer.Model.Particles
         /// </summary>
         public struct ParticleVertex
         {
-            public Vector3 Position;
+            public TGCVector3 Position;
             public float PointSize;
             public int Color;
         }
@@ -84,11 +85,11 @@ namespace TgcViewer.Model.Particles
             set { timeToLive = value; }
         }
 
-        private Vector3 speed;
+        private TGCVector3 speed;
         /// <summary>
         /// Velocidad de la particula
         /// </summary>
-        public Vector3 Speed
+        public TGCVector3 Speed
         {
             get { return speed; }
             set { speed = value; }
@@ -106,7 +107,7 @@ namespace TgcViewer.Model.Particles
         /// <summary>
         /// Posicion de la particula
         /// </summary>
-        public Vector3 Position
+        public TGCVector3 Position
         {
             get { return pointSprite.Position; }
             set { pointSprite.Position = value;  }
@@ -133,7 +134,7 @@ namespace TgcViewer.Model.Particles
         public Particle()
 		{
             pointSprite = new ParticleVertex();
-            pointSprite.Position = new Vector3(0, 0, 0);
+            pointSprite.Position = new TGCVector3(0, 0, 0);
             pointSprite.PointSize = 1.0f;
             pointSprite.Color = DEFAULT_COLOR.ToArgb();
 		}

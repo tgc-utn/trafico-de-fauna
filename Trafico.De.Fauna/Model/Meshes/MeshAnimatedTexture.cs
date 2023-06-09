@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TgcViewer.Utils.Render;
@@ -34,7 +35,7 @@ namespace TgcViewer.Model.Meshes
     public class MeshAnimatedTexture : TgcMeshShader, IRenderQueueElement, IAlphaObject
     {
 
-        Vector2 currentUVsum;
+        TGCVector2 currentUVsum;
 
         private bool playing;
         /// <summary>
@@ -46,11 +47,11 @@ namespace TgcViewer.Model.Meshes
             set { playing = value; }
         }
 
-        private Vector2 speed;
+        private TGCVector2 speed;
         /// <summary>
         /// Velocidad de desplazamiento de las coordenadas UV
         /// </summary>
-        public Vector2 Speed
+        public TGCVector2 Speed
         {
             get { return speed; }
             set { speed = value; }
@@ -65,11 +66,11 @@ namespace TgcViewer.Model.Meshes
                 throw new Exception("El mesh no tiene texturas.");
             }
 
-            this.speed = new Vector2(0, 1);
-            currentUVsum = new Vector2(0, 0);
+            this.speed = new TGCVector2(0, 1);
+            currentUVsum = new TGCVector2(0, 0);
         }
 
-        public MeshAnimatedTexture(string name, TgcMesh parentInstance, Vector3 translation, Vector3 rotation, Vector3 scale)
+        public MeshAnimatedTexture(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
             : base(name, parentInstance, translation, rotation, scale)
         {
             throw new Exception("Instancia no soportada");
@@ -86,7 +87,7 @@ namespace TgcViewer.Model.Meshes
             if (!enabled)
                 return;
 
-            if (alphaBlendEnable)
+            if (AlphaBlendEnable)
             {
                 GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
@@ -117,13 +118,13 @@ namespace TgcViewer.Model.Meshes
             //Actualizar incremento de UV
             if (playing)
             {
-                Vector2 addVec = Vector2.Scale(speed, elapsedTime);
+                TGCVector2 addVec = TGCVector2.Scale(speed, elapsedTime);
                 currentUVsum += addVec;
                 currentUVsum.X %= 1;
                 currentUVsum.Y %= 1;
             }
 
-            effect.SetValue("animateUV", TgcParserUtils.vector2ToFloat2Array(currentUVsum));
+            effect.SetValue("animateUV", TGCVector2.Vector2ToFloat2Array(currentUVsum));
 
             //Ejecutar render de TgcMeshShader
             base.executeRender();
@@ -140,7 +141,7 @@ namespace TgcViewer.Model.Meshes
                 return new MeshAnimatedTexture(d3dMesh, meshName, renderType);
             }
 
-            public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, Vector3 translation, Vector3 rotation, Vector3 scale)
+            public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
             {
                 return new MeshAnimatedTexture(meshName, originalMesh, translation, rotation, scale);
             }

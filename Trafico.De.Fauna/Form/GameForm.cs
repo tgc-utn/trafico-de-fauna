@@ -34,7 +34,7 @@ namespace TgcViewer.Form
     /// <summary>
     /// Formulario principal de la aplicación
     /// </summary>
-    public partial class MainForm : System.Windows.Forms.Form
+    public partial class GameForm : System.Windows.Forms.Form
     {
         /// <summary>
         /// Ejemplo del juego a correr
@@ -56,7 +56,7 @@ namespace TgcViewer.Form
         /// </summary>
         private TgcD3dInput Input { get; set; }
 
-        public MainForm()
+        public GameForm()
         {
             InitializeComponent();
             //TODO check this.

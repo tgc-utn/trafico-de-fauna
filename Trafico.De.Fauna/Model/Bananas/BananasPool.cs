@@ -53,7 +53,7 @@ namespace TgcViewer.Model.Bananas
             for (int i = 0; i < MAX_BANANAS; i++)
             {
                 TgcMeshShader mesh = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 meshes.Add(mesh);
             }
 

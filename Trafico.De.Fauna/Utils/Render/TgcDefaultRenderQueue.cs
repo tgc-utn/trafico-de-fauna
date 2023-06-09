@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Utils.Render
 {
@@ -90,7 +91,7 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Renderizar todos los elementos de la cola de renderizado
         /// </summary>
-        public void renderAll(Device d3dDevice, Vector3 cameraPos)
+        public void renderAll(Device d3dDevice, TGCVector3 cameraPos)
         {
             renderAlphaElements(d3dDevice, cameraPos);
             renderOpaqueElements(d3dDevice);
@@ -99,7 +100,7 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Renderizar elementos con alpha
         /// </summary>
-        private void renderAlphaElements(Device d3dDevice, Vector3 cameraPos)
+        private void renderAlphaElements(Device d3dDevice, TGCVector3 cameraPos)
         {
             if (alphaList.Count == 0)
                 return;
@@ -125,14 +126,14 @@ namespace TgcViewer.Utils.Render
         /// <summary>
         /// Ordenar elementos con Alpha según view-distance
         /// </summary>
-        private void sortAlphaList(Vector3 cameraPos)
+        private void sortAlphaList(TGCVector3 cameraPos)
         {
             this.elementsViewDistance.Clear();
 
             //Calcular la distancia cuadrada de cada elemento hacia la cámara
             foreach (IRenderQueueElement element in alphaList)
             {
-                Vector3 v = cameraPos - element.Position;
+                TGCVector3 v = cameraPos - element.Position;
                 elementsViewDistance.Add(element, v.LengthSq());
             }
 

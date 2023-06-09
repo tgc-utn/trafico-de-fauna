@@ -65,7 +65,7 @@ namespace TgcViewer.Model.Bananas
             for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
                 TgcKeyFrameMesh mesh = loader.loadMesh(meshDataConBananas, mediaPath);
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 for (int j = 0; j < animData.Length; j++)
                 {
                     loader.loadAnimation(mesh, animData[j]);
@@ -77,7 +77,7 @@ namespace TgcViewer.Model.Bananas
             for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
                 TgcKeyFrameMesh mesh = loader.loadMesh(meshDataSinBananas, mediaPath);
-                mesh.AutoTransformEnable = true;
+                mesh.AutoTransform = true;
                 for (int j = 0; j < animData.Length; j++)
                 {
                     loader.loadAnimation(mesh, animData[j]);

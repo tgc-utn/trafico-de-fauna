@@ -25,6 +25,7 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
 using TGC.Core.Textures;
 using TGC.Core.Utils;
@@ -87,7 +88,7 @@ namespace TgcViewer.Model.Enemies
             get { return activo; }
         }
 
-        Vector3 center;
+        TGCVector3 center;
         TgcSkeletalMesh mesh;
         GameUtils.Orientacion orientacion;
         State currentState;
@@ -102,17 +103,17 @@ namespace TgcViewer.Model.Enemies
         float watchingElapsedTime;
         float rotatingAcumRotation;
         int currentWaypointIndex;
-        Vector3 walkingDir;
+        TGCVector3 walkingDir;
         float rotatingNextAngle;
         float rotatingNextAngleSign;
         float walkingDistanceToTravel;
         float origAngleRot;
-        Vector3 origVecRot;
+        TGCVector3 origVecRot;
         
         //Variables de chasing
         WaypointAtaque waypointAtaqueA;
         WaypointAtaque waypointAtaqueB;
-        Vector3 chaseAristaNextPos;
+        TGCVector3 chaseAristaNextPos;
 
 
         //Para render debug de la vision
@@ -196,7 +197,7 @@ namespace TgcViewer.Model.Enemies
             mesh.Position = this.center;
             
             //rotar segun orientacion
-            mesh.Rotation = Vector3.Empty;
+            mesh.Rotation = TGCVector3.Empty;
             switch (orientacion)
             {
                 case GameUtils.Orientacion.Norte:
@@ -215,7 +216,7 @@ namespace TgcViewer.Model.Enemies
             }
 
             //Rotar y ajustar BoundingSpheres
-            mesh.rotateY(origAngleRot);
+            mesh.RotateY(origAngleRot);
             origVecRot = getCurrentVecRot();
             bSphereVisual.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaVisual);
             bSphereAttack.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaAtaque);
@@ -254,7 +255,7 @@ namespace TgcViewer.Model.Enemies
         /// </summary>
         public void update(float elapsedTime)
         {
-            Vector3 lastPos = mesh.Position;
+            TGCVector3 lastPos = mesh.Position;
 
             switch (currentState)
             {
@@ -292,14 +293,14 @@ namespace TgcViewer.Model.Enemies
             if (waypoints.Count > 1)
             {
                 //obtener direccion hacia el proximo waypoint (sin cambiar el waypoint actual)
-                Vector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
-                Vector3 nextWaypointCenter = waypoints[getNextWaypoint()].Center;
+                TGCVector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
+                TGCVector3 nextWaypointCenter = waypoints[getNextWaypoint()].Center;
                 walkingDir = nextWaypointCenter - lastWaypointCenter;
                 walkingDir.Y = 0;
                 walkingDir.Normalize();
 
                 //Calcular direccion a la que apunta actualmente
-                Vector3 currentVecRot = getCurrentVecRot();
+                TGCVector3 currentVecRot = getCurrentVecRot();
 
                 //Obtener siguiente menor angulo de rotacion y signo
                 rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(walkingDir.Z, walkingDir.X);
@@ -333,13 +334,13 @@ namespace TgcViewer.Model.Enemies
             float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
-                mesh.rotateY(rotatingAcumRotation);
+                mesh.RotateY(rotatingAcumRotation);
                 setWatching();
             }
             else
             {
                 frameRot *= rotatingNextAngleSign;
-                mesh.rotateY(frameRot);
+                mesh.RotateY(frameRot);
                 rotatingAcumRotation -= frameRot;
             }
         }
@@ -380,7 +381,7 @@ namespace TgcViewer.Model.Enemies
                 }
                 else
                 {
-                    mesh.rotateY(rot);
+                    mesh.RotateY(rot);
                 }
             }
         }
@@ -388,18 +389,18 @@ namespace TgcViewer.Model.Enemies
         private void setRotating()
         {
             //Cambiar de waypoint
-            Vector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
+            TGCVector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
             setNextWaypoint();
-            Vector3 nextWaypointCenter = waypoints[currentWaypointIndex].Center;
+            TGCVector3 nextWaypointCenter = waypoints[currentWaypointIndex].Center;
 
             //obtener direccion para caminar hacia el proximo
             walkingDir = nextWaypointCenter - lastWaypointCenter;
             walkingDir.Y = 0;
             walkingDistanceToTravel = walkingDir.Length();
             walkingDir.Normalize();
-            
+
             //Calcular direccion a la que apunta actualmente
-            Vector3 currentVecRot = getCurrentVecRot();
+            TGCVector3 currentVecRot = getCurrentVecRot();
             
             //Obtener siguiente menor angulo de rotacion y signo
             rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(walkingDir.Z, walkingDir.X);
@@ -424,21 +425,21 @@ namespace TgcViewer.Model.Enemies
             float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
-                mesh.rotateY(rotatingAcumRotation);
+                mesh.RotateY(rotatingAcumRotation);
                 setWalking();
             }
             else
             {
                 frameRot *= rotatingNextAngleSign;
-                mesh.rotateY(frameRot);
+                mesh.RotateY(frameRot);
                 rotatingAcumRotation -= frameRot;
             }
         }
 
-        private Vector3 getCurrentVecRot()
+        private TGCVector3 getCurrentVecRot()
         {
             float currentAngle = mesh.Rotation.Y - origAngleRot;
-            Vector3 currentVecRot = new Vector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
+            TGCVector3 currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
             return currentVecRot;
         }
 
@@ -447,12 +448,12 @@ namespace TgcViewer.Model.Enemies
         /// and returns the yaw increment we should be applying in order to chase the target. 
         /// It detects which side it stands in, and so on:
         /// </summary>
-       private float computeRotation(Vector3 pos, float yaw, Vector3 target)
+       private float computeRotation(TGCVector3 pos, float yaw, TGCVector3 target)
        {
-           Vector3 forward = pos + new Vector3(FastMath.Cos(yaw), 0, FastMath.Sin(yaw));
-           Vector3 up = pos + new Vector3(0, 1, 0);
-           
-           Plane pl = Plane.FromPoints(pos, forward, up);
+           TGCVector3 forward = pos + new TGCVector3(FastMath.Cos(yaw), 0, FastMath.Sin(yaw));
+           TGCVector3 up = pos + new TGCVector3(0, 1, 0);
+
+           TGCPlane pl = TGCPlane.FromPoints(pos, forward, up);
            if(TgcCollisionUtils.classifyPointPlane(target, pl) == TgcCollisionUtils.PointPlaneResult.IN_FRONT_OF)
            {
                return -0.1f;
@@ -501,7 +502,7 @@ namespace TgcViewer.Model.Enemies
             else
             {
                 //avanzar
-                mesh.move(Vector3.Scale(walkingDir, movement));
+                mesh.Move(TGCVector3.Scale(walkingDir, movement));
             }
         }
 
@@ -528,7 +529,7 @@ namespace TgcViewer.Model.Enemies
         /// <summary>
         /// Ver si el guardia ve al personaje
         /// </summary>
-        private void checkCollisionVision(Vector3 centerMovement)
+        private void checkCollisionVision(TGCVector3 centerMovement)
         {
             //Mover esferas visuales
             bSphereVisual.moveCenter(centerMovement);
@@ -589,9 +590,9 @@ namespace TgcViewer.Model.Enemies
                 //Ver si esta dentro del angulo de vision, con el dot product
                 if (checkVisionAngle)
                 {
-                    Vector3 guardiaCharacterVec = Vector3.Normalize(Vector3.Subtract(mainCharacter.CurrentPos, mesh.Position));
-                    Vector3 currentVecRot = getCurrentVecRot();
-                    float dotAngle = Vector3.Dot(currentVecRot, guardiaCharacterVec);
+                    TGCVector3 guardiaCharacterVec = TGCVector3.Normalize(TGCVector3.Subtract(mainCharacter.CurrentPos, mesh.Position));
+                    TGCVector3 currentVecRot = getCurrentVecRot();
+                    float dotAngle = TGCVector3.Dot(currentVecRot, guardiaCharacterVec);
                     if (dotAngle > GameModel.instance.gameConfig.guardia.anguloVisionDotValue)
                     {
                         //Hay vision, ver que nada se interponga en el camino
@@ -618,7 +619,7 @@ namespace TgcViewer.Model.Enemies
         /// Indica si la vista directa del enemigo choca con algun objeto colisionable del escenario al mirar hacia el jugador.
         /// Devuelve true si se puede llegar a ver porque nada se interpone.
         /// </summary>
-        private bool checkDirectViewCollision(Vector3 enemyPos, TgcBoundingSphere bsphereVision, Vector3 mainCharacterPos, float visionY)
+        private bool checkDirectViewCollision(TGCVector3 enemyPos, TgcBoundingSphere bsphereVision, TGCVector3 mainCharacterPos, float visionY)
         {
             //Ver que nada se interponga en el camino
             List<ColliderObject> objetosColisionables = GameModel.instance.currentLevel.CurrentSector.ObjetosColisionables;
@@ -641,12 +642,12 @@ namespace TgcViewer.Model.Enemies
         /// Indica si la vista directa del enemigo choca con el objeto indicado al mirar hacia el jugador.
         /// Devuelve true si la vista choca contra el objeto.
         /// </summary>
-        private bool viewCollideWithOccluder(Vector3 enemyPos, Vector3 mainCharacterPos, TgcBoundingAxisAlignBox objectAabb, float visionY)
+        private bool viewCollideWithOccluder(TGCVector3 enemyPos, TGCVector3 mainCharacterPos, TgcBoundingAxisAlignBox objectAabb, float visionY)
         {
-            Vector3 q;
+            TGCVector3 q;
             if (TgcCollisionUtils.intersectSegmentAABB(
-                    new Vector3(enemyPos.X, visionY, enemyPos.Z),
-                    new Vector3(mainCharacterPos.X, visionY, mainCharacterPos.Z),
+                    new TGCVector3(enemyPos.X, visionY, enemyPos.Z),
+                    new TGCVector3(mainCharacterPos.X, visionY, mainCharacterPos.Z),
                     objectAabb, out q))
             {
                 return true;
@@ -692,25 +693,25 @@ namespace TgcViewer.Model.Enemies
                 //Estrategia de Rotar y avanzar hacia el enemigo (chase tradicional)
 
                 //Calcular direccion a la que apunta actualmente
-                Vector3 currentVecRot = getCurrentVecRot();
+                TGCVector3 currentVecRot = getCurrentVecRot();
 
                 //Orientar guardia hacia el personaje
-                Vector3 dir = mainCharacter.CurrentPos - mesh.Position;
+                TGCVector3 dir = mainCharacter.CurrentPos - mesh.Position;
                 dir.Normalize();
                 float angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(dir.Z, dir.X);
-                mesh.rotateY(angle);
+                mesh.RotateY(angle);
 
                 //Avanzar en esa direccion
                 float movement = -(conf.guardia.velocidadCorrer * elapsedTime);
 
-                Vector3 movementVector = new Vector3(
+                TGCVector3 movementVector = new TGCVector3(
                     FastMath.Sin(mesh.Rotation.Y) * movement,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * movement
                     );
 
                 //Se mueve sin detectar un carajo de colisiones
-                mesh.move(movementVector);
+                mesh.Move(movementVector);
             }
         }
 
@@ -810,10 +811,10 @@ namespace TgcViewer.Model.Enemies
                 //Estrategia de Rotar y avanzar hacia el enemigo (chase tradicional)
 
                 //Calcular direccion a la que apunta actualmente
-                Vector3 currentVecRot = getCurrentVecRot();
+                TGCVector3 currentVecRot = getCurrentVecRot();
 
                 //Orientar guardia hacia el personaje
-                Vector3 dir = mainCharacter.CurrentPos - mesh.Position;
+                TGCVector3 dir = mainCharacter.CurrentPos - mesh.Position;
                 dir.Normalize();
                 float angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(dir.Z, dir.X);
                 mesh.rotateY(angle);
@@ -821,7 +822,7 @@ namespace TgcViewer.Model.Enemies
                 //Avanzar en esa direccion
                 float movement = -(conf.guardia.velocidadCorrer * GuiController.Instance.ElapsedTime);
 
-                Vector3 movementVector = new Vector3(
+                TGCVector3 movementVector = new TGCVector3(
                     FastMath.Sin(mesh.Rotation.Y) * movement,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * movement
@@ -850,7 +851,7 @@ namespace TgcViewer.Model.Enemies
             walkingDir.Normalize();
 
             //Rotar personaje para que mire hacia el destino
-            Vector3 currentVecRot = getCurrentVecRot();
+            TGCVector3 currentVecRot = getCurrentVecRot();
             rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(walkingDir.Z, walkingDir.X);
             mesh.rotateY(rotatingNextAngle);
 
@@ -873,7 +874,7 @@ namespace TgcViewer.Model.Enemies
             else
             {
                 //avanzar
-                mesh.move(Vector3.Scale(walkingDir, movement));
+                mesh.move(TGCVector3.Scale(walkingDir, movement));
             }
         }
 
@@ -909,11 +910,11 @@ namespace TgcViewer.Model.Enemies
         /// <param name="collisionObj">Objeto con el que se colisiono</param>
         /// <param name="collisionNormal">Normal contra la que se colisiona</param>
         /// <returns>true si hubo colision</returns>
-        private bool tryMove(Vector3 pos, Vector3 nextPos, out TgcBoundingBox collisionObj, out Vector3 collisionNormal)
+        private bool tryMove(TGCVector3 pos, TGCVector3 nextPos, out TgcBoundingBox collisionObj, out TGCVector3 collisionNormal)
         {
             TgcBoundingBox minAABB = null;
             float minDistSq = float.MaxValue;
-            Vector3 minCollisionPoint = Vector3.Empty;
+            TGCVector3 minCollisionPoint = TGCVector3.Empty;
 
             //Colision de BoundingBox de proxima posicion contra todos los objetos del escenario
             List<ColliderObject> objetosColisionables = Game.instance.currentLevel.CurrentSector.ObjetosColisionables;
@@ -922,11 +923,11 @@ namespace TgcViewer.Model.Enemies
                 if (TgcCollisionUtils.testAABBAABB(collider.BoundingBox, mesh.BoundingBox))
                 {
                     //Colision segmento de movimiento contra AABB del obstaculo
-                    Vector3 q;
+                    TGCVector3 q;
                     if (TgcCollisionUtils.intersectSegmentAABB(pos, nextPos, collider.BoundingBox, out q))
                     {
                         //Guardar el mas cercano
-                        float distSq = Vector3.Subtract(q, pos).LengthSq();
+                        float distSq = TGCVector3.Subtract(q, pos).LengthSq();
                         if (distSq < minDistSq)
                         {
                             minDistSq = distSq;
@@ -940,7 +941,7 @@ namespace TgcViewer.Model.Enemies
             //No hay colision, se puede avanzar
             if (minAABB == null)
             {
-                collisionNormal = Vector3.Empty;
+                collisionNormal = TGCVector3.Empty;
                 collisionObj = null;
                 return true;
             }
@@ -954,27 +955,27 @@ namespace TgcViewer.Model.Enemies
         /// <summary>
         /// Obtiene la normal del BoundingBox a la que pertenece un punto de colision
         /// </summary>
-        private Vector3 getAAABBCollisionFaceNormal(TgcBoundingBox aabb, Vector3 collisionPoint)
+        private TGCVector3 getAAABBCollisionFaceNormal(TgcBoundingBox aabb, TGCVector3 collisionPoint)
         {
             //+X: (1, 0, 0)
             if (collisionPoint.X < aabb.PMax.X + float.Epsilon && collisionPoint.X > aabb.PMax.X - float.Epsilon)
             {
-                return new Vector3(1, 0, 0);
+                return new TGCVector3(1, 0, 0);
             }
             //-X: (-1, 0, 0)
             if (collisionPoint.X < aabb.PMin.X + float.Epsilon && collisionPoint.X > aabb.PMin.X - float.Epsilon)
             {
-                return new Vector3(-1, 0, 0);
+                return new TGCVector3(-1, 0, 0);
             }
             //+Z: (0, 0, 1)
             if (collisionPoint.Z < aabb.PMax.Z + float.Epsilon && collisionPoint.Z > aabb.PMax.Z - float.Epsilon)
             {
-                return new Vector3(0, 0, 1);
+                return new TGCVector3(0, 0, 1);
             }
             //+Z: (0, 0, -1)
             if (collisionPoint.Z < aabb.PMin.Z + float.Epsilon && collisionPoint.Z > aabb.PMin.Z - float.Epsilon)
             {
-                return new Vector3(0, 0, -1);
+                return new TGCVector3(0, 0, -1);
             }
 
 
@@ -982,7 +983,7 @@ namespace TgcViewer.Model.Enemies
             throw new Exception("No se encontro face del BoundingBox que coincida con el punto de colision. Aabb: " + aabb.ToString() + ", Point: " + TgcParserUtils.printVector3(collisionPoint));
         }
         */
-        
+
 
         #endregion
 
@@ -1014,15 +1015,15 @@ namespace TgcViewer.Model.Enemies
         /// </summary>
         private void renderVision()
         {
-            Vector3 currentVecRot = getCurrentVecRot();
+            TGCVector3 currentVecRot = getCurrentVecRot();
 
             float visionY = GameModel.instance.mainCharacter.Crouched ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado : GameModel.instance.gameConfig.guardia.alturaVision;
-            Vector3 meshPos = new Vector3(mesh.Position.X, visionY, mesh.Position.Z);
-            Vector3 x = meshPos + Vector3.Scale(currentVecRot, GameModel.instance.gameConfig.guardia.distanciaVisual);
+            TGCVector3 meshPos = new TGCVector3(mesh.Position.X, visionY, mesh.Position.Z);
+            TGCVector3 x = meshPos + TGCVector3.Scale(currentVecRot, GameModel.instance.gameConfig.guardia.distanciaVisual);
             float delta = GameModel.instance.gameConfig.guardia.radioPerpendicularVision;
-            Vector3 orthonormal = Vector3.Cross((x - meshPos), new Vector3(0, 1, 0));
+            TGCVector3 orthonormal = TGCVector3.Cross((x - meshPos), new TGCVector3(0, 1, 0));
             orthonormal.Normalize();
-            Vector3 orthonormalScaled = Vector3.Scale(orthonormal, delta);
+            TGCVector3 orthonormalScaled = TGCVector3.Scale(orthonormal, delta);
 
             //int color = currentState == State.Alarm ? visionColorAlarm : visionColor;
             int color = currentVisionColor;
@@ -1036,7 +1037,7 @@ namespace TgcViewer.Model.Enemies
             TexturesManager.Instance.clear(0);
             TexturesManager.Instance.clear(1);
             d3dDevice.Material = D3DDevice.DEFAULT_MATERIAL;
-            d3dDevice.Transform.World = Matrix.Identity;
+            d3dDevice.Transform.World = TGCMatrix.Identity;
 
             d3dDevice.VertexFormat = CustomVertex.PositionColored.Format;
             d3dDevice.DrawUserPrimitives(PrimitiveType.TriangleList, 1, visionVertices);
@@ -1045,8 +1046,8 @@ namespace TgcViewer.Model.Enemies
 
             //esfera de colision
             //bSphereVisual.render();
-            bSphereVisualEspaldas.render();
-            bSphereAttack.render();
+            bSphereVisualEspaldas.Render();
+            bSphereAttack.Render();
         }
 
 
@@ -1057,9 +1058,9 @@ namespace TgcViewer.Model.Enemies
         public void dispose()
         {
             this.mesh = null;
-            bSphereVisual.dispose();
-            bSphereAttack.dispose();
-            bSphereVisualEspaldas.dispose();
+            bSphereVisual.Dispose();
+            bSphereAttack.Dispose();
+            bSphereVisualEspaldas.Dispose();
             visionVertices = null;
         }
 

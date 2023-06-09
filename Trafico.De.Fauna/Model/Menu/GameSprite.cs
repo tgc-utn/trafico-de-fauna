@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
 namespace TgcViewer.Model.Menu
@@ -10,12 +11,12 @@ namespace TgcViewer.Model.Menu
     public class GameSprite
     {
         Rectangle srcRect;
-        Matrix transformationMatrix;
+        TGCMatrix transformationMatrix;
 
         /// <summary>
         /// The transformation matrix.
         /// </summary>
-        public Matrix TransformationMatrix
+        public TGCMatrix TransformationMatrix
         {
             get { return transformationMatrix; }
 
@@ -53,12 +54,12 @@ namespace TgcViewer.Model.Menu
             set { color = value; }
         }
 
-        private Vector2 position;
+        private TGCVector2 position;
 
         /// <summary>
         /// The sprite position in the 2D plane.
         /// </summary>
-        public Vector2 Position
+        public TGCVector2 Position
         {
             get { return position; }
             set { position = value; UpdateTransformationMatrix(); }
@@ -75,34 +76,34 @@ namespace TgcViewer.Model.Menu
             set { rotation = value; UpdateTransformationMatrix(); }
         }
 
-        private Vector2 rotationCenter;
+        private TGCVector2 rotationCenter;
 
         /// <summary>
         /// The position of the centre of rotation
         /// </summary>
-        public Vector2 RotationCenter
+        public TGCVector2 RotationCenter
         {
             get { return rotationCenter; }
             set { rotationCenter = value; UpdateTransformationMatrix(); }
         }
 
-        private Vector2 scalingCenter;
+        private TGCVector2 scalingCenter;
 
         /// <summary>
         /// The position of the centre of scaling
         /// </summary>
-        public Vector2 ScalingCenter
+        public TGCVector2 ScalingCenter
         {
             get { return scalingCenter; }
             set { scalingCenter = value; UpdateTransformationMatrix(); }
         }
 
-        private Vector2 scaling;
+        private TGCVector2 scaling;
 
         /// <summary>
         /// The scaling factors in the x and y axes.
         /// </summary>
-        public Vector2 Scaling
+        public TGCVector2 Scaling
         {
             get { return scaling; }
             set { scaling = value; UpdateTransformationMatrix(); }
@@ -126,17 +127,17 @@ namespace TgcViewer.Model.Menu
         private void initialize()
         {
             //Set the identity matrix.
-            transformationMatrix = Matrix.Identity;
+            transformationMatrix = TGCMatrix.Identity;
 
             //Set an empty rectangle to indicate the entire bitmap.
             srcRect = Rectangle.Empty;
 
             //Initialize transformation properties.
-            position = new Vector2(0, 0);
-            scaling = new Vector2(1, 1);
-            scalingCenter = new Vector2(0, 0);
+            position = new TGCVector2(0, 0);
+            scaling = new TGCVector2(1, 1);
+            scalingCenter = new TGCVector2(0, 0);
             rotation = 0;
-            rotationCenter = new Vector2(0, 0);
+            rotationCenter = new TGCVector2(0, 0);
 
 
             color = Color.White;
@@ -145,7 +146,7 @@ namespace TgcViewer.Model.Menu
 
         private void UpdateTransformationMatrix()
         {
-            this.transformationMatrix = Matrix.Transformation2D(scalingCenter, 0, scaling, rotationCenter, rotation, position);
+            this.transformationMatrix = TGCMatrix.Transformation2D(scalingCenter, 0, scaling, rotationCenter, rotation, position);
         }
 
         /// <summary>

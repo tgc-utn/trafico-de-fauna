@@ -22,6 +22,7 @@ using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Geometry;
+using TGC.Core.Mathematica;
 using TgcViewer.Model.Meshes;
 
 namespace TgcViewer.Model.MainCharacters
@@ -40,12 +41,12 @@ namespace TgcViewer.Model.MainCharacters
     {
         const float EPSILON = 0.05f;
 
-        private Vector3 gravityForce;
+        private TGCVector3 gravityForce;
         /// <summary>
         /// Vector que representa la fuerza de gravedad.
         /// Debe tener un valor negativo en Y para que la fuerza atraiga hacia el suelo
         /// </summary>
-        public Vector3 GravityForce
+        public TGCVector3 GravityForce
         {
             get { return gravityForce; }
             set { gravityForce = value; }
@@ -77,7 +78,7 @@ namespace TgcViewer.Model.MainCharacters
         public SphereCollisionManager()
         {
             gravityEnabled = true;
-            gravityForce = new Vector3(0, -10, 0);
+            gravityForce = new TGCVector3(0, -10, 0);
             slideFactor = 1.3f;
         }
 
@@ -89,9 +90,9 @@ namespace TgcViewer.Model.MainCharacters
         /// <param name="movementVector">Movimiento a realizar</param>
         /// <param name="obstaculos">BoundingBox de obstáculos contra los cuales se puede colisionar</param>
         /// <returns>Desplazamiento relativo final efecutado al BoundingSphere</returns> 
-        public Vector3 moveCharacter(TgcBoundingSphere characterSphere, Vector3 movementVector, List<ColliderObject> obstaculos)
+        public TGCVector3 moveCharacter(TgcBoundingSphere characterSphere, TGCVector3 movementVector, List<ColliderObject> obstaculos)
         {
-            Vector3 originalSphereCenter = characterSphere.Center;
+            TGCVector3 originalSphereCenter = characterSphere.Center;
 
             //Realizar movimiento
             collideWithWorld(characterSphere, movementVector, obstaculos);
@@ -108,17 +109,17 @@ namespace TgcViewer.Model.MainCharacters
         /// <summary>
         /// Detección de colisiones, filtrando los obstaculos que se encuentran dentro del radio de movimiento
         /// </summary>
-        private void collideWithWorld(TgcBoundingSphere characterSphere, Vector3 movementVector, List<ColliderObject> obstaculos)
+        private void collideWithWorld(TgcBoundingSphere characterSphere, TGCVector3 movementVector, List<ColliderObject> obstaculos)
         {
             if (movementVector.LengthSq() < EPSILON)
             {
                 return;
             }
 
-            Vector3 lastCenterSafePosition = characterSphere.Center;
+            TGCVector3 lastCenterSafePosition = characterSphere.Center;
 
             //Dejar solo los obstáculos que están dentro del radio de movimiento de la esfera
-            Vector3 halfMovementVec = Vector3.Multiply(movementVector, 0.5f);
+            TGCVector3 halfMovementVec = TGCVector3.Multiply(movementVector, 0.5f);
             TgcBoundingSphere testSphere = new TgcBoundingSphere(
                 characterSphere.Center + halfMovementVec,
                 halfMovementVec.Length() + characterSphere.Radius
@@ -153,7 +154,7 @@ namespace TgcViewer.Model.MainCharacters
         /// <summary>
         /// Detección de colisiones recursiva
         /// </summary>
-        public void doCollideWithWorld(TgcBoundingSphere characterSphere, Vector3 movementVector, List<TgcBoundingAxisAlignBox> obstaculos, int recursionDepth)
+        public void doCollideWithWorld(TgcBoundingSphere characterSphere, TGCVector3 movementVector, List<TgcBoundingAxisAlignBox> obstaculos, int recursionDepth)
         {
             //Limitar recursividad
             if (recursionDepth > 5)
@@ -169,15 +170,15 @@ namespace TgcViewer.Model.MainCharacters
             }
 
             //Posicion deseada
-            Vector3 originalSphereCenter = characterSphere.Center;
-            Vector3 nextSphereCenter = originalSphereCenter + movementVector;
+            TGCVector3 originalSphereCenter = characterSphere.Center;
+            TGCVector3 nextSphereCenter = originalSphereCenter + movementVector;
 
             //Buscar el punto de colision mas cercano de todos los objetos candidatos
             float minCollisionDistSq = float.MaxValue;
-            Vector3 realMovementVector = movementVector;
+            TGCVector3 realMovementVector = movementVector;
             TgcBoundingAxisAlignBox.Face collisionFace = null;
             TgcBoundingAxisAlignBox collisionObstacle = null;
-            Vector3 nearestPolygonIntersectionPoint = Vector3.Empty;
+            TGCVector3 nearestPolygonIntersectionPoint = TGCVector3.Empty;
             foreach (TgcBoundingAxisAlignBox obstaculoBB in obstaculos)
             {
                 //Obtener los polígonos que conforman las 6 caras del BoundingBox
@@ -185,17 +186,17 @@ namespace TgcViewer.Model.MainCharacters
 
                 foreach (TgcBoundingAxisAlignBox.Face bbFace in bbFaces)
                 {
-                    Vector3 pNormal = TgcCollisionUtils.getPlaneNormal(bbFace.Plane);
+                    TGCVector3 pNormal = TgcCollisionUtils.getPlaneNormal(bbFace.Plane);
 
                     TgcRay movementRay = new TgcRay(originalSphereCenter, movementVector);
                     float brutePlaneDist;
-                    Vector3 brutePlaneIntersectionPoint;
+                    TGCVector3 brutePlaneIntersectionPoint;
                     if (!TgcCollisionUtils.intersectRayPlane(movementRay, bbFace.Plane, out brutePlaneDist, out brutePlaneIntersectionPoint))
                     {
                         continue;
                     }
 
-                    float movementRadiusLengthSq = Vector3.Multiply(movementVector, characterSphere.Radius).LengthSq();
+                    float movementRadiusLengthSq = TGCVector3.Multiply(movementVector, characterSphere.Radius).LengthSq();
                     if (brutePlaneDist * brutePlaneDist > movementRadiusLengthSq)
                     {
                         continue;
@@ -204,8 +205,8 @@ namespace TgcViewer.Model.MainCharacters
 
                     //Obtener punto de colisión en el plano, según la normal del plano
                     float pDist;
-                    Vector3 planeIntersectionPoint;
-                    Vector3 sphereIntersectionPoint;
+                    TGCVector3 planeIntersectionPoint;
+                    TGCVector3 sphereIntersectionPoint;
                     TgcRay planeNormalRay = new TgcRay(originalSphereCenter, -pNormal);
                     bool embebbed = false;
                     bool collisionFound = false;
@@ -223,7 +224,7 @@ namespace TgcViewer.Model.MainCharacters
                         else
                         {
                             //Obtener punto de colisión del contorno de la esfera según la normal del plano
-                            sphereIntersectionPoint = originalSphereCenter - Vector3.Multiply(pNormal, characterSphere.Radius);
+                            sphereIntersectionPoint = originalSphereCenter - TGCVector3.Multiply(pNormal, characterSphere.Radius);
 
                             //Disparar un rayo desde el contorno de la esfera hacia el plano, con el vector de movimiento
                             TgcRay sphereMovementRay = new TgcRay(sphereIntersectionPoint, movementVector);
@@ -235,9 +236,9 @@ namespace TgcViewer.Model.MainCharacters
                         }
 
                         //Ver si planeIntersectionPoint pertenece al polígono
-                        Vector3 newMovementVector;
+                        TGCVector3 newMovementVector;
                         float newMoveDistSq;
-                        Vector3 polygonIntersectionPoint;
+                        TGCVector3 polygonIntersectionPoint;
                         if (pointInBounbingBoxFace(planeIntersectionPoint, bbFace))
                         {
                             if (embebbed)
@@ -256,7 +257,7 @@ namespace TgcViewer.Model.MainCharacters
                                 bbFace.Extremes[0], bbFace.Extremes[1], bbFace.Extremes[2]);
 
                             //Revertir el vector de velocidad desde el nuevo polygonIntersectionPoint para ver donde colisiona la esfera, si es que llega
-                            Vector3 reversePointSeg = polygonIntersectionPoint - movementVector;
+                            TGCVector3 reversePointSeg = polygonIntersectionPoint - movementVector;
                             if (TgcCollisionUtils.intersectSegmentSphere(polygonIntersectionPoint, reversePointSeg, characterSphere, out pDist, out sphereIntersectionPoint))
                             {
                                 collisionFound = true;
@@ -305,21 +306,21 @@ namespace TgcViewer.Model.MainCharacters
 
 
             //Calcular plano de Sliding
-            Vector3 slidePlaneOrigin = nearestPolygonIntersectionPoint;
-            Vector3 slidePlaneNormal = characterSphere.Center - nearestPolygonIntersectionPoint;
+            TGCVector3 slidePlaneOrigin = nearestPolygonIntersectionPoint;
+            TGCVector3 slidePlaneNormal = characterSphere.Center - nearestPolygonIntersectionPoint;
             slidePlaneNormal.Normalize();
 
-            Plane slidePlane = Plane.FromPointNormal(slidePlaneOrigin, slidePlaneNormal);
+            TGCPlane slidePlane = TGCPlane.FromPointNormal(slidePlaneOrigin, slidePlaneNormal);
 
             //Proyectamos el punto original de destino en el plano de sliding
-            TgcRay slideRay = new TgcRay(nearestPolygonIntersectionPoint + Vector3.Multiply(movementVector, slideFactor), slidePlaneNormal);
+            TgcRay slideRay = new TgcRay(nearestPolygonIntersectionPoint + TGCVector3.Multiply(movementVector, slideFactor), slidePlaneNormal);
             float slideT;
-            Vector3 slideDestinationPoint;
+            TGCVector3 slideDestinationPoint;
 
             if (TgcCollisionUtils.intersectRayPlane(slideRay, slidePlane, out slideT, out slideDestinationPoint))
             {
                 //Nuevo vector de movimiento
-                Vector3 slideMovementVector = slideDestinationPoint - nearestPolygonIntersectionPoint;
+                TGCVector3 slideMovementVector = slideDestinationPoint - nearestPolygonIntersectionPoint;
 
                 if (slideMovementVector.LengthSq() < EPSILON)
                 {
@@ -335,10 +336,10 @@ namespace TgcViewer.Model.MainCharacters
         /// Ver si un punto pertenece a una cara de un BoundingBox
         /// </summary>
         /// <returns>True si pertenece</returns>
-        private bool pointInBounbingBoxFace(Vector3 p, TgcBoundingAxisAlignBox.Face bbFace)
+        private bool pointInBounbingBoxFace(TGCVector3 p, TgcBoundingAxisAlignBox.Face bbFace)
         {
-            Vector3 min = bbFace.Extremes[0];
-            Vector3 max = bbFace.Extremes[3];
+            TGCVector3 min = bbFace.Extremes[0];
+            TGCVector3 max = bbFace.Extremes[3];
 
             return p.X >= min.X && p.Y >= min.Y && p.Z >= min.Z &&
                p.X <= max.X && p.Y <= max.Y && p.Z <= max.Z;

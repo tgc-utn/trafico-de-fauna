@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using Microsoft.DirectX;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 
 namespace TgcViewer.Model.Menu
@@ -90,7 +91,7 @@ namespace TgcViewer.Model.Menu
         /// <summary>
         /// Posicion del sprite
         /// </summary>
-        public Vector2 Position
+        public TGCVector2 Position
         {
             get { return sprite.Position; }
             set { sprite.Position = value; }
@@ -99,7 +100,7 @@ namespace TgcViewer.Model.Menu
         /// <summary>
         /// The scaling factors in the x and y axes.
         /// </summary>
-        public Vector2 Scaling
+        public TGCVector2 Scaling
         {
             get { return sprite.Scaling; }
             set { sprite.Scaling = value; }

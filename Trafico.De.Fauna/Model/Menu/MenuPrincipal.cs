@@ -22,6 +22,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Input;
+using TGC.Core.Mathematica;
 using TGC.Core.Textures;
 using TgcViewer.Model.Interpolators;
 using Device = Microsoft.DirectX.Direct3D.Device;
@@ -33,11 +34,11 @@ namespace TgcViewer.Model.Menu
     /// </summary>
     public class MenuPrincipal
     {
-        static readonly Vector2 ITEM_JUGAR_POSITION = new Vector2(390, 412 - 15);
-        static readonly Vector2 ITEM_OPCIONES_POSITION = new Vector2(390, 469 - 15);
-        static readonly Vector2 ITEM_SALIR_POSITION = new Vector2(390, 525 - 15);
+        static readonly TGCVector2 ITEM_JUGAR_POSITION = new TGCVector2(390, 412 - 15);
+        static readonly TGCVector2 ITEM_OPCIONES_POSITION = new TGCVector2(390, 469 - 15);
+        static readonly TGCVector2 ITEM_SALIR_POSITION = new TGCVector2(390, 525 - 15);
 
-        static readonly Vector2[] ITEMS_POSITION = new Vector2[]{
+        static readonly TGCVector2[] ITEMS_POSITION = new TGCVector2[]{
             ITEM_JUGAR_POSITION,
             ITEM_OPCIONES_POSITION,
             ITEM_SALIR_POSITION

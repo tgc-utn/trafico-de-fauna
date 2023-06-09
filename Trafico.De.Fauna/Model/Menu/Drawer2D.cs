@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System.Drawing;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Mathematica;
 
 namespace TgcViewer.Model.Menu
 {
@@ -65,7 +66,7 @@ namespace TgcViewer.Model.Menu
             if (sprite.Enabled)
             {
                 DxSprite.Transform = sprite.TransformationMatrix;
-                DxSprite.Draw(sprite.Texture.D3dTexture, sprite.SrcRect, Vector3.Empty, Vector3.Empty, sprite.Color);
+                DxSprite.Draw(sprite.Texture.D3dTexture, sprite.SrcRect, TGCVector3.Empty, TGCVector3.Empty, sprite.Color);
             }
         }
 
@@ -99,7 +100,7 @@ namespace TgcViewer.Model.Menu
         /// </summary>
         /// <param name="position">The location.</param>
         /// <param name="color">The color.</param>
-        public void DrawPoint(Vector2 position, Color color)
+        public void DrawPoint(TGCVector2 position, Color color)
         {
             LineVertexData[0].X = position.X;
             LineVertexData[0].Y = position.Y;
@@ -118,9 +119,9 @@ namespace TgcViewer.Model.Menu
         /// <param name="color">The color.</param>
         /// <param name="width">The width</param>
         /// <param name="antiAlias">Anti-alias enabled.</param>
-        public void DrawLine(Vector2 position1, Vector2 position2, Color color, int width, bool antiAlias)
+        public void DrawLine(TGCVector2 position1, TGCVector2 position2, Color color, int width, bool antiAlias)
         {
-            Vector2[] positionList = new Vector2[2] { position1, position2 };
+            TGCVector2[] positionList = new TGCVector2[2] { position1, position2 };
             DrawPolyline(positionList, color, width, antiAlias);
         }
 
@@ -131,12 +132,12 @@ namespace TgcViewer.Model.Menu
         /// <param name="color">The color</param>
         /// <param name="width">The width</param>
         /// <param name="antiAlias">Anti-alias enabled.</param>
-        public void DrawPolyline(Vector2[] positionList, Color color, int width, bool antiAlias)
+        public void DrawPolyline(TGCVector2[] positionList, Color color, int width, bool antiAlias)
         {
 
             line.Antialias = antiAlias;
             line.Width = width;
-            line.Draw(positionList, color);
+            line.Draw(TGCVector2.ToVector2Array(positionList), color);
 
         }
 

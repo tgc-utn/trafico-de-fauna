@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Drawing;
 using Microsoft.DirectX;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TgcViewer.Model.Billboards;
 using TgcViewer.Model.Meshes;
@@ -36,7 +37,7 @@ namespace TgcViewer.Model.CustomEvents.Billboards
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             billboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Explosion.png", new Size(64, 64), 16, 16);
-            billboard.Size = new Vector2(64, 64);
+            billboard.Size = new TGCVector2(64, 64);
             billboard.Position = GameUtils.getBBLowerCenterFromMeshData(meshData);
         }
 
@@ -60,7 +61,7 @@ namespace TgcViewer.Model.CustomEvents.Billboards
             if (GameModel.instance.mainCharacter.isInProximityRange(billboard.Position))
             {
                 billboard.RotationY = GameModel.instance.mainCharacter.Camera.RotationY;
-                billboard.render();
+                billboard.Render();
             }
         }
 
@@ -76,7 +77,7 @@ namespace TgcViewer.Model.CustomEvents.Billboards
 
         public override void dispose()
         {
-            billboard.dispose();
+            billboard.Dispose();
         }
     }
 }

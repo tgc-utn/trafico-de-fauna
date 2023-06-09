@@ -83,12 +83,12 @@ namespace TgcViewer.Model.Meshes
         {
             if (boundingBox != null)
             {
-                boundingBox.dispose();
+                boundingBox.Dispose();
                 boundingBox = null;
             }
             if (mesh != null)
             {
-                mesh.dispose();
+                mesh.Dispose();
                 mesh = null;
             }
         }

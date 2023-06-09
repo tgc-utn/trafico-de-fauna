@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 using TgcViewer.Utils.Render;
@@ -72,7 +73,7 @@ namespace TgcViewer.Model.Meshes
         {
         }
 
-        public TgcMeshShader(string name, TgcMesh parentInstance, Vector3 translation, Vector3 rotation, Vector3 scale)
+        public TgcMeshShader(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
             : base(name, parentInstance, translation, rotation, scale)
         {
         }
@@ -87,7 +88,7 @@ namespace TgcViewer.Model.Meshes
             if (!enabled)
                 return;
 
-            if (alphaBlendEnable)
+            if (AlphaBlendEnable)
             {
                 GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
@@ -121,10 +122,10 @@ namespace TgcViewer.Model.Meshes
             //Aplicar transformacion de malla
             if (autoTransformEnable)
             {
-                this.transform = Matrix.Identity
-                    * Matrix.Scaling(scale)
-                    * Matrix.RotationYawPitchRoll(rotation.Y, rotation.X, rotation.Z)
-                    * Matrix.Translation(translation);
+                this.transform = TGCMatrix.Identity
+                    * TGCMatrix.Scaling(scale)
+                    * TGCMatrix.RotationYawPitchRoll(rotation.Y, rotation.X, rotation.Z)
+                    * TGCMatrix.Translation(translation);
             }
             device.Transform.World = this.transform;
 
@@ -134,8 +135,8 @@ namespace TgcViewer.Model.Meshes
 
             //Cargar valores de shader de matrices que dependen de la posición del mesh
             int numPasses;
-            Matrix matWorldView = this.transform * device.Transform.View;
-            Matrix matWorldViewProj = matWorldView * device.Transform.Projection;
+            TGCMatrix matWorldView = this.transform * TGCMatrix.FromMatrix(device.Transform.View);
+            TGCMatrix matWorldViewProj = matWorldView * TGCMatrix.FromMatrix(device.Transform.Projection);
             effect.SetValue("matWorld", this.transform);
             effect.SetValue("matWorldView", matWorldView);
             effect.SetValue("matWorldViewProj", matWorldViewProj);
@@ -193,7 +194,7 @@ namespace TgcViewer.Model.Meshes
                     TexturesManager.Instance.clear(1);
                     
                     //Activar AlphaBlending
-                    if (this.alphaBlendEnable)
+                    if (this.AlphaBlendEnable)
                     {
                         device.RenderState.AlphaBlendEnable = true;
                         device.RenderState.AlphaTestEnable = true;
@@ -248,7 +249,7 @@ namespace TgcViewer.Model.Meshes
 
 
                     //Activar AlphaBlending
-                    if (this.alphaBlendEnable)
+                    if (this.AlphaBlendEnable)
                     {
                         device.RenderState.AlphaBlendEnable = true;
                         device.RenderState.AlphaTestEnable = true;
@@ -314,7 +315,7 @@ namespace TgcViewer.Model.Meshes
             return new TgcMeshShader(d3dMesh, meshName, renderType);
         }
 
-        public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, Vector3 translation, Vector3 rotation, Vector3 scale)
+        public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
         {
             return new TgcMeshShader(meshName, originalMesh, translation, rotation, scale);
         }

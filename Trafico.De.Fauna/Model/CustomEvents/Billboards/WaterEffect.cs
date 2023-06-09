@@ -68,13 +68,13 @@ namespace TgcViewer.Model.CustomEvents.Billboards
             //Dibujar si esta en rango visible
             if (GameModel.instance.mainCharacter.isInProximityRange(billboard.PMin))
             {
-                billboard.render();
+                billboard.Render();
             }
         }
 
         public override void renderDebug()
         {
-            aabb.render();
+            aabb.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -84,8 +84,8 @@ namespace TgcViewer.Model.CustomEvents.Billboards
 
         public override void dispose()
         {
-            billboard.dispose();
-            aabb.dispose();
+            billboard.Dispose();
+            aabb.Dispose();
         }
     }
 }

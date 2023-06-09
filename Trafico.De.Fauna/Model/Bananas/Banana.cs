@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
 using TgcViewer.Model.ItemsAnimal;
@@ -34,7 +35,7 @@ namespace TgcViewer.Model.Bananas
     {
         const float BSPHERE_RADIUS = 15;
 
-        Vector3 center;
+        TGCVector3 center;
         TgcMeshShader mesh;
         RotadorDeItems rotador;
 
@@ -71,7 +72,7 @@ namespace TgcViewer.Model.Bananas
             TgcBoundingAxisAlignBox boundingBox = GameUtils.createBBFromMeshData(meshData);
             center = boundingBox.calculateBoxCenter();
 
-            boundingSphere = new TgcBoundingSphere(new Vector3(center.X, center.Y + BSPHERE_RADIUS / 2, center.Z), BSPHERE_RADIUS);
+            boundingSphere = new TgcBoundingSphere(new TGCVector3(center.X, center.Y + BSPHERE_RADIUS / 2, center.Z), BSPHERE_RADIUS);
 
             rotador = new RotadorDeItems();
             rotador.YSpeed = 13f;
@@ -105,7 +106,7 @@ namespace TgcViewer.Model.Bananas
                 //Debug
                 if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
-                    boundingSphere.render();
+                    boundingSphere.Render();
                 }
 
             }
@@ -121,7 +122,7 @@ namespace TgcViewer.Model.Bananas
         public void dispose()
         {
             mesh = null;
-            boundingSphere.dispose();
+            boundingSphere.Dispose();
             boundingSphere = null;
         }
 

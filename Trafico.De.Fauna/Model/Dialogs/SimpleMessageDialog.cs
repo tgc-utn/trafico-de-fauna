@@ -21,6 +21,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
 using TgcViewer.Model.Menu;
@@ -48,7 +49,7 @@ namespace TgcViewer.Model.Dialogs
             background.Texture = TgcTexture.createTexture(device, dialogPath + "backgroundSimpleMessage.png");
             int textureWidth = background.Texture.Width;
             int textureHeight = background.Texture.Height;
-            background.Position = new Vector2(width / 2 - textureWidth / 2, height / 2 - textureHeight / 2);
+            background.Position = new TGCVector2(width / 2 - textureWidth / 2, height / 2 - textureHeight / 2);
 
             //Cuadro de texto
             text2d = new TgcText2D();

@@ -194,7 +194,9 @@ namespace TgcViewer.Model
         {
             PreUpdate();
             //TODO
+            PostUpdate();
             ((GameThirdPersonCamera)this.Camara).updateViewMatrix(D3DDevice.Instance.Device);
+
 
         }
 

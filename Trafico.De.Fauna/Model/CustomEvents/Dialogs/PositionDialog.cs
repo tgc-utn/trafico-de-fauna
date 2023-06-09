@@ -131,7 +131,7 @@ namespace TgcViewer.Model.CustomEvents.Dialogs
 
             if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
             {
-                boundingBox.render();
+                boundingBox.Render();
             }
         }
 
@@ -142,7 +142,7 @@ namespace TgcViewer.Model.CustomEvents.Dialogs
 
         public override void renderDebug()
         {
-            boundingBox.render();
+            boundingBox.Render();
         }
 
         public override ColliderObject getColliderObject()
@@ -152,7 +152,7 @@ namespace TgcViewer.Model.CustomEvents.Dialogs
 
         public override void dispose()
         {
-            boundingBox.dispose();
+            boundingBox.Dispose();
             boundingBox = null;
         }
 

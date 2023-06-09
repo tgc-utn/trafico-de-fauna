@@ -20,6 +20,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.DirectX;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TgcViewer.Model.Meshes;
@@ -81,14 +82,14 @@ namespace TgcViewer.Model.ItemsAnimal
 
             //Cargar mesh
             string meshName = split[1];
-            Vector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
+            TGCVector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
             TgcSceneLoader loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
             string meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransformEnable = true;
-            mesh.Position = new Vector3(nodeCenter.X, 0, nodeCenter.Z);
+            mesh.AutoTransform = true;
+            mesh.Position = new TGCVector3(nodeCenter.X, 0, nodeCenter.Z);
 
             //bSphereProximidad de proximidad
             bSphereProximidad = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
@@ -141,7 +142,7 @@ namespace TgcViewer.Model.ItemsAnimal
                     angleRot = FastMath.PI_HALF;
                     break;
             }
-            mesh.rotateY(angleRot);
+            mesh.RotateY(angleRot);
 
         }
 
@@ -159,7 +160,7 @@ namespace TgcViewer.Model.ItemsAnimal
                 //Debug render
                 if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
-                    bSphereProximidad.render();
+                    bSphereProximidad.Render();
                 }
             }
         }
@@ -194,10 +195,10 @@ namespace TgcViewer.Model.ItemsAnimal
 
         public void dispose()
         {
-            mesh.dispose();
+            mesh.Dispose();
             mesh = null;
             colliderObject = null;
-            bSphereProximidad.dispose();
+            bSphereProximidad.Dispose();
             bSphereProximidad = null;
         }
     }
