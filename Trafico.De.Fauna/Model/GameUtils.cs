@@ -116,7 +116,7 @@ namespace Trafico.De.Fauna.Model
             TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshDataNode);
             TgcScene scene = loader.loadScene(sceneData, texturePath);
             TgcMeshShader mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransform = true;
+            mesh.AutoTransformEnable = true;
             return mesh;
         }
 

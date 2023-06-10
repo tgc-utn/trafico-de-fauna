@@ -53,7 +53,7 @@ namespace Trafico.De.Fauna.Model.Bananas
             for (int i = 0; i < MAX_BANANAS; i++)
             {
                 TgcMeshShader mesh = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
-                mesh.AutoTransform = true;
+                mesh.AutoTransformEnable = true;
                 meshes.Add(mesh);
             }
 

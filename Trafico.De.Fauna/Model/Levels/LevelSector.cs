@@ -398,7 +398,7 @@ namespace Trafico.De.Fauna.Model.Levels
             staticMeshes = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
-                mesh.AutoTransform = true;
+                mesh.AutoTransformEnable = true;
                 staticMeshes.Add((TgcMeshShader)mesh);
             }
         }
@@ -416,7 +416,7 @@ namespace Trafico.De.Fauna.Model.Levels
             meshesSinColision = new List<TgcMeshShader>();
             foreach (TgcMesh mesh in scene.Meshes)
             {
-                mesh.AutoTransform = true;
+                mesh.AutoTransformEnable = true;
                 meshesSinColision.Add((TgcMeshShader)mesh);
             }
         }

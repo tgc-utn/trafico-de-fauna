@@ -65,10 +65,12 @@ namespace Trafico.De.Fauna.Model.Dialogs
             //Cuadro de texto
             text2d = new TgcText2D();
             text2d.Color = Color.White;
-            PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-            privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\spathasans.ttf");
-            FontFamily[] families = privateFontCollection.Families;
-            System.Drawing.Font font = new System.Drawing.Font(families[0], 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            // TODO fix custom font.
+            //PrivateFontCollection privateFontCollection = new PrivateFontCollection();
+            //privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\spathasans.ttf");
+            //FontFamily[] families = privateFontCollection.Families;
+            //Font font = new Font(families[0], 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            Font font = new Font(FontFamily.GenericMonospace, 20, FontStyle.Regular, GraphicsUnit.Pixel);
             text2d.changeFont(font);
             text2d.Position = new Point((int)background.Position.X + 10, (int)background.Position.Y + 10);
             text2d.Align = TgcText2D.TextAlign.LEFT;

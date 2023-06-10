@@ -86,7 +86,7 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
             string meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransform = true;
+            mesh.AutoTransformEnable = true;
             mesh.Position = new TGCVector3(nodeCenter.X, 0, nodeCenter.Z);
 
             //bSphereProximidad de proximidad

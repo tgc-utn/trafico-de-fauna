@@ -193,11 +193,8 @@ namespace Trafico.De.Fauna.Model
         public override void Update()
         {
             PreUpdate();
-            //TODO
             PostUpdate();
             ((GameThirdPersonCamera)this.Camara).updateViewMatrix(D3DDevice.Instance.Device);
-
-
         }
 
         /// <summary>
@@ -326,7 +323,7 @@ namespace Trafico.De.Fauna.Model
         {
             //TODO: hacer dispose de todo
 
-            this.currentLevel.unloadLevel();
+            this.currentLevel?.unloadLevel();
             this.textDialog.dispose();
         }
     }

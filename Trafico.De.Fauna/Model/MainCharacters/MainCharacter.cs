@@ -190,7 +190,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                     meshPath + "Jumping-TgcSkeletalAnim.xml",
                     meshPath + "Punch-TgcSkeletalAnim.xml"
                 });
-            mesh.AutoTransform = true;
+            mesh.AutoTransformEnable = true;
             mesh.RotateY(Geometry.DegreeToRadian(180f));
             origAngleRot = FastMath.PI;
             origPosY = 0;

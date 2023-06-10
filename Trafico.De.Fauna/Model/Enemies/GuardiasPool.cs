@@ -53,7 +53,7 @@ namespace Trafico.De.Fauna.Model.Enemies
                     meshPath+ "StandBy-TgcSkeletalAnim.xml",
                     meshPath+ "Run-TgcSkeletalAnim.xml"
                 });
-                mesh.AutoTransform = true;
+                mesh.AutoTransformEnable = true;
                 meshes.Add(mesh);
             }
 

@@ -13,7 +13,7 @@
 				<alphaBlendEnable>false</alphaBlendEnable>
 				<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>piedraSelva_pasto.jpg</bitmap>
 			</subM>
-			<subM name='piedra Montaña' type='Standardmaterial'>
+			<subM name='piedra MontaÃ±a' type='Standardmaterial'>
 				<ambient>[150.0,150.0,150.0,255.0]</ambient>
 				<diffuse>[150.0,150.0,150.0,255.0]</diffuse>
 				<specular>[229.5,229.5,229.5,255.0]</specular>
@@ -129,7 +129,7 @@
 				<alphaBlendEnable>false</alphaBlendEnable>
 				<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>piedraSelva_pasto2.jpg</bitmap>
 			</subM>
-			<subM name='piedra Montaña' type='Standardmaterial'>
+			<subM name='piedra MontaÃ±a' type='Standardmaterial'>
 				<ambient>[150.0,150.0,150.0,255.0]</ambient>
 				<diffuse>[150.0,150.0,150.0,255.0]</diffuse>
 				<specular>[229.5,229.5,229.5,255.0]</specular>
@@ -3906,7 +3906,7 @@
 			<colors count='3'>88.0 144.0 225.0 </colors>
 			<userProps count='2'>
 				<onlyOnce>true</onlyOnce>
-				<text>Hola! Bienvenido al juego "Trafico de Fauna". Tu objetivo es liberar a todos los monos que se encuentran atrapados en las jaulas. Para desplzarte utiliza las "flechas" del teclado.</text>
+				<text>Hola! Bienvenido al juego "Trafico de Fauna". Tu objetivo es liberar a todos los monos que se encuentran atrapados en las jaulas. Para desplazarte utiliza las "flechas" del teclado.</text>
 			</userProps>
 		</mesh>
 		<mesh name='PositionDialog_AvisoCajas' layer='CustomEvents' type='Original' matId='-1' color='[88.0,144.0,225.0]' visibility='1.0' lightmap=''>

@@ -120,7 +120,7 @@ namespace Trafico.De.Fauna.Model.Meshes
             effect.Technique = this.technique;
 
             //Aplicar transformacion de malla
-            if (autoTransformEnable)
+            if (AutoTransformEnable)
             {
                 this.transform = TGCMatrix.Identity
                     * TGCMatrix.Scaling(scale)

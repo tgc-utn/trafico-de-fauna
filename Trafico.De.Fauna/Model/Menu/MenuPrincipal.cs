@@ -206,11 +206,10 @@ namespace Trafico.De.Fauna.Model.Menu
                     //Salir
                     else if (currentOption == 2)
                     {
-                        //GuiController.Instance.exitGame();
+                        Application.Exit();
+                        return;
                     }
                 }
-
-
 
                 //dibujar
                 device.BeginScene();

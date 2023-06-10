@@ -99,7 +99,7 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
             string meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransform = true;
+            mesh.AutoTransformEnable = true;
             mesh.Position = new TGCVector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
 
             TGCVector3 sphereCenter = new TGCVector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);

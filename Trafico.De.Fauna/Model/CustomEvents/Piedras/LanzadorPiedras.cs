@@ -59,7 +59,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
             string meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
             TgcScene scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
-            mesh.AutoTransform = true;
+            mesh.AutoTransformEnable = true;
 
             //Extremos y direccion de movimiento
             axisX = GameUtils.getBBExtremeCentersXZ(meshData, out posOrigen, out posFinal);

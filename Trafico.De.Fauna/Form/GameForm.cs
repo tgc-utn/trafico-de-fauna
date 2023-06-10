@@ -65,11 +65,19 @@ namespace Trafico.De.Fauna.Form
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            //FullScreen, van en este orden para que queda oculta la barra de Windows.
+            this.WindowState = FormWindowState.Normal;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+
+            //OriginalBorderStyle
+            //this.FormBorderStyle = FormBorderStyle.Sizable;
+
             //Iniciar graficos
             InitGraphics();
 
             //Titulo de la ventana principal
-            Text = Modelo.Name + " - " + Modelo.Description;
+            Text = Modelo.Name + @" - " + Modelo.Description;
 
             //Focus panel3D
             panel3D.Focus();
@@ -112,7 +120,7 @@ namespace Trafico.De.Fauna.Form
             var currentDirectory = Environment.CurrentDirectory + "\\";
 
             //Cargar shaders del framework
-            TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
+            TGCShaders.Instance.LoadCommonShaders(currentDirectory + Game.Default.ShadersDirectory, D3DDevice.Instance);
 
             //Juego a ejecutar
             Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
