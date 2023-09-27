@@ -40,7 +40,7 @@ namespace Trafico.De.Fauna.Model
     /// <summary>
     /// Clase principal del juego
     /// </summary>
-    public class GameModel : TgcExample
+    public class GameModel : TGCExample
     {
         public static GameModel instance;
         public GameConfig gameConfig;
@@ -92,6 +92,9 @@ namespace Trafico.De.Fauna.Model
         {
             //Device de DirectX para crear primitivas
             var d3dDevice = D3DDevice.Instance.Device;
+
+            //Utilizando esta propiedad puedo activar el update/render a intervalos constantes.
+            FixedTickEnable = true;
 
             //BackgroundColor = Color.Black; this is the way in the last version.
             //BackgroundColor
@@ -192,9 +195,7 @@ namespace Trafico.De.Fauna.Model
 
         public override void Update()
         {
-            PreUpdate();
-            PostUpdate();
-            ((GameThirdPersonCamera)this.Camara).updateViewMatrix(D3DDevice.Instance.Device);
+            
         }
 
         /// <summary>
@@ -202,6 +203,9 @@ namespace Trafico.De.Fauna.Model
         /// </summary>
         public override void Render()
         {
+            // TODO remove this from the Render method.
+            ((GameThirdPersonCamera)this.Camera).updateViewMatrix(D3DDevice.Instance.Device);
+
             //Inicio el render de la escena
             PreRender();
 

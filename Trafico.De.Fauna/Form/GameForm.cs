@@ -39,7 +39,7 @@ namespace Trafico.De.Fauna.Form
         /// <summary>
         /// Ejemplo del juego a correr
         /// </summary>
-        private TgcExample Modelo { get; set; }
+        private TGCExample Modelo { get; set; }
 
         /// <summary>
         /// Obtener o parar el estado del RenderLoop.
@@ -144,8 +144,7 @@ namespace Trafico.De.Fauna.Form
                         //Solo renderizamos si la aplicacion tiene foco, para no consumir recursos innecesarios
                         if (ApplicationActive())
                         {
-                            Modelo.Update();
-                            Modelo.Render();
+                            Modelo.Tick();
                         }
                         else
                         {

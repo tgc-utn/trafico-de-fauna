@@ -210,7 +210,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             //Configurar camara en Tercer Persona personalizada
             GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
             camera = new GameThirdPersonCamera();
-            GameModel.instance.Camara = camera;
+            GameModel.instance.Camera = camera;
             camera.Target = mesh.Position;
             camera.OffsetHeight = camaraConfig.offsetY;
             camera.OffsetForward = camaraConfig.offsetZ;

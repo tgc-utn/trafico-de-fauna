@@ -45,16 +45,16 @@ namespace Trafico.De.Fauna.Model
         public static TgcBoundingAxisAlignBox createBBFromMeshData(TgcMeshData meshData)
         {
             return new TgcBoundingAxisAlignBox(
-                TGCVector3.Float3ArrayToVector3(meshData.pMin),
-                TGCVector3.Float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
                         );
         }
 
         public static TGCVector3 getBBCenterFromMeshData(TgcMeshData meshData)
         {
             TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
-                TGCVector3.Float3ArrayToVector3(meshData.pMin),
-                TGCVector3.Float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
                         );
             return aabb.calculateBoxCenter();
         }
@@ -62,8 +62,8 @@ namespace Trafico.De.Fauna.Model
         public static TGCVector3 getBBLowerCenterFromMeshData(TgcMeshData meshData)
         {
             TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
-                TGCVector3.Float3ArrayToVector3(meshData.pMin),
-                TGCVector3.Float3ArrayToVector3(meshData.pMax)
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
+                TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
                         );
             TGCVector3 center = aabb.calculateBoxCenter();
             center.Y = aabb.PMin.Y;
