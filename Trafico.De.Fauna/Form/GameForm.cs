@@ -68,7 +68,7 @@ namespace Trafico.De.Fauna.Form
             //FullScreen, van en este orden para que queda oculta la barra de Windows.
             this.WindowState = FormWindowState.Normal;
             this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
+            //this.WindowState = FormWindowState.Maximized;
 
             //OriginalBorderStyle
             //this.FormBorderStyle = FormBorderStyle.Sizable;

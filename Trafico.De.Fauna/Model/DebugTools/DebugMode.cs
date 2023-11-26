@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -34,7 +33,7 @@ using Trafico.De.Fauna.Model.Levels;
 using Trafico.De.Fauna.Model.Meshes;
 using Trafico.De.Fauna.Model.Saltos;
 
-namespace Trafico.De.Fauna.Model.Debug
+namespace Trafico.De.Fauna.Model.DebugTools
 {
     /// <summary>
     /// Utilidades de Debug

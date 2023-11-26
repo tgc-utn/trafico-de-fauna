@@ -25,7 +25,7 @@ using TGC.Core.Input;
 using Trafico.De.Fauna.Model.Bananas;
 using Trafico.De.Fauna.Model.Camera;
 using Trafico.De.Fauna.Model.CustomEvents;
-using Trafico.De.Fauna.Model.Debug;
+using Trafico.De.Fauna.Model.DebugTools;
 using Trafico.De.Fauna.Model.Dialogs;
 using Trafico.De.Fauna.Model.Enemies;
 using Trafico.De.Fauna.Model.GameModes;

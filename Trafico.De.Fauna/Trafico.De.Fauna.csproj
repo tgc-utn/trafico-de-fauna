@@ -91,7 +91,7 @@
     <Compile Include="Form\GameForm.Designer.cs">
       <DependentUpon>GameForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\Debug\TextureMemory.cs" />
+    <Compile Include="Model\DebugTools\TextureMemory.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -152,7 +152,7 @@
     <Compile Include="Model\CustomEvents\Surfaces\MeshChorreando.cs" />
     <Compile Include="Model\CustomEvents\Surfaces\WaterSurface.cs" />
     <Compile Include="Model\CustomEvents\ZonasEspeciales\ZonaDeMuerte.cs" />
-    <Compile Include="Model\Debug\DebugMode.cs" />
+    <Compile Include="Model\DebugTools\DebugMode.cs" />
     <Compile Include="Model\Dialogs\SimpleMessageDialog.cs" />
     <Compile Include="Model\Dialogs\TextDialog.cs" />
     <Compile Include="Model\Enemies\Ataque\WaypointAtaque.cs" />

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trafico.De.Fauna.Model.Debug
+namespace Trafico.De.Fauna.Model.DebugTools
 {
     class TextureMemory : IComparable
     {
