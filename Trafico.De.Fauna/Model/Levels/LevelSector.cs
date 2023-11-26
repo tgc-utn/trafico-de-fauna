@@ -790,7 +790,7 @@ namespace Trafico.De.Fauna.Model.Levels
             MainCharacter mainCharacter = GameModel.instance.mainCharacter;
             camera.OffsetForward = mainCharacter.CurrentCameraOffsetForward;
             camera.OffsetHeight = camaraConfig.offsetY;
-            //TODO change Vector3 to TGCVector3 in the camera.
+
             TGCVector3 segmentA;
             TGCVector3 segmentB;
             camera.generateViewMatrix(out segmentA, out segmentB);
@@ -800,9 +800,9 @@ namespace Trafico.De.Fauna.Model.Levels
             {
                 if (collObj.Enabled)
                 {
-                    if (TgcCollisionUtils.intersectSegmentAABB(TGCVector3.FromVector3(segmentB), TGCVector3.FromVector3(segmentA), collObj.BoundingBox, out q))
+                    if (TgcCollisionUtils.intersectSegmentAABB(segmentB, segmentA, collObj.BoundingBox, out q))
                     {
-                        float distSq = (TGCVector3.Subtract(q, TGCVector3.FromVector3(segmentB))).LengthSq();
+                        float distSq = (TGCVector3.Subtract(q, segmentB)).LengthSq();
                         if (distSq < minDistSq)
                         {
                             minDistSq = distSq;

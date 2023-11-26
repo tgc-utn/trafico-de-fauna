@@ -24,6 +24,7 @@ using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
 using Trafico.De.Fauna.Model.Menu;
+using SystemFont = System.Drawing.Font;
 
 namespace Trafico.De.Fauna.Model.Dialogs
 {
@@ -53,12 +54,8 @@ namespace Trafico.De.Fauna.Model.Dialogs
             //Cuadro de texto
             text2d = new TgcText2D();
             text2d.Color = Color.White;
-            PrivateFontCollection privateFontCollection = new PrivateFontCollection();
-            privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
-            FontFamily[] families = privateFontCollection.Families;
-            System.Drawing.Font font = new System.Drawing.Font(families[0], 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            SystemFont font = new SystemFont("JungleFever", 20, FontStyle.Regular, GraphicsUnit.Pixel);
             text2d.changeFont(font);
-            
             text2d.Position = new Point((int)background.Position.X + 10, (int)background.Position.Y + 16);
             text2d.Align = TgcText2D.TextAlign.CENTER;
             text2d.Color = Color.FromArgb(252, 250, 114);

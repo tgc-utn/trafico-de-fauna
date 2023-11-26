@@ -36,13 +36,11 @@ using Trafico.De.Fauna.Model.Saltos;
 
 namespace Trafico.De.Fauna.Model.Debug
 {
-
     /// <summary>
     /// Utilidades de Debug
     /// </summary>
     public class DebugMode
     {
-
         bool enabled;
         /// <summary>
         /// Habilitado
@@ -77,7 +75,6 @@ namespace Trafico.De.Fauna.Model.Debug
         TgcBoundingSphere radioVisionPersonaje;
         bool showConectorList;
         List<Conector> conectoresList;
-        
 
         public DebugMode()
         {
@@ -90,10 +87,10 @@ namespace Trafico.De.Fauna.Model.Debug
             textDebug = new TgcText2D();
             int width = D3DDevice.Instance.Device.Viewport.Width;
             int height = D3DDevice.Instance.Device.Viewport.Height;
-            textDebug.Position = new System.Drawing.Point(0, height / 2);
+            textDebug.Position = new Point(0, height / 2);
             textDebug.Align = TgcText2D.TextAlign.LEFT;
             textDebug.Color = Color.Yellow;
-            textDebug.Size = new System.Drawing.Size(width, height / 2);
+            textDebug.Size = new Size(width, height / 2);
 
             radioVisionPersonaje = new TgcBoundingSphere();
             conectoresList = new List<Conector>();
@@ -107,7 +104,6 @@ namespace Trafico.De.Fauna.Model.Debug
             textDebug.Text = text;
         }
 
-
         public void render()
         {
             if (!enabled)
@@ -116,20 +112,18 @@ namespace Trafico.De.Fauna.Model.Debug
             }
 
             TgcD3dInput d3dInput = GameModel.instance.Input;
-            
+
             //Habilitar modo debug por teclado
             if (d3dInput.keyPressed(Key.D))
             {
                 this.enabled = !this.enabled;
             }
 
-
             //Activar ver BoundingVolume
             if (d3dInput.keyPressed(Key.B))
             {
                 showBoundingVolumes = !showBoundingVolumes;
             }
-
 
             //Ganar vida
             if (d3dInput.keyPressed(Key.V))
@@ -156,7 +150,6 @@ namespace Trafico.De.Fauna.Model.Debug
             {
                 guardiasEnabled = !guardiasEnabled;
             }
-
 
             //Mostrar lista de conectores
             if (d3dInput.keyPressed(Key.S))
@@ -186,12 +179,10 @@ namespace Trafico.De.Fauna.Model.Debug
             //Ir hacia un conector especifico de la lista
             jumpToConector(d3dInput);
 
-
-
-
             //Render
 
             //Hay que renderizar devuelta estas cosas porque se pierden con el RenderTarget
+            //TODO Render de Axis and FPS.
             //GuiController.Instance.Text3d.drawText("FPS: " + GameModel.instance.HighResolutionTimer.FramesPerSecond, 0, 0, Color.Yellow);
             //GuiController.Instance.AxisLines.render();
 
@@ -247,7 +238,7 @@ namespace Trafico.De.Fauna.Model.Debug
                 }
 
                 //Waypoints de guardias
-                List<Guardia> guardias =  CurrentSector.GuardiasManager.Guardias;
+                List<Guardia> guardias = CurrentSector.GuardiasManager.Guardias;
                 foreach (Guardia g in guardias)
                 {
                     foreach (GuardiaWaypoint w in g.Waypoints)
@@ -257,13 +248,8 @@ namespace Trafico.De.Fauna.Model.Debug
                 }
             }
 
-
-
             printTexturesMemory(d3dInput);
-            
         }
-
-        
 
         private void printTexturesMemory(TgcD3dInput d3dInput)
         {
@@ -295,19 +281,6 @@ namespace Trafico.De.Fauna.Model.Debug
                 //GameModel.instance.errorWindow.showError(, new Exception(sb.ToString()));*/
             }
         }
-
-        class TextureMemory : IComparable
-        {
-            public string FilePath;
-            public float Length;
-            public int References;
-
-            public int CompareTo(object obj)
-            {
-                return Length.CompareTo(((TextureMemory)obj).Length);
-            }
-        }
-
 
         /// <summary>
         /// Ir hacia un conector especifico
@@ -403,7 +376,5 @@ namespace Trafico.De.Fauna.Model.Debug
                 }
             }
         }
-
-
     }
 }

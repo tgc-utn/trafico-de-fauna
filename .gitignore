@@ -194,3 +194,30 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+# Windows thumbnail cache files
+Thumbs.db
+
+# Windows folder config file
+[Dd]esktop.ini
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+### Windows Executable ###
+*.bat
+*.com
+*.exe
+
+### Windows Library ###
+*.dll
+
+### Linux Library ###
+*.so

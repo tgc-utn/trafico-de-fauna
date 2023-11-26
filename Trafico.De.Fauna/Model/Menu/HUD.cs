@@ -19,6 +19,7 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Drawing;
 using System.Drawing.Text;
+using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
@@ -29,6 +30,7 @@ using Trafico.De.Fauna.Model.ItemsAnimal;
 using Trafico.De.Fauna.Model.Levels;
 using Trafico.De.Fauna.Model.MainCharacters;
 using Device = Microsoft.DirectX.Direct3D.Device;
+using SystemFont = System.Drawing.Font;
 
 namespace Trafico.De.Fauna.Model.Menu
 {
@@ -37,8 +39,6 @@ namespace Trafico.De.Fauna.Model.Menu
     /// </summary>
     public class HUD
     {
-        static readonly Font FONT_COMIC_SANS_24 = new Font("Comic Sans MS", 24, FontStyle.Bold, GraphicsUnit.Pixel);
-        public readonly Font GAME_FONT;
         readonly TGCVector2 SCREEN_CENTRAL_POS;
 
         TgcText2D textoContadorBananas;
@@ -55,7 +55,6 @@ namespace Trafico.De.Fauna.Model.Menu
         GameSprite spriteItemAnimal;
         GameSprite spriteItemAnimalLiberado;
         Drawer2D drawer2D;
-        PrivateFontCollection privateFontCollection;
         Position2dInterpolator interpoladorBananaAgarrada;
         Position2dInterpolator interpoladorVariasBananasAgarradas;
         Position2dInterpolator interpoladorLifeAgarrada;
@@ -72,13 +71,9 @@ namespace Trafico.De.Fauna.Model.Menu
             string hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
             drawer2D = new Drawer2D(device);
 
-            //Cargar fuentes personalizadas
-            privateFontCollection = new PrivateFontCollection();
-            privateFontCollection.AddFontFile(GameModel.instance.gameConfig.basePath + "Fonts\\JUNGLEFE.TTF");
-            FontFamily[] families = privateFontCollection.Families;
-            GAME_FONT = new Font(families[0], 24, FontStyle.Regular, GraphicsUnit.Pixel);
-
-
+            //Cargar fuente
+            SystemFont font = new SystemFont("JungleFever", 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            
             //Sprite para contador de bananas
             spriteContadorBananas = new GameSprite();
             spriteContadorBananas.Texture = TgcTexture.createTexture(device, hudPath + "hud_bananas.png");
@@ -91,7 +86,7 @@ namespace Trafico.De.Fauna.Model.Menu
             textoContadorBananas.Position = new Point(64 + 5, 20);
             textoContadorBananas.Size = new Size(200, 100);
             textoContadorBananas.Text = ": 0";
-            textoContadorBananas.changeFont(GAME_FONT);
+            textoContadorBananas.changeFont(font);
 
             //Sprite items animal liberados
             spriteItemAnimal = new GameSprite();
@@ -105,7 +100,7 @@ namespace Trafico.De.Fauna.Model.Menu
             textoContadorItemsAnimal.Position = new Point(width - 160, 20);
             textoContadorItemsAnimal.Size = new Size(150, 100);
             textoContadorItemsAnimal.Text = ": 0";
-            textoContadorItemsAnimal.changeFont(GAME_FONT);
+            textoContadorItemsAnimal.changeFont(font);
 
             //Sprite para vidas
             spriteLife = new GameSprite();
@@ -119,9 +114,7 @@ namespace Trafico.De.Fauna.Model.Menu
             textoContadorVidas.Position = new Point(width / 2 + 36, 20);
             textoContadorVidas.Size = new Size(100, 100);
             textoContadorVidas.Text = ": 0";
-            textoContadorVidas.changeFont(GAME_FONT);
-
-
+            textoContadorVidas.changeFont(font);
 
             //Sprite para cuando se agarra una banana
             spriteBananaAgarrada = new GameSprite();
@@ -140,8 +133,7 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorVariasBananasAgarradas = new Position2dInterpolator();
             interpoladorVariasBananasAgarradas.End = spriteContadorBananas.Position;
             interpoladorVariasBananasAgarradas.Speed = 1500f;
-
-
+            
             //Sprite para cuando se agarra una vida
             spriteLifeAgarrada = new GameSprite();
             spriteLifeAgarrada.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
@@ -152,8 +144,7 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorLifeAgarrada = new Position2dInterpolator();
             interpoladorLifeAgarrada.End = spriteLife.Position;
             interpoladorLifeAgarrada.Speed = 400f;
-
-
+            
             //Sprite para cuando se libera un item animal
             spriteItemAnimalLiberado = new GameSprite();
             spriteItemAnimalLiberado.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
@@ -164,8 +155,7 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorItemAnimalLiberado = new Position2dInterpolator();
             interpoladorItemAnimalLiberado.End = spriteItemAnimal.Position;
             interpoladorItemAnimalLiberado.Speed = 1000f;
-
-
+            
             //Sprite de llave roja
             spriteLlaveRoja = new GameSprite();
             spriteLlaveRoja.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_roja.png");
@@ -181,8 +171,7 @@ namespace Trafico.De.Fauna.Model.Menu
             spriteLlaveAmarilla.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_amarilla.png");
             spriteLlaveAmarilla.Position = new TGCVector2(width - 70, 180);
 
-
-
+            
             //Texto con el nombre del sector actual
             textoCurrentSectorName = new TgcText2D();
             textoCurrentSectorName.Color = Color.White;
@@ -190,7 +179,7 @@ namespace Trafico.De.Fauna.Model.Menu
             textoCurrentSectorName.Position = new Point(50, height - 50);
             textoCurrentSectorName.Size = new Size(500, 50);
             textoCurrentSectorName.Text = ": 0";
-            textoCurrentSectorName.changeFont(GAME_FONT);
+            textoCurrentSectorName.changeFont(font);
         }
 
         /// <summary>
@@ -247,8 +236,7 @@ namespace Trafico.De.Fauna.Model.Menu
                     spriteItemAnimalLiberado.Enabled = false;
                 }
             }
-
-
+            
             //Contador de items animal liberados
             textoContadorItemsAnimal.Text = ": " + mainCharacter.ItemsAnimalLiberados + "/" + GameModel.instance.currentLevel.TotalItemsAnimal;
 
@@ -297,7 +285,6 @@ namespace Trafico.De.Fauna.Model.Menu
             drawer2D.DrawSprite(spriteLife);
             drawer2D.DrawSprite(spriteItemAnimal);
             
-
             //animacion de bananas agarradas
             drawer2D.DrawSprite(spriteBananaAgarrada);
             drawer2D.DrawSprite(spriteVariasBananasAgarradas);
@@ -313,8 +300,7 @@ namespace Trafico.De.Fauna.Model.Menu
 
             drawer2D.EndDrawSprite();
         }
-
-
+        
         /// <summary>
         /// Cuando se intenta liberar un Item Animal sin tener su llave aun
         /// </summary>

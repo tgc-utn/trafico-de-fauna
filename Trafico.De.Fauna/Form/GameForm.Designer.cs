@@ -38,7 +38,7 @@
             this.panel3D.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3D.Location = new System.Drawing.Point(0, 0);
             this.panel3D.Name = "panel3D";
-            this.panel3D.Size = new System.Drawing.Size(784, 561);
+            this.panel3D.Size = new System.Drawing.Size(1024, 600);
             this.panel3D.TabIndex = 0;
             // 
             // GameForm
@@ -46,7 +46,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(1024, 600);
             this.Controls.Add(this.panel3D);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GameForm";
