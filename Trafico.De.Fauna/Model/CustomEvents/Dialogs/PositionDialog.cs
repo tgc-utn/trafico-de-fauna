@@ -20,32 +20,28 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.SceneLoader;
-using Trafico.De.Fauna.Model.Dialogs;
-using Trafico.De.Fauna.Model.MainCharacters;
 using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
 {
     /// <summary>
-    /// Evento que levanta un cuadro de dialogo al pasar por el BoundingBox.
-    /// Propiedades:
-    ///  - onlyOnce=true => Solo se activa la primera vez. En false se activa siempre que pasas por el BoundingBox (default false)
-    ///  - text=Bla Bla => Texto a mostrar en el dialogo. Sin enter. Se pagina solo. 
-    /// 
+    ///     Evento que levanta un cuadro de dialogo al pasar por el BoundingBox.
+    ///     Propiedades:
+    ///     - onlyOnce=true => Solo se activa la primera vez. En false se activa siempre que pasas por el BoundingBox (default
+    ///     false)
+    ///     - text=Bla Bla => Texto a mostrar en el dialogo. Sin enter. Se pagina solo.
     /// </summary>
     public class PositionDialog : CustomEvent, IAlphaObject
     {
-        enum State
-        {
-            ACTIVE,
-            INACTIVE,
-            GOING_OUT,
-        }
+        private TgcBoundingAxisAlignBox boundingBox;
+        private State currentState;
+        private bool onlyOnce;
+        private string text;
 
-        TgcBoundingAxisAlignBox boundingBox;
-        bool onlyOnce;
-        string text;
-        State currentState;
+        public void renderWithAlpha()
+        {
+            GameModel.instance.textDialog.render();
+        }
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -60,6 +56,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
             {
                 onlyOnce = false;
             }
+
             //Propiedad: text=Hola como estas... (obligatoria)
             if (GameUtils.containsUserProp(meshData.userProperties, "text"))
             {
@@ -82,19 +79,19 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
 
         public override void update(float elapsedTime)
         {
-            TextDialog dialog = GameModel.instance.textDialog;
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var dialog = GameModel.instance.textDialog;
+            var mainCharacter = GameModel.instance.mainCharacter;
 
             switch (currentState)
             {
                 case State.ACTIVE:
-                    bool finished = dialog.update();
+                    var finished = dialog.update();
                     if (finished)
                     {
                         currentState = State.INACTIVE;
                         if (onlyOnce)
                         {
-                            this.Enabled = false;
+                            Enabled = false;
                         }
                         else
                         {
@@ -104,20 +101,23 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
                             }
                         }
                     }
+
                     break;
                 case State.INACTIVE:
                     if (mainCharacter.collideWithAABB(boundingBox))
                     {
                         currentState = State.ACTIVE;
                         dialog.setText(text);
-                        GameModel.instance.sonidos.dialogo_abrir.play();
+                        GameModel.instance.sonidos.dialogo_abrir.Play();
                     }
+
                     break;
                 case State.GOING_OUT:
                     if (!mainCharacter.collideWithAABB(boundingBox))
                     {
                         currentState = State.INACTIVE;
                     }
+
                     break;
             }
         }
@@ -133,11 +133,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
             {
                 boundingBox.Render();
             }
-        }
-
-        public void renderWithAlpha()
-        {
-            GameModel.instance.textDialog.render();
         }
 
         public override void renderDebug()
@@ -156,7 +151,11 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Dialogs
             boundingBox = null;
         }
 
-        
-
+        private enum State
+        {
+            ACTIVE,
+            INACTIVE,
+            GOING_OUT
+        }
     }
 }

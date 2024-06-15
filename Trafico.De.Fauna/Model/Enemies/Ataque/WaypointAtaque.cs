@@ -23,65 +23,51 @@ using TGC.Core.Mathematica;
 namespace Trafico.De.Fauna.Model.Enemies.Ataque
 {
     /// <summary>
-    /// Waypoint para que el Guardia navegue por el sector en modo ataque
+    ///     Waypoint para que el Guardia navegue por el sector en modo ataque
     /// </summary>
     public class WaypointAtaque
     {
-        string name;
-        /// <summary>
-        /// Nombre
-        /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
-
-        TGCVector3 position;
-        /// <summary>
-        /// Posicion del Waypoint
-        /// </summary>
-        public TGCVector3 Position
-        {
-            get { return position; }
-        }
-
-        int index;
-        /// <summary>
-        /// Indice del waypoint
-        /// </summary>
-        public int Index
-        {
-            set { index = value; }
-            get { return index; }
-        }
-
         public WaypointAtaque(string name, TGCVector3 position, int index)
         {
-            this.name = name;
-            this.position = position;
-            this.index = index;
+            this.Name = name;
+            this.Position = position;
+            this.Index = index;
         }
 
         /// <summary>
-        /// Comparador para ordenar por index
+        ///     Nombre
         /// </summary>
-        public class WaypointAtaqueComparer : IComparer<WaypointAtaque>
-        {
-            public int Compare(WaypointAtaque x, WaypointAtaque y)
-            {
-                return x.index.CompareTo(y.index);
-            }
-        }
+        public string Name { get; }
+
+        /// <summary>
+        ///     Posicion del Waypoint
+        /// </summary>
+        public TGCVector3 Position { get; }
+
+        /// <summary>
+        ///     Indice del waypoint
+        /// </summary>
+        public int Index { set; get; }
 
         public override string ToString()
         {
-            return "name: " + name + ", index: " + index;
+            return "name: " + Name + ", index: " + Index;
         }
 
 
         public void dispose()
         {
-            
+        }
+
+        /// <summary>
+        ///     Comparador para ordenar por index
+        /// </summary>
+        public class WaypointAtaqueComparer : IComparer<WaypointAtaque>
+        {
+            public int Compare(WaypointAtaque x, WaypointAtaque y)
+            {
+                return x.Index.CompareTo(y.Index);
+            }
         }
     }
 }

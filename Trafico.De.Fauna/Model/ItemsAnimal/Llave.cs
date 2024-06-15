@@ -26,84 +26,59 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.ItemsAnimal
 {
     /// <summary>
-    /// Llave para abrir una celda de item animal
+    ///     Llave para abrir una celda de item animal
     /// </summary>
     public class Llave
     {
         /// <summary>
-        /// Altura a la que aparecen las llaves
-        /// </summary>
-        const float ALTURA_LLAVE = 10f;
-
-        /// <summary>
-        /// Radio colision
-        /// </summary>
-        const float BSPHERE_RADIUS = 28f;
-
-        /// <summary>
-        /// Color de la llave y celda
+        ///     Color de la llave y celda
         /// </summary>
         public enum ColorType
         {
             VERDE,
             ROJA,
-            AMARILLA,
+            AMARILLA
         }
 
-
-        ColorType color;
         /// <summary>
-        /// Color de la llave
+        ///     Altura a la que aparecen las llaves
         /// </summary>
-        public ColorType Color
-        {
-            get { return color; }
-        }
+        private const float ALTURA_LLAVE = 10f;
 
-        bool agarrada;
-        public bool Agarrada
-        {
-            get { return agarrada; }
-        }
-
-        TgcBoundingSphere boundingSphere;
         /// <summary>
-        /// BoundingSphere para agarrar la llave
+        ///     Radio colision
         /// </summary>
-        public TgcBoundingSphere BoundingSphere
-        {
-            get { return boundingSphere; }
-        }
+        private const float BSPHERE_RADIUS = 28f;
 
-        TgcMeshShader mesh;
-        RotadorDeItems rotador;
-        
+
+        private TgcMeshShader mesh;
+        private readonly RotadorDeItems rotador;
 
 
         public Llave(TgcMeshData meshDataNode)
         {
-            agarrada = false;
-            
+            Agarrada = false;
+
             //Nombre: VERDE o ROJA o AMARILLA
-            string name = meshDataNode.name;
+            var name = meshDataNode.name;
             name.ToUpper();
-            
+
 
             //Determinar color
-            this.color = getColorType(name);
+            Color = getColorType(name);
 
             //Cargar Mesh
-            TGCVector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + color + "\\" + color + "-TgcScene.xml";
-            TgcScene scene = loader.loadSceneFromFile(meshPath);
+            var meshPath = GameModel.instance.gameConfig.basePath + "Llaves\\" + Color + "\\" + Color + "-TgcScene.xml";
+            var scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.AutoTransformEnable = true;
             mesh.Position = new TGCVector3(nodeCenter.X, ALTURA_LLAVE, nodeCenter.Z);
 
-            TGCVector3 sphereCenter = new TGCVector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);
-            boundingSphere = new TgcBoundingSphere(sphereCenter, BSPHERE_RADIUS);
+            var sphereCenter = new TGCVector3(nodeCenter.X, ALTURA_LLAVE + BSPHERE_RADIUS / 2, nodeCenter.Z);
+            BoundingSphere = new TgcBoundingSphere(sphereCenter, BSPHERE_RADIUS);
 
             rotador = new RotadorDeItems();
             rotador.YSpeed = 13f;
@@ -111,29 +86,41 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
             rotador.YawSpeed = 3f;
         }
 
+        /// <summary>
+        ///     Color de la llave
+        /// </summary>
+        public ColorType Color { get; }
+
+        public bool Agarrada { get; private set; }
+
+        /// <summary>
+        ///     BoundingSphere para agarrar la llave
+        /// </summary>
+        public TgcBoundingSphere BoundingSphere { get; private set; }
+
         public void render()
         {
-            if (!agarrada)
+            if (!Agarrada)
             {
                 //Dibujar si esta en rango visible
                 if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
                 {
-                    rotador.rotate(GameModel.instance.ElapsedTime, this.mesh);
+                    rotador.rotate(GameModel.instance.ElapsedTime, mesh);
                     GameModel.instance.shaders.setCorrectTechnique(mesh);
-                    this.mesh.render();
+                    mesh.render();
                 }
 
                 //Debug render
                 if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
-                    boundingSphere.Render();
+                    BoundingSphere.Render();
                 }
             }
         }
 
         public override string ToString()
         {
-            return Enum.GetName(typeof(ColorType), this.color);
+            return Enum.GetName(typeof(ColorType), Color);
         }
 
 
@@ -153,21 +140,20 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
         }
 
         /// <summary>
-        /// Marca la llave como agarrada
+        ///     Marca la llave como agarrada
         /// </summary>
         public void agarrar()
         {
-            agarrada = true;
-            GameModel.instance.sonidos.llave_agarrar.play();
+            Agarrada = true;
+            GameModel.instance.sonidos.llave_agarrar.Play();
         }
 
         public void dispose()
         {
             mesh.Dispose();
             mesh = null;
-            boundingSphere.Dispose();
-            boundingSphere = null;
-            
+            BoundingSphere.Dispose();
+            BoundingSphere = null;
         }
     }
 }

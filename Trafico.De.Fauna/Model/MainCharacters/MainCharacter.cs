@@ -23,14 +23,12 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Collision;
 using TGC.Core.Direct3D;
-using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
 using Trafico.De.Fauna.Model.Billboards;
 using Trafico.De.Fauna.Model.Camera;
 using Trafico.De.Fauna.Model.Escondites;
 using Trafico.De.Fauna.Model.ItemsAnimal;
-using Trafico.De.Fauna.Model.Levels;
 using Trafico.De.Fauna.Model.Meshes;
 using Trafico.De.Fauna.Model.Particles;
 using Trafico.De.Fauna.Model.Saltos;
@@ -39,147 +37,104 @@ using Trafico.De.Fauna.Model.Sonidos;
 namespace Trafico.De.Fauna.Model.MainCharacters
 {
     /// <summary>
-    /// Personaje principal del juego
+    ///     Personaje principal del juego
     /// </summary>
     public class MainCharacter
     {
         /// <summary>
-        /// Cuanto para adelelante movemos el efecto de punch con billboard.
-        /// Multiplica la direccion actual del personaje.
+        ///     Cuanto para adelelante movemos el efecto de punch con billboard.
+        ///     Multiplica la direccion actual del personaje.
         /// </summary>
-        const float PUNCH_BILLBOARD_POS_SCALE = 20;
+        private const float PUNCH_BILLBOARD_POS_SCALE = 20;
 
+        private float beforeJumpRotY;
 
-        TgcSkeletalMesh mesh;
-        SphereCollisionManager collisionManager;
-        State currentState;
-        EsconditeMovil esconditeMovil;
-        EsconditeFijo esconditeFijo;
-        Salto.Plataforma plataformaSalto;
-        bool punching;
-        bool facingBackward;
-        ParticleEmitter stepsEmitter;
-        ParticleEmitter punchEmitter;
-        QuadAnimatedBillboard punchBillboard;
-        TemporalSound sonidoPasosCorrer;
-        TemporalSound sonidoPasosCaminandoEsconditeMovil;
+        private SphereCollisionManager collisionManager;
 
+        private State currentState;
+        private EsconditeFijo esconditeFijo;
+        private EsconditeMovil esconditeMovil;
+        private bool facingBackward;
+
+        private TGCVector3 jumpDir;
+        private float jumpDistanceToTravel;
+        private float jumpPosY;
+        private bool jumpYPositive;
+
+        private TgcSkeletalMesh mesh;
+        private float origAngleRot;
 
         //Salto
-        float origPosY;
-        float origAngleRot;
-        TGCVector3 jumpDir;
-        float jumpDistanceToTravel;
-        float jumpPosY;
-        bool jumpYPositive;
-        float beforeJumpRotY;
-
-
-        TgcBoundingSphere characterSphere;
-        /// <summary>
-        /// BoundingSphere del personaje
-        /// </summary>
-        public TgcBoundingSphere CharacterSphere
-        {
-            get { return characterSphere; }
-        }
+        private float origPosY;
+        private Salto.Plataforma plataformaSalto;
+        private QuadAnimatedBillboard punchBillboard;
+        private ParticleEmitter punchEmitter;
+        private bool punching;
+        private TemporalSound sonidoPasosCaminandoEsconditeMovil;
+        private TemporalSound sonidoPasosCorrer;
+        private ParticleEmitter stepsEmitter;
 
         /// <summary>
-        /// Posicion actual
-        /// Varia segun si ya se aplico el moveWithCollisions()
+        ///     BoundingSphere del personaje
         /// </summary>
-        public TGCVector3 CurrentPos
-        {
-            get { return mesh.Position; }
-        }
+        public TgcBoundingSphere CharacterSphere { get; private set; }
 
-        bool hidden;
         /// <summary>
-        /// Indica si el personaje esta escondido
+        ///     Posicion actual
+        ///     Varia segun si ya se aplico el moveWithCollisions()
         /// </summary>
-        public bool Hidden
-        {
-            get { return hidden; }
-        }
+        public TGCVector3 CurrentPos => mesh.Position;
 
-        bool crouched;
         /// <summary>
-        /// Indica si el personaje esta agachado
+        ///     Indica si el personaje esta escondido
         /// </summary>
-        public bool Crouched
-        {
-            get { return crouched; }
-        }
+        public bool Hidden { get; private set; }
 
-        GameThirdPersonCamera camera;
         /// <summary>
-        /// Camara en tercera persona que se ajusta segun los movimientos del personaje
+        ///     Indica si el personaje esta agachado
         /// </summary>
-        public GameThirdPersonCamera Camera
-        {
-            get { return camera; }
-        }
+        public bool Crouched { get; private set; }
 
-        int bananasAgarradas;
         /// <summary>
-        /// Cantidad de bananas agarradas
+        ///     Camara en tercera persona que se ajusta segun los movimientos del personaje
         /// </summary>
-        public int BananasAgarradas
-        {
-            get { return bananasAgarradas; }
-        }
+        public GameThirdPersonCamera Camera { get; private set; }
 
-        int itemsAnimalLiberados;
         /// <summary>
-        /// Cantidad de ItemsAnimal liberados
+        ///     Cantidad de bananas agarradas
         /// </summary>
-        public int ItemsAnimalLiberados
-        {
-            get { return itemsAnimalLiberados; }
-        }
+        public int BananasAgarradas { get; private set; }
 
-        int vidas;
         /// <summary>
-        /// Vidas del personaje
+        ///     Cantidad de ItemsAnimal liberados
         /// </summary>
-        public int Vidas
-        {
-            get { return vidas; }
-            set { vidas = value; }
-        }
+        public int ItemsAnimalLiberados { get; private set; }
 
-        float currentCameraOffsetForward;
         /// <summary>
-        /// Offset Z actual de la camara
+        ///     Vidas del personaje
         /// </summary>
-        public float CurrentCameraOffsetForward
-        {
-            get { return currentCameraOffsetForward; }
-        }
+        public int Vidas { get; set; }
 
-        float currentCameraMinOffsetForward;
         /// <summary>
-        /// Offset minimp de Z actual de la camara
+        ///     Offset Z actual de la camara
         /// </summary>
-        public float CurrentMinCameraOffsetForward
-        {
-            get { return currentCameraMinOffsetForward; }
-        }
+        public float CurrentCameraOffsetForward { get; private set; }
 
-
-        public MainCharacter()
-        {
-        }
+        /// <summary>
+        ///     Offset minimp de Z actual de la camara
+        /// </summary>
+        public float CurrentMinCameraOffsetForward { get; private set; }
 
         public void loadModel()
         {
             //Cargar mesh
-            string meshPath = GameModel.instance.gameConfig.basePath + "MainCharacterMono\\";
-            TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
+            var meshPath = GameModel.instance.gameConfig.basePath + "MainCharacterMono\\";
+            var skeletalLoader = new TgcSkeletalLoader();
             mesh = skeletalLoader.loadMeshAndAnimationsFromFile(
                 meshPath + "Mono-TgcSkeletalMesh.xml",
                 meshPath,
-                new string[] { 
+                new[]
+                {
                     meshPath + "StandBy-TgcSkeletalAnim.xml",
                     meshPath + "Run-TgcSkeletalAnim.xml",
                     meshPath + "Crouch-TgcSkeletalAnim.xml",
@@ -194,12 +149,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             mesh.RotateY(Geometry.DegreeToRadian(180f));
             origAngleRot = FastMath.PI;
             origPosY = 0;
-            mesh.AnimationEnds += new TgcSkeletalMesh.AnimationEndsHandler(mesh_AnimationEnds);
+            mesh.AnimationEnds += mesh_AnimationEnds;
 
             //BoundingSphere que va a usar el mesh
             mesh.AutoUpdateBoundingBox = false;
-            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            characterSphere = new TgcBoundingSphere(new TGCVector3(0, fisica.boundingSphereCenterY, 0), fisica.boundingSphereRadio);
+            var fisica = GameModel.instance.gameConfig.fisica;
+            CharacterSphere = new TgcBoundingSphere(new TGCVector3(0, fisica.boundingSphereCenterY, 0),
+                fisica.boundingSphereRadio);
 
             //Crear manejador de colisiones
             collisionManager = new SphereCollisionManager();
@@ -208,16 +164,17 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             collisionManager.SlideFactor = fisica.slideFactor;
 
             //Configurar camara en Tercer Persona personalizada
-            GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
-            camera = new GameThirdPersonCamera();
-            GameModel.instance.Camera = camera;
-            camera.Target = mesh.Position;
-            camera.OffsetHeight = camaraConfig.offsetY;
-            camera.OffsetForward = camaraConfig.offsetZ;
-            camera.TargetDisplacement = new TGCVector3(0, camaraConfig.displacementY, 0);
+            var camaraConfig = GameModel.instance.gameConfig.camara;
+            Camera = new GameThirdPersonCamera();
+            GameModel.instance.Camera = Camera;
+            Camera.Target = mesh.Position;
+            Camera.OffsetHeight = camaraConfig.offsetY;
+            Camera.OffsetForward = camaraConfig.offsetZ;
+            Camera.TargetDisplacement = new TGCVector3(0, camaraConfig.displacementY, 0);
 
             //Particulas para las pisadas del personaje
-            stepsEmitter = new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\pisada_mono.png", 4);
+            stepsEmitter =
+                new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\pisada_mono.png", 4);
             stepsEmitter.Dispersion = 400;
             stepsEmitter.ParticleTimeToLive = 0.5f;
             stepsEmitter.CreationFrecuency = 0.1f;
@@ -226,7 +183,8 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             stepsEmitter.MaxSizeParticle = 1f;
 
             //Particulas para el punch al romper cajas
-            punchEmitter = new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\punch_mono.png", 2);
+            punchEmitter =
+                new ParticleEmitter(GameModel.instance.gameConfig.basePath + "Shaders\\Particles\\punch_mono.png", 2);
             punchEmitter.Dispersion = 100;
             punchEmitter.ParticleTimeToLive = 0.4f;
             punchEmitter.CreationFrecuency = 1f;
@@ -234,7 +192,9 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             punchEmitter.MinSizeParticle = 40f;
             punchEmitter.MaxSizeParticle = 40f;
 
-            punchBillboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\personaje_punch_effect.png", new Size(64, 64), 16, 16);
+            punchBillboard = new QuadAnimatedBillboard(
+                GameModel.instance.gameConfig.basePath + "Billboards\\personaje_punch_effect.png", new Size(64, 64), 16,
+                16);
             punchBillboard.Size = new TGCVector2(50, 50);
             punchBillboard.Position = mesh.Position;
             punchBillboard.Enabled = false;
@@ -253,34 +213,34 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         //Cargar valores iniciales para el primer nivel de todo el juego
         public void resetForFirstLevel()
         {
-            vidas = 5;
+            Vidas = 5;
         }
 
         /// <summary>
-        /// Cargar valores iniciales para empezar un nuevo nivel
+        ///     Cargar valores iniciales para empezar un nuevo nivel
         /// </summary>
         public void resetForNewLevel()
         {
-            bananasAgarradas = 0;
-            itemsAnimalLiberados = 0;
+            BananasAgarradas = 0;
+            ItemsAnimalLiberados = 0;
             stepsEmitter.Playing = false;
             punchEmitter.Playing = false;
             punchBillboard.Enabled = false;
             facingBackward = false;
-            currentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
-            currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
+            CurrentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
+            CurrentMinCameraOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
             punching = false;
         }
 
         /// <summary>
-        /// Configurar personaje para arrancar en un sector
+        ///     Configurar personaje para arrancar en un sector
         /// </summary>
         public void initInConectorPos(TGCVector3 conectorPos, GameUtils.Orientacion orientacion)
         {
             //Posicionar
-            TGCVector3 diffPos = TGCVector3.Subtract(conectorPos, mesh.Position);
+            var diffPos = TGCVector3.Subtract(conectorPos, mesh.Position);
             mesh.Move(diffPos);
-            characterSphere.moveCenter(diffPos);
+            CharacterSphere.moveCenter(diffPos);
 
             //Rotar hacia la orientacion indicada
             restoreFaceForward();
@@ -301,13 +261,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                     angleRot = -FastMath.PI_HALF;
                     break;
             }
+
             mesh.RotateY(angleRot);
-            camera.RotationY = angleRot;
+            Camera.RotationY = angleRot;
 
             //Pasar a estado normal
             setNormal();
         }
-
 
         public void render(float elapsedTime)
         {
@@ -322,7 +282,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
 
             //Render punch
             //Game.instance.currentLevel.AlphaObjects.Add(punchEmitter);
-            
+
             //Desactivo hasta que se mejore
             //Game.instance.currentLevel.AlphaObjects.Add(punchBillboard);
 
@@ -332,93 +292,89 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         }
 
         /// <summary>
-        /// Hacer que la camara siga al personaje en su nueva posicion
+        ///     Hacer que la camara siga al personaje en su nueva posicion
         /// </summary>
         private void targetCamera()
         {
-            camera.Target = characterSphere.Center;
+            Camera.Target = CharacterSphere.Center;
         }
 
         /// <summary>
-        /// Colision de un AABB con el BoundingSphere del personaje
+        ///     Colision de un AABB con el BoundingSphere del personaje
         /// </summary>
         public bool collideWithAABB(TgcBoundingAxisAlignBox aabb)
         {
-            return TgcCollisionUtils.testSphereAABB(characterSphere, aabb);
+            return TgcCollisionUtils.testSphereAABB(CharacterSphere, aabb);
         }
 
         /// <summary>
-        /// Colision de un BoundingSphere con el BoundingSphere del personaje
+        ///     Colision de un BoundingSphere con el BoundingSphere del personaje
         /// </summary>
         public bool collideWithBSphere(TgcBoundingSphere sphere)
         {
-            return TgcCollisionUtils.testSphereSphere(characterSphere, sphere);
+            return TgcCollisionUtils.testSphereSphere(CharacterSphere, sphere);
         }
 
         /// <summary>
-        /// Indica si un objeto ubicado en la posicion especificada se encuentra dentro del
-        /// radio de alcance visible por el personaje
+        ///     Indica si un objeto ubicado en la posicion especificada se encuentra dentro del
+        ///     radio de alcance visible por el personaje
         /// </summary>
         public bool isInProximityRange(TGCVector3 pos)
         {
             //Ver si esta dentro del radio de vision
-            return TGCVector3.Subtract(pos, this.CurrentPos).LengthSq() < GameModel.instance.gameConfig.camara.distanciaVisualSq;
+            return TGCVector3.Subtract(pos, CurrentPos).LengthSq() <
+                   GameModel.instance.gameConfig.camara.distanciaVisualSq;
         }
 
-
         /// <summary>
-        /// Agrega bananas al personaje principal.
-        /// Si es multiplo de 100 gana una vida
+        ///     Agrega bananas al personaje principal.
+        ///     Si es multiplo de 100 gana una vida
         /// </summary>
         public void agregarBananas(int n)
         {
-            int enteros = bananasAgarradas / 100;
-            bananasAgarradas += n;
-            int enteros2 = bananasAgarradas / 100;
+            var enteros = BananasAgarradas / 100;
+            BananasAgarradas += n;
+            var enteros2 = BananasAgarradas / 100;
             if (enteros2 > enteros)
             {
-                vidas += enteros2 - enteros;
-                bananasAgarradas = bananasAgarradas % 100;
-                GameModel.instance.sonidos.personaje_ganar_vida.play(false);
+                Vidas += enteros2 - enteros;
+                BananasAgarradas = BananasAgarradas % 100;
+                GameModel.instance.sonidos.personaje_ganar_vida.Play(false);
                 GameModel.instance.hud.efectoGanarVida();
             }
         }
 
         /// <summary>
-        /// Agregar un item animal liberado.
-        /// Si se liberaron todos, ganaste el juego.
+        ///     Agregar un item animal liberado.
+        ///     Si se liberaron todos, ganaste el juego.
         /// </summary>
         public void agregarItemAnimalLiberado(ItemAnimal itemAnimal)
         {
-            itemsAnimalLiberados++;
-            if (itemsAnimalLiberados == GameModel.instance.currentLevel.TotalItemsAnimal)
+            ItemsAnimalLiberados++;
+            if (ItemsAnimalLiberados == GameModel.instance.currentLevel.TotalItemsAnimal)
             {
                 GameModel.instance.transiciones.initGameWin();
-                GameModel.instance.currentGameMode = GameModel.GameMode.GameWin;
+                GameModel.instance.currentGameMode = GameMode.GameWin;
             }
         }
 
-
-
         #region Maquina de estados
 
-
         /// <summary>
-        /// Estados del personaje principal
+        ///     Estados del personaje principal
         /// </summary>
-        enum State
+        private enum State
         {
             Normal,
             Agachado,
             AgachadoEsconditeFijo,
             CargandoEsconditeMovil,
             AgachadoEsconditeMovil,
-            SaltandoPlataformas,
+            SaltandoPlataformas
         }
 
-
         /// <summary>
-        /// Actualizar estado del personaje
+        ///     Actualizar estado del personaje
         /// </summary>
         public void update(float elapsedTime)
         {
@@ -446,13 +402,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         }
 
         /// <summary>
-        /// Pasar a estado normal
+        ///     Pasar a estado normal
         /// </summary>
         private void setNormal()
         {
             mesh.playAnimation("StandBy", true);
-            hidden = false;
-            crouched = false;
+            Hidden = false;
+            Crouched = false;
             currentState = State.Normal;
             punching = false;
             punchEmitter.Enabled = false;
@@ -464,23 +420,22 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             setBoundingSphereParado();
         }
 
-
         /// <summary>
-        /// Estado normal del personaje
+        ///     Estado normal del personaje
         /// </summary>
         private void normal(float elapsedTime)
         {
             //obtener velocidades de Modifiers
-            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-            Level level = GameModel.instance.currentLevel;
+            var fisica = GameModel.instance.gameConfig.fisica;
+            var keys = GameModel.instance.gameConfig.keys;
+            var d3dInput = GameModel.instance.Input;
+            var level = GameModel.instance.currentLevel;
 
             //Crouch
             if (d3dInput.keyDown(keys.crouch))
             {
                 //Ver si hay un escondite fijo
-                EsconditeFijo esconditeFijo = level.CurrentSector.checkEsconditesFijos(this);
+                var esconditeFijo = level.CurrentSector.checkEsconditesFijos(this);
                 if (esconditeFijo != null)
                 {
                     this.esconditeFijo = esconditeFijo;
@@ -498,7 +453,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             if (d3dInput.keyPressed(keys.action))
             {
                 //Ver si hay colision con algun conector
-                Conector conectorCollision = level.CurrentSector.checkConectores(this);
+                var conectorCollision = level.CurrentSector.checkConectores(this);
                 if (conectorCollision != null)
                 {
                     //ejecutar conector
@@ -507,15 +462,15 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 }
 
                 //Ver si hay colision con un item Animal para rescatar
-                ItemAnimal item = level.CurrentSector.checkItemsAnimal(this);
+                var item = level.CurrentSector.checkItemsAnimal(this);
                 if (item != null)
                 {
-                    bool liberado = item.intentarLiberar();
+                    var liberado = item.intentarLiberar();
                     return;
                 }
 
                 //Ver si hay un escondite movil para agarrar
-                EsconditeMovil esconditeMovil = level.CurrentSector.checkEsconditesMoviles(this);
+                var esconditeMovil = level.CurrentSector.checkEsconditesMoviles(this);
                 if (esconditeMovil != null)
                 {
                     this.esconditeMovil = esconditeMovil;
@@ -530,14 +485,14 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             if (d3dInput.keyDown(keys.action))
             {
                 //Ver si hay colision con alguna plataforma de Salto
-                Salto.Plataforma plataformaSaltoCollision = level.CurrentSector.checkSaltos(this);
+                var plataformaSaltoCollision = level.CurrentSector.checkSaltos(this);
                 if (plataformaSaltoCollision != null)
                 {
                     //Solo puede saltar si antes estuvo corriendo
-                    if (/*mesh.CurrentAnimation.Name == "Run"*/ true)
+                    if ( /*mesh.CurrentAnimation.Name == "Run"*/ true)
                     {
-                        this.plataformaSalto = plataformaSaltoCollision;
-                        GameModel.instance.sonidos.personaje_saltar.play();
+                        plataformaSalto = plataformaSaltoCollision;
+                        GameModel.instance.sonidos.personaje_saltar.Play();
                         setSaltandoPlataformas();
                         return;
                     }
@@ -549,7 +504,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                     punching = true;
                     mesh.playAnimation("Punch", false);
                     sonidoPasosCorrer.Enabled = false;
-                    GameModel.instance.sonidos.personaje_golpe.play();
+                    GameModel.instance.sonidos.personaje_golpe.Play();
 
                     //Intentar golpear cajas de bananas cercanas
                     level.CurrentSector.golpearCajasBananas(this);
@@ -561,14 +516,11 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 }
             }
 
-
-
-
             //Movimiento
-            float moveForward = 0f;
+            var moveForward = 0f;
             float rotate = 0;
-            bool moving = false;
-            bool rotating = false;
+            var moving = false;
+            var rotating = false;
 
             //Adelante
             if (d3dInput.keyDown(keys.forward))
@@ -603,14 +555,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             if (rotating)
             {
                 //Rotar mesh y camara
-                float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+                var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                 mesh.RotateY(rotAngle);
-                camera.rotateY(rotAngle);
+                Camera.rotateY(rotAngle);
             }
 
-
             //Vector de movimiento
-            TGCVector3 movementVector = TGCVector3.Empty;
+            var movementVector = TGCVector3.Empty;
             if (moving)
             {
                 if (!punching)
@@ -629,7 +580,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                     FastMath.Sin(mesh.Rotation.Y) * moveForward,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * moveForward
-                    );
+                );
 
                 //Si avanza hacia atrás, rotar personaje para que mire a la camara (pero que no afecte en nada su movimiento, solo decorativo)
                 if (moveForward > 0)
@@ -649,7 +600,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             }
 
             //Deteccion de colisiones con meshes estaticos del Sector
-            TGCVector3 newPosition = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
+            var newPosition = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
 
             //Colision con llaves del sector
             level.CurrentSector.checkLlaves(this);
@@ -675,26 +626,24 @@ namespace Trafico.De.Fauna.Model.MainCharacters
 
                 //Ubicar billboard de punch un poco adelante del personaje
                 punchBillboard.Position = CurrentPos + TGCVector3.Scale(getCurrentVecRot(), PUNCH_BILLBOARD_POS_SCALE);
-                punchBillboard.RotationY = camera.RotationY;
+                punchBillboard.RotationY = Camera.RotationY;
             }
         }
 
-        
-
         /// <summary>
-        /// Mover al personaje con deteccion de colisiones por el escenario
+        ///     Mover al personaje con deteccion de colisiones por el escenario
         /// </summary>
         public TGCVector3 moveWithCollisions(List<ColliderObject> objetosColisionables, TGCVector3 movementVector)
         {
-            TGCVector3 realMovement = collisionManager.moveCharacter(characterSphere, movementVector, objetosColisionables);
+            var realMovement = collisionManager.moveCharacter(CharacterSphere, movementVector, objetosColisionables);
             mesh.Move(realMovement);
             return realMovement;
         }
 
         /// <summary>
-        /// Evento cuando termina de ejecutarse una animacion
+        ///     Evento cuando termina de ejecutarse una animacion
         /// </summary>
-        void mesh_AnimationEnds(TgcSkeletalMesh mesh)
+        private void mesh_AnimationEnds(TgcSkeletalMesh mesh)
         {
             if (currentState == State.Normal && mesh.CurrentAnimation.Name == "Punch")
             {
@@ -705,19 +654,19 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         }
 
         /// <summary>
-        /// Rotar el personaje para que mire hacia la camara
+        ///     Rotar el personaje para que mire hacia la camara
         /// </summary>
         private void faceBackward()
         {
             mesh.RotateY(FastMath.PI);
             facingBackward = true;
-            currentCameraOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardOffsetZ;
-            currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardMinOffsetZ;
-            camera.OffsetForward = currentCameraOffsetForward;
+            CurrentCameraOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardOffsetZ;
+            CurrentMinCameraOffsetForward = GameModel.instance.gameConfig.camara.facingBackwardMinOffsetZ;
+            Camera.OffsetForward = CurrentCameraOffsetForward;
         }
 
         /// <summary>
-        /// Recuperar la rotacion del personaje si es que antes estaba girado mirando a la camara
+        ///     Recuperar la rotacion del personaje si es que antes estaba girado mirando a la camara
         /// </summary>
         private void restoreFaceForward()
         {
@@ -725,21 +674,19 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             {
                 mesh.RotateY(FastMath.PI);
                 facingBackward = false;
-                currentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
-                currentCameraMinOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
-                camera.OffsetForward = currentCameraOffsetForward;
+                CurrentCameraOffsetForward = GameModel.instance.gameConfig.camara.offsetZ;
+                CurrentMinCameraOffsetForward = GameModel.instance.gameConfig.camara.minOffsetZ;
+                Camera.OffsetForward = CurrentCameraOffsetForward;
             }
         }
 
-
-
         /// <summary>
-        /// Pasar a estado agachado
+        ///     Pasar a estado agachado
         /// </summary>
         private void setAgachado()
         {
             currentState = State.Agachado;
-            crouched = true;
+            Crouched = true;
             mesh.playAnimation("Crouch", true);
             punching = false;
             punchEmitter.Enabled = false;
@@ -752,24 +699,24 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             setBoundingSphereAgachado();
 
             //Sonido de agacharse
-            GameModel.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.Play(false);
         }
 
         /// <summary>
-        /// Estado agachado del personaje
+        ///     Estado agachado del personaje
         /// </summary>
         private void agachado(float elapsedTime)
         {
             //Sigue agachado mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
+            var d3dInput = GameModel.instance.Input;
+            var keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
+                var fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
-                bool rotating = false;
+                var rotating = false;
 
                 //Derecha
                 if (d3dInput.keyDown(keys.turnRight))
@@ -789,12 +736,12 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+                    var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.RotateY(rotAngle);
-                    camera.rotateY(rotAngle);
+                    Camera.rotateY(rotAngle);
 
                     //Animacion
-                    string rotAnim = rotate > 0 ? "CrouchRight" : "CrouchLeft";
+                    var rotAnim = rotate > 0 ? "CrouchRight" : "CrouchLeft";
                     mesh.playAnimation(rotAnim, true);
                 }
                 else
@@ -810,13 +757,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         }
 
         /// <summary>
-        /// Pasar a estado agachado en un escondite fijo
+        ///     Pasar a estado agachado en un escondite fijo
         /// </summary>
         private void setAgachadoEsconditeFijo()
         {
             currentState = State.AgachadoEsconditeFijo;
-            crouched = true;
-            hidden = true;
+            Crouched = true;
+            Hidden = true;
             mesh.playAnimation("Crouch", true);
             punching = false;
             punchEmitter.Enabled = false;
@@ -829,24 +776,24 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             setBoundingSphereAgachado();
 
             //Sonido de agacharse
-            GameModel.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.Play(false);
         }
 
         /// <summary>
-        /// Estado agachado en un escondite fijo
+        ///     Estado agachado en un escondite fijo
         /// </summary>
         private void agachadoEsconditeFijo(float elapsedTime)
         {
             //Sigue agachado mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
+            var d3dInput = GameModel.instance.Input;
+            var keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
+                var fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
-                bool rotating = false;
+                var rotating = false;
 
                 //Derecha
                 if (d3dInput.keyDown(keys.turnRight))
@@ -866,12 +813,12 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+                    var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.RotateY(rotAngle);
-                    camera.rotateY(rotAngle);
+                    Camera.rotateY(rotAngle);
 
                     //Animacion
-                    string rotAnim = rotate > 0 ? "CrouchRight" : "CrouchLeft";
+                    var rotAnim = rotate > 0 ? "CrouchRight" : "CrouchLeft";
                     mesh.playAnimation(rotAnim, true);
                 }
                 else
@@ -882,43 +829,43 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             //Si suelta sale del escondite fijo y pasa a normal
             else if (d3dInput.keyUp(keys.crouch))
             {
-                this.esconditeFijo.Escondido = false;
-                this.esconditeFijo = null;
+                esconditeFijo.Escondido = false;
+                esconditeFijo = null;
                 setNormal();
             }
         }
 
-
         /// <summary>
-        /// Acomodar BoundingSphere de agachado
+        ///     Acomodar BoundingSphere de agachado
         /// </summary>
         private void setBoundingSphereAgachado()
         {
-            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            characterSphere.setValues(
-                new TGCVector3(characterSphere.Center.X, fisica.boundingSphereAgachadoCenterY, characterSphere.Center.Z),
+            var fisica = GameModel.instance.gameConfig.fisica;
+            CharacterSphere.setValues(
+                new TGCVector3(CharacterSphere.Center.X, fisica.boundingSphereAgachadoCenterY,
+                    CharacterSphere.Center.Z),
                 fisica.boundingSphereRadioAgachado);
         }
 
         /// <summary>
-        /// Acomodar BoundingSphere de parado
+        ///     Acomodar BoundingSphere de parado
         /// </summary>
         private void setBoundingSphereParado()
         {
-            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            characterSphere.setValues(
-                new TGCVector3(characterSphere.Center.X, fisica.boundingSphereCenterY, characterSphere.Center.Z),
+            var fisica = GameModel.instance.gameConfig.fisica;
+            CharacterSphere.setValues(
+                new TGCVector3(CharacterSphere.Center.X, fisica.boundingSphereCenterY, CharacterSphere.Center.Z),
                 fisica.boundingSphereRadio);
         }
 
         /// <summary>
-        /// Pasar a estado cargando un escondite movil
+        ///     Pasar a estado cargando un escondite movil
         /// </summary>
         private void setCargandoEsconditeMovil()
         {
             currentState = State.CargandoEsconditeMovil;
-            crouched = false;
-            hidden = false;
+            Crouched = false;
+            Hidden = false;
             mesh.playAnimation("StandByCarryingObject", true);
             punching = false;
             punchEmitter.Enabled = false;
@@ -931,21 +878,21 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             setBoundingSphereParado();
 
             //Mover escondite arriba del personaje
-            TGCVector3 objCenter = esconditeMovil.BoundingBox.calculateBoxCenter();
+            var objCenter = esconditeMovil.BoundingBox.calculateBoxCenter();
             objCenter.Y = esconditeMovil.BoundingBox.PMin.Y;
-            TGCVector3 objDiff = characterSphere.Center - objCenter;
-            objDiff.Y += characterSphere.Radius;
-            this.esconditeMovil.Mesh.Move(objDiff);
+            var objDiff = CharacterSphere.Center - objCenter;
+            objDiff.Y += CharacterSphere.Radius;
+            esconditeMovil.Mesh.Move(objDiff);
 
             //Marcar como que no esta escondido
-            this.esconditeMovil.Escondido = false;
+            esconditeMovil.Escondido = false;
 
             //Sonido de agarrar escondite
-            GameModel.instance.sonidos.personaje_levantar_escondite_movil.play(false);
+            GameModel.instance.sonidos.personaje_levantar_escondite_movil.Play(false);
         }
 
         /// <summary>
-        /// Estado cargando escondite movil del personaje
+        ///     Estado cargando escondite movil del personaje
         /// </summary>
         private void cargandoEsconditeMovil(float elapsedTime)
         {
@@ -953,10 +900,10 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             var d3dDevice = D3DDevice.Instance.Device;
 
             //obtener velocidades de Modifiers
-            GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-            Level level = GameModel.instance.currentLevel;
+            var fisica = GameModel.instance.gameConfig.fisica;
+            var keys = GameModel.instance.gameConfig.keys;
+            var d3dInput = GameModel.instance.Input;
+            var level = GameModel.instance.currentLevel;
 
             //Crouch, esconderse con el objeto
             if (d3dInput.keyDown(keys.crouch))
@@ -969,23 +916,21 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             if (d3dInput.keyPressed(keys.action))
             {
                 //Dejar escondite en el piso
-                TGCVector3 objSize = esconditeMovil.BoundingBox.calculateSize();
+                var objSize = esconditeMovil.BoundingBox.calculateSize();
                 esconditeMovil.Mesh.Move(0, -objSize.Y, 0);
                 esconditeMovil.Agarrado = false;
                 esconditeMovil.Escondido = false;
                 esconditeMovil = null;
-                
+
                 setNormal();
                 return;
             }
 
-
-
             //Movimiento
-            float moveForward = 0f;
+            var moveForward = 0f;
             float rotate = 0;
-            bool moving = false;
-            bool rotating = false;
+            var moving = false;
+            var rotating = false;
 
             //Adelante
             if (d3dInput.keyDown(keys.forward))
@@ -1020,11 +965,10 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             if (rotating)
             {
                 //Rotar mesh y camara
-                float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+                var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                 mesh.RotateY(rotAngle);
-                camera.rotateY(rotAngle);
+                Camera.rotateY(rotAngle);
             }
-
 
             //Si hubo desplazamiento
             if (moving)
@@ -1042,10 +986,8 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 sonidoPasosCaminandoEsconditeMovil.Enabled = false;
             }
 
-
-
             //Vector de movimiento
-            TGCVector3 movementVector = TGCVector3.Empty;
+            var movementVector = TGCVector3.Empty;
             if (moving)
             {
                 //Ajustar por el tiempo transcurrido
@@ -1056,7 +998,7 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                     FastMath.Sin(mesh.Rotation.Y) * moveForward,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * moveForward
-                    );
+                );
 
                 //Si avanza hacia atrás, rotar personaje para que mire a la camara (pero que no afecte en nada su movimiento, solo decorativo)
                 if (moveForward > 0)
@@ -1066,10 +1008,10 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             }
 
             //Deteccion de colisiones con meshes estaticos del Sector
-            TGCVector3 realMovement = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
+            var realMovement = moveWithCollisions(level.CurrentSector.ObjetosColisionables, movementVector);
 
             //Mover tambien escondite movil
-            this.esconditeMovil.Mesh.Move(realMovement);
+            esconditeMovil.Mesh.Move(realMovement);
 
             //Colision con llaves del sector
             level.CurrentSector.checkLlaves(this);
@@ -1083,13 +1025,13 @@ namespace Trafico.De.Fauna.Model.MainCharacters
         }
 
         /// <summary>
-        /// Pasar a estado Agachado con escondite movil
+        ///     Pasar a estado Agachado con escondite movil
         /// </summary>
         private void setAgachadoEsconditeMovil()
         {
             currentState = State.AgachadoEsconditeMovil;
-            crouched = true;
-            hidden = true;
+            Crouched = true;
+            Hidden = true;
             mesh.playAnimation("Crouch", true);
             punching = false;
             punchEmitter.Enabled = false;
@@ -1102,31 +1044,31 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             setBoundingSphereAgachado();
 
             //Poner escondite en el piso
-            TGCVector3 objSize = esconditeMovil.BoundingBox.calculateSize();
+            var objSize = esconditeMovil.BoundingBox.calculateSize();
             esconditeMovil.Mesh.Move(0, -objSize.Y, 0);
 
             //Marcar escondite como escondido
-            this.esconditeMovil.Escondido = true;
+            esconditeMovil.Escondido = true;
 
             //Sonido de agacharse
-            GameModel.instance.sonidos.personaje_agacharse.play(false);
+            GameModel.instance.sonidos.personaje_agacharse.Play(false);
         }
 
         /// <summary>
-        /// Estado agachado escondite movil del personaje
+        ///     Estado agachado escondite movil del personaje
         /// </summary>
         private void agachadoEsconditeMovil(float elapsedTime)
         {
             //Sigue escondido agachado con el objeto mientras se mantiene presionado crouch
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-            GameConfig.Keys keys = GameModel.instance.gameConfig.keys;
+            var d3dInput = GameModel.instance.Input;
+            var keys = GameModel.instance.gameConfig.keys;
 
             if (d3dInput.keyDown(keys.crouch))
             {
                 //No se puede mover, solo rotar
-                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
+                var fisica = GameModel.instance.gameConfig.fisica;
                 float rotate = 0;
-                bool rotating = false;
+                var rotating = false;
 
                 //Derecha
                 if (d3dInput.keyDown(keys.turnRight))
@@ -1146,27 +1088,26 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 if (rotating)
                 {
                     //Rotar mesh y camara
-                    float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+                    var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
                     mesh.RotateY(rotAngle);
-                    camera.rotateY(rotAngle);
+                    Camera.rotateY(rotAngle);
                 }
             }
             //Si suelta, el objeto se para cargando el escondite
             else if (d3dInput.keyUp(keys.crouch))
             {
                 setCargandoEsconditeMovil();
-
             }
         }
 
         /// <summary>
-        /// Pasar a estado Saltando entre plataformas
+        ///     Pasar a estado Saltando entre plataformas
         /// </summary>
         private void setSaltandoPlataformas()
         {
             currentState = State.SaltandoPlataformas;
-            crouched = false;
-            hidden = false;
+            Crouched = false;
+            Hidden = false;
             mesh.playAnimation("Jumping", true);
             punching = false;
             punchEmitter.Enabled = false;
@@ -1178,8 +1119,8 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             //restoreFaceForward();
 
             //Posicion deseada
-            TGCVector3 initPos = mesh.Position;
-            TGCVector3 destPos = this.plataformaSalto.NextPlatform.Position;
+            var initPos = mesh.Position;
+            var destPos = plataformaSalto.NextPlatform.Position;
 
             //Direccion hacia la que hay que saltar
             jumpDir = destPos - initPos;
@@ -1193,35 +1134,35 @@ namespace Trafico.De.Fauna.Model.MainCharacters
 
             //Rotar personaje hacia esa direccion
             beforeJumpRotY = getCurrentRotAngle();
-            TGCVector3 currentVecRot = getCurrentVecRot();
-            float angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(jumpDir.Z, jumpDir.X);
+            var currentVecRot = getCurrentVecRot();
+            var angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(jumpDir.Z, jumpDir.X);
             mesh.RotateY(angle);
-            camera.rotateY(angle);
+            Camera.rotateY(angle);
         }
 
         /// <summary>
-        /// Estado saltando entre plataformas
+        ///     Estado saltando entre plataformas
         /// </summary>
         private void saltandoPlataformas(float elapsedTime)
         {
             //Ir avanzando gradualmente
-            float speed = GameModel.instance.gameConfig.fisica.velocidadSalto;
-            float movement = speed * elapsedTime;
+            var speed = GameModel.instance.gameConfig.fisica.velocidadSalto;
+            var movement = speed * elapsedTime;
             jumpDistanceToTravel -= movement;
             if (jumpDistanceToTravel < 0)
             {
                 //llego a la siguiente plataforma, volver a acomodar a posicion y orientacion correcta
-                TGCVector3 pos = this.plataformaSalto.NextPlatform.Position;
+                var pos = plataformaSalto.NextPlatform.Position;
                 pos.Y = origPosY;
                 mesh.Position = pos;
                 //TGCVector3 beforeJumpRot = new TGCVector3(0, beforeJumpRotY, 0);
                 //mesh.Rotation = beforeJumpRot;
                 //camera.RotationY = beforeJumpRot.Y + origAngleRot;
-                this.plataformaSalto = null;
+                plataformaSalto = null;
 
                 //acomodar bounding sphere
-                GameConfig.Fisica fisica = GameModel.instance.gameConfig.fisica;
-                characterSphere.setValues(
+                var fisica = GameModel.instance.gameConfig.fisica;
+                CharacterSphere.setValues(
                     new TGCVector3(pos.X, fisica.boundingSphereCenterY, pos.Z),
                     fisica.boundingSphereRadio);
 
@@ -1231,10 +1172,10 @@ namespace Trafico.De.Fauna.Model.MainCharacters
             else
             {
                 //Movimiento en XZ
-                TGCVector3 move = TGCVector3.Scale(jumpDir, movement);
+                var move = TGCVector3.Scale(jumpDir, movement);
 
                 //Movimiento vertical a la mitad de velocidad
-                float movementJump = movement / 2; 
+                var movementJump = movement / 2;
                 if (jumpYPositive)
                 {
                     move.Y += movementJump;
@@ -1248,41 +1189,32 @@ namespace Trafico.De.Fauna.Model.MainCharacters
                 {
                     move.Y -= movementJump;
                 }
-                
+
 
                 //Avanzar
                 mesh.Move(move);
-                characterSphere.moveCenter(move);
+                CharacterSphere.moveCenter(move);
             }
         }
 
         /// <summary>
-        /// Devuelve el vector de orientacion actual del personaje, respecto de su orientacion inicial.
+        ///     Devuelve el vector de orientacion actual del personaje, respecto de su orientacion inicial.
         /// </summary>
         public TGCVector3 getCurrentVecRot()
         {
-            float currentAngle = getCurrentRotAngle();
-            TGCVector3 currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
+            var currentAngle = getCurrentRotAngle();
+            var currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
             return currentVecRot;
         }
 
         /// <summary>
-        /// Angulo actual de rotacion, respecto de su orientacion inicial
+        ///     Angulo actual de rotacion, respecto de su orientacion inicial
         /// </summary>
         public float getCurrentRotAngle()
         {
             return mesh.Rotation.Y - origAngleRot;
         }
 
-        
-
         #endregion
-
-
-
-
-
-
-        
     }
 }

@@ -23,71 +23,57 @@ using TGC.Core.SceneLoader;
 namespace Trafico.De.Fauna.Model.ItemsAnimal
 {
     /// <summary>
-    /// Utilidad para rotar items que flotan en el suelo
+    ///     Utilidad para rotar items que flotan en el suelo
     /// </summary>
     public class RotadorDeItems
     {
-        const float LIMIT_Y = 10;
-        const float YAW = 5f;
-        const float Y_SPEED = 50;
+        private const float LIMIT_Y = 10;
+        private const float YAW = 5f;
+        private const float Y_SPEED = 50;
 
-        float acumY;
-        float signY;
+        private float acumY;
 
-        float yawSpeed;
-        /// <summary>
-        /// Velocidad de rotacion
-        /// </summary>
-        public float YawSpeed
-        {
-            get { return yawSpeed; }
-            set { yawSpeed = value; }
-        }
-
-        float limitY;
-        /// <summary>
-        /// Maximo incremento en Y
-        /// </summary>
-        public float LimitY
-        {
-            get { return limitY; }
-            set { limitY = value; }
-        }
-
-        float ySpeed;
-        /// <summary>
-        /// Velocidad con la que se sube el objeto
-        /// </summary>
-        public float YSpeed
-        {
-            get { return ySpeed; }
-            set { ySpeed = value; }
-        }
+        private float signY;
 
         public RotadorDeItems()
         {
             acumY = 0;
             signY = 1;
-            ySpeed = Y_SPEED;
-            limitY = LIMIT_Y;
-            yawSpeed = YAW;
+            YSpeed = Y_SPEED;
+            LimitY = LIMIT_Y;
+            YawSpeed = YAW;
         }
+
+        /// <summary>
+        ///     Velocidad de rotacion
+        /// </summary>
+        public float YawSpeed { get; set; }
+
+        /// <summary>
+        ///     Maximo incremento en Y
+        /// </summary>
+        public float LimitY { get; set; }
+
+        /// <summary>
+        ///     Velocidad con la que se sube el objeto
+        /// </summary>
+        public float YSpeed { get; set; }
 
         public void rotate(float elapsedTime, TgcMesh mesh)
         {
-            float move = ySpeed * elapsedTime * signY;
+            var move = YSpeed * elapsedTime * signY;
             acumY += move;
-            if (FastMath.Abs(acumY) > limitY)
+            if (FastMath.Abs(acumY) > LimitY)
             {
                 acumY = 0;
                 signY *= -1;
             }
             else
             {
-                mesh.Move(0, move, 0); 
+                mesh.Move(0, move, 0);
             }
-            mesh.RotateY(yawSpeed * elapsedTime);
-        }
 
+            mesh.RotateY(YawSpeed * elapsedTime);
+        }
     }
 }

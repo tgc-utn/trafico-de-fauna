@@ -25,17 +25,17 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Billboards
 {
-
     /// <summary>
-    /// Billboard de una animacion de explosion
+    ///     Billboard de una animacion de explosion
     /// </summary>
     public class BillboardExplosion : CustomEvent
     {
-        QuadAnimatedBillboard billboard;
+        private QuadAnimatedBillboard billboard;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            billboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Explosion.png", new Size(64, 64), 16, 16);
+            billboard = new QuadAnimatedBillboard(GameModel.instance.gameConfig.basePath + "Billboards\\Explosion.png",
+                new Size(64, 64), 16, 16);
             billboard.Size = new TGCVector2(64, 64);
             billboard.Position = GameUtils.getBBLowerCenterFromMeshData(meshData);
         }
@@ -66,7 +66,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Billboards
 
         public override void renderDebug()
         {
-            
         }
 
         public override ColliderObject getColliderObject()

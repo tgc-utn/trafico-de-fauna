@@ -26,20 +26,19 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model
 {
     /// <summary>
-    /// Utilidades generales del juego
+    ///     Utilidades generales del juego
     /// </summary>
     public class GameUtils
     {
-
-         /// <summary>
-        /// Orientaciones basicas en XZ
+        /// <summary>
+        ///     Orientaciones basicas en XZ
         /// </summary>
         public enum Orientacion
         {
             Norte,
             Sur,
             Este,
-            Oeste,
+            Oeste
         }
 
         public static TgcBoundingAxisAlignBox createBBFromMeshData(TgcMeshData meshData)
@@ -47,25 +46,25 @@ namespace Trafico.De.Fauna.Model
             return new TgcBoundingAxisAlignBox(
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
-                        );
+            );
         }
 
         public static TGCVector3 getBBCenterFromMeshData(TgcMeshData meshData)
         {
-            TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
+            var aabb = new TgcBoundingAxisAlignBox(
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
-                        );
+            );
             return aabb.calculateBoxCenter();
         }
 
         public static TGCVector3 getBBLowerCenterFromMeshData(TgcMeshData meshData)
         {
-            TgcBoundingAxisAlignBox aabb = new TgcBoundingAxisAlignBox(
+            var aabb = new TgcBoundingAxisAlignBox(
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMin),
                 TGCVector3.Float3ArrayToTGCVector3(meshData.pMax)
-                        );
-            TGCVector3 center = aabb.calculateBoxCenter();
+            );
+            var center = aabb.calculateBoxCenter();
             center.Y = aabb.PMin.Y;
             return center;
         }
@@ -76,12 +75,12 @@ namespace Trafico.De.Fauna.Model
         }
 
         /// <summary>
-        /// Crear un TgcSceneData reducido en base a solo lo necesario por un  TgcMeshData
+        ///     Crear un TgcSceneData reducido en base a solo lo necesario por un  TgcMeshData
         /// </summary>
         public static TgcSceneData createSceneDataForMeshData(TgcSceneData origSceneData, TgcMeshData meshData)
         {
             //Duplicar parte base
-            TgcSceneData newSceneData = new TgcSceneData();
+            var newSceneData = new TgcSceneData();
             newSceneData.name = origSceneData.name;
             newSceneData.pMin = origSceneData.pMin;
             newSceneData.pMax = origSceneData.pMax;
@@ -90,7 +89,7 @@ namespace Trafico.De.Fauna.Model
             newSceneData.lightmapsEnabled = origSceneData.lightmapsEnabled;
 
             //Agregar unico meshData
-            newSceneData.meshesData = new TgcMeshData[] { meshData };
+            newSceneData.meshesData = new[] { meshData };
 
             //Agarrar solo los materials necesarios por este meshData
             if (meshData.materialId == -1)
@@ -99,7 +98,7 @@ namespace Trafico.De.Fauna.Model
             }
             else
             {
-                newSceneData.materialsData = new TgcMaterialData[] { origSceneData.materialsData[meshData.materialId] };
+                newSceneData.materialsData = new[] { origSceneData.materialsData[meshData.materialId] };
                 meshData.materialId = 0;
             }
 
@@ -107,15 +106,16 @@ namespace Trafico.De.Fauna.Model
         }
 
         /// <summary>
-        /// Carga un unico Mesh en base en base a su MeshData y a las texturas de toda la escena
+        ///     Carga un unico Mesh en base en base a su MeshData y a las texturas de toda la escena
         /// </summary>
-        public static TgcMeshShader loadMeshShaderFromSceneData(TgcMeshData meshDataNode, string texturePath, TgcSceneData originalSceneData)
+        public static TgcMeshShader loadMeshShaderFromSceneData(TgcMeshData meshDataNode, string texturePath,
+            TgcSceneData originalSceneData)
         {
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshDataNode);
-            TgcScene scene = loader.loadScene(sceneData, texturePath);
-            TgcMeshShader mesh = (TgcMeshShader)scene.Meshes[0];
+            var sceneData = createSceneDataForMeshData(originalSceneData, meshDataNode);
+            var scene = loader.loadScene(sceneData, texturePath);
+            var mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.AutoTransformEnable = true;
             return mesh;
         }
@@ -129,14 +129,14 @@ namespace Trafico.De.Fauna.Model
 
 
         /// <summary>
-        /// Devuelve los extremos en X o en Z del Bounding, dependiendo que lado es mas largo (X o Z).
-        /// Devuelve true si el lado mas largo es el X
+        ///     Devuelve los extremos en X o en Z del Bounding, dependiendo que lado es mas largo (X o Z).
+        ///     Devuelve true si el lado mas largo es el X
         /// </summary>
         public static bool getBBExtremeCentersXZ(TgcMeshData meshData, out TGCVector3 extreme1, out TGCVector3 extreme2)
         {
-            TgcBoundingAxisAlignBox bb = createBBFromMeshData(meshData);
-            TGCVector3 size = bb.calculateSize();
-            TGCVector3 center = bb.calculateBoxCenter();
+            var bb = createBBFromMeshData(meshData);
+            var size = bb.calculateSize();
+            var center = bb.calculateBoxCenter();
 
             if (size.X > size.Z)
             {
@@ -144,12 +144,10 @@ namespace Trafico.De.Fauna.Model
                 extreme2 = new TGCVector3(bb.PMax.X, bb.PMin.Y, center.Z);
                 return true;
             }
-            else
-            {
-                extreme1 = new TGCVector3(center.X, bb.PMin.Y, bb.PMin.Z);
-                extreme2 = new TGCVector3(center.X, bb.PMin.Y, bb.PMax.Z);
-                return false;
-            }
+
+            extreme1 = new TGCVector3(center.X, bb.PMin.Y, bb.PMin.Z);
+            extreme2 = new TGCVector3(center.X, bb.PMin.Y, bb.PMax.Z);
+            return false;
         }
     }
 }

@@ -26,19 +26,19 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Billboards
 {
-
     /// <summary>
-    /// Efecto de agua animada en el piso
+    ///     Efecto de agua animada en el piso
     /// </summary>
     public class WaterEffect : CustomEvent
     {
-        HorizontalAnimatedBillboard billboard;
-        TgcBoundingAxisAlignBox aabb;
+        private TgcBoundingAxisAlignBox aabb;
+        private HorizontalAnimatedBillboard billboard;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             var device = D3DDevice.Instance.Device;
-            billboard = new HorizontalAnimatedBillboard(device, GameModel.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
+            billboard = new HorizontalAnimatedBillboard(device,
+                GameModel.instance.gameConfig.basePath + "Billboards\\Water.png", new Size(128, 128), 4, 7);
             aabb = GameUtils.createBBFromMeshData(meshData);
             billboard.PMin = aabb.PMin;
             billboard.PMax = aabb.PMax;

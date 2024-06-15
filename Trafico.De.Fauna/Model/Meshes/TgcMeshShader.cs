@@ -28,44 +28,22 @@ using Trafico.De.Fauna.Utils.Render;
 namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
-    /// Extendemos de TgcMesh para poder redefinir el método executeRender() y agregar renderizado de Shaders. 
-    /// 
+    ///     Extendemos de TgcMesh para poder redefinir el método executeRender() y agregar renderizado de Shaders.
     /// </summary>
     public class TgcMeshShader : TgcMesh, IRenderQueueElement, IAlphaObject
     {
-
-        string technique;
         /// <summary>
-        /// Technique a utilizar en el renderizado
-        /// </summary>
-        public string Technique
-        {
-            get { return technique; }
-            set { technique = value; }
-        }
-
-        /// <summary>
-        /// Se llama antes de iniciar el shader.
+        ///     Se llama antes de iniciar el shader.
         /// </summary>
         /// <param name="mesh">Mesh</param>
         public delegate void ShaderBeginHandler(TgcMeshShader mesh);
 
         /// <summary>
-        /// Evento que se llama antes de iniciar el shader.
-        /// </summary>
-        public event ShaderBeginHandler ShaderBegin;
-
-        /// <summary>
-        /// Se llama antes de iniciar una pasada del shader.
+        ///     Se llama antes de iniciar una pasada del shader.
         /// </summary>
         /// <param name="mesh">Mesh</param>
         /// <param name="pass">Número de pasada del shader</param>
         public delegate void ShaderPassBeginHandler(TgcMeshShader mesh, int pass);
-
-        /// <summary>
-        /// Evento que se llama antes de iniciar una pasada del shader.
-        /// </summary>
-        public event ShaderPassBeginHandler ShaderPassBegin;
 
 
         public TgcMeshShader(Mesh mesh, string name, MeshRenderType renderType)
@@ -73,33 +51,19 @@ namespace Trafico.De.Fauna.Model.Meshes
         {
         }
 
-        public TgcMeshShader(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
+        public TgcMeshShader(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation,
+            TGCVector3 scale)
             : base(name, parentInstance, translation, rotation, scale)
         {
         }
 
         /// <summary>
-        /// Se redefine este método.
-        /// Si tiene Alpha habilitado no renderiza directo, sino que lo manda a una lista para renderizar
-        /// luego de todos los objetos opacos.
+        ///     Technique a utilizar en el renderizado
         /// </summary>
-        public new void render()
-        {
-            if (!enabled)
-                return;
-
-            if (AlphaBlendEnable)
-            {
-                GameModel.instance.currentLevel.AlphaObjects.Add(this);
-            }
-            else
-            {
-                executeRender();
-            }
-        }
+        public string Technique { get; set; }
 
         /// <summary>
-        /// Render directo
+        ///     Render directo
         /// </summary>
         public void renderWithAlpha()
         {
@@ -107,27 +71,28 @@ namespace Trafico.De.Fauna.Model.Meshes
         }
 
         /// <summary>
-        /// Se redefine este método para agregar shaders.
-        /// Es el mismo código del executeRender() pero con la sección de "MeshRenderType.DIFFUSE_MAP" ampliada
-        /// para Shaders.
+        ///     Se redefine este método para agregar shaders.
+        ///     Es el mismo código del executeRender() pero con la sección de "MeshRenderType.DIFFUSE_MAP" ampliada
+        ///     para Shaders.
         /// </summary>
-        public new void executeRender()
+        public void executeRender()
         {
             var device = D3DDevice.Instance.Device;
-            Effect effect = GameModel.instance.shaders.effect;
+            var effect = GameModel.instance.shaders.effect;
 
             //Cargar technique
-            effect.Technique = this.technique;
+            effect.Technique = Technique;
 
             //Aplicar transformacion de malla
             if (AutoTransformEnable)
             {
-                this.transform = TGCMatrix.Identity
-                    * TGCMatrix.Scaling(scale)
-                    * TGCMatrix.RotationYawPitchRoll(rotation.Y, rotation.X, rotation.Z)
-                    * TGCMatrix.Translation(translation);
+                transform = TGCMatrix.Identity
+                            * TGCMatrix.Scaling(scale)
+                            * TGCMatrix.RotationYawPitchRoll(rotation.Y, rotation.X, rotation.Z)
+                            * TGCMatrix.Translation(translation);
             }
-            device.Transform.World = this.transform;
+
+            device.Transform.World = transform;
 
             //Cargar VertexDeclaration
             device.VertexDeclaration = vertexDeclaration;
@@ -135,9 +100,9 @@ namespace Trafico.De.Fauna.Model.Meshes
 
             //Cargar valores de shader de matrices que dependen de la posición del mesh
             int numPasses;
-            TGCMatrix matWorldView = this.transform * TGCMatrix.FromMatrix(device.Transform.View);
-            TGCMatrix matWorldViewProj = matWorldView * TGCMatrix.FromMatrix(device.Transform.Projection);
-            effect.SetValue("matWorld", this.transform);
+            var matWorldView = transform * TGCMatrix.FromMatrix(device.Transform.View);
+            var matWorldViewProj = matWorldView * TGCMatrix.FromMatrix(device.Transform.Projection);
+            effect.SetValue("matWorld", transform);
             effect.SetValue("matWorldView", matWorldView);
             effect.SetValue("matWorldViewProj", matWorldViewProj);
 
@@ -160,7 +125,7 @@ namespace Trafico.De.Fauna.Model.Meshes
 
                     //Iniciar Shader e iterar sobre sus Render Passes
                     numPasses = effect.Begin(0);
-                    for (int n = 0; n < numPasses; n++)
+                    for (var n = 0; n < numPasses; n++)
                     {
                         //Llamar evento para configurar inicio de la pasada del shader
                         if (ShaderPassBegin != null)
@@ -192,15 +157,15 @@ namespace Trafico.De.Fauna.Model.Meshes
 
                     //Hacer reset de Lightmap
                     TexturesManager.Instance.clear(1);
-                    
+
                     //Activar AlphaBlending
-                    if (this.AlphaBlendEnable)
+                    if (AlphaBlendEnable)
                     {
                         device.RenderState.AlphaBlendEnable = true;
                         device.RenderState.AlphaTestEnable = true;
                     }
-                    
-                    
+
+
                     //Llamar evento para configurar inicio del shader
                     if (ShaderBegin != null)
                     {
@@ -209,7 +174,7 @@ namespace Trafico.De.Fauna.Model.Meshes
 
                     //Iniciar Shader e iterar sobre sus Render Passes
                     numPasses = effect.Begin(0);
-                    for (int n = 0; n < numPasses; n++)
+                    for (var n = 0; n < numPasses; n++)
                     {
                         //Llamar evento para configurar inicio de la pasada del shader
                         if (ShaderPassBegin != null)
@@ -217,10 +182,9 @@ namespace Trafico.De.Fauna.Model.Meshes
                             ShaderPassBegin.Invoke(this, n);
                         }
 
-                        
 
                         //Dibujar cada subset con su Material y DiffuseMap correspondiente
-                        for (int i = 0; i < materials.Length; i++)
+                        for (var i = 0; i < materials.Length; i++)
                         {
                             device.Material = materials[i];
 
@@ -249,7 +213,7 @@ namespace Trafico.De.Fauna.Model.Meshes
 
 
                     //Activar AlphaBlending
-                    if (this.AlphaBlendEnable)
+                    if (AlphaBlendEnable)
                     {
                         device.RenderState.AlphaBlendEnable = true;
                         device.RenderState.AlphaTestEnable = true;
@@ -264,7 +228,7 @@ namespace Trafico.De.Fauna.Model.Meshes
 
                     //Iniciar Shader e iterar sobre sus Render Passes
                     numPasses = effect.Begin(0);
-                    for (int n = 0; n < numPasses; n++)
+                    for (var n = 0; n < numPasses; n++)
                     {
                         //Llamar evento para configurar inicio de la pasada del shader
                         if (ShaderPassBegin != null)
@@ -276,7 +240,7 @@ namespace Trafico.De.Fauna.Model.Meshes
                         TexturesManager.Instance.shaderSet(effect, "lightMap_Tex", lightMap);
 
                         //Dibujar cada subset con su Material y su DiffuseMap correspondiente
-                        for (int i = 0; i < materials.Length; i++)
+                        for (var i = 0; i < materials.Length; i++)
                         {
                             device.Material = materials[i];
 
@@ -303,10 +267,41 @@ namespace Trafico.De.Fauna.Model.Meshes
             }
         }
 
+        /// <summary>
+        ///     Evento que se llama antes de iniciar el shader.
+        /// </summary>
+        public event ShaderBeginHandler ShaderBegin;
+
+        /// <summary>
+        ///     Evento que se llama antes de iniciar una pasada del shader.
+        /// </summary>
+        public event ShaderPassBeginHandler ShaderPassBegin;
+
+        /// <summary>
+        ///     Se redefine este método.
+        ///     Si tiene Alpha habilitado no renderiza directo, sino que lo manda a una lista para renderizar
+        ///     luego de todos los objetos opacos.
+        /// </summary>
+        public void render()
+        {
+            if (!enabled)
+            {
+                return;
+            }
+
+            if (AlphaBlendEnable)
+            {
+                GameModel.instance.currentLevel.AlphaObjects.Add(this);
+            }
+            else
+            {
+                executeRender();
+            }
+        }
     }
 
     /// <summary>
-    /// Factory customizado para poder crear clase TgcMeshShader
+    ///     Factory customizado para poder crear clase TgcMeshShader
     /// </summary>
     public class TgcMeshShaderFactory : IMeshFactory
     {
@@ -315,7 +310,8 @@ namespace Trafico.De.Fauna.Model.Meshes
             return new TgcMeshShader(d3dMesh, meshName, renderType);
         }
 
-        public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
+        public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation,
+            TGCVector3 rotation, TGCVector3 scale)
         {
             return new TgcMeshShader(meshName, originalMesh, translation, rotation, scale);
         }

@@ -22,83 +22,64 @@ using TGC.Core.Mathematica;
 namespace Trafico.De.Fauna.Model.Interpolators
 {
     /// <summary>
-    /// Interpolador lineal de posicion en 2D.
+    ///     Interpolador lineal de posicion en 2D.
     /// </summary>
     public class Position2dInterpolator
     {
-        TGCVector2 current;
-        TGCVector2 dir;
-        float distanceToTravel;
+        private TGCVector2 current;
+        private TGCVector2 dir;
+        private float distanceToTravel;
 
-        float speed;
         /// <summary>
-        /// Velocidad de desplazamiento
+        ///     Velocidad de desplazamiento
         /// </summary>
-        public float Speed
-        {
-            get { return speed; }
-            set { speed = value; }
-        }
+        public float Speed { get; set; }
 
-        TGCVector2 init;
         /// <summary>
-        /// Posicion inicial
+        ///     Posicion inicial
         /// </summary>
-        public TGCVector2 Init
-        {
-            get { return init; }
-            set { init = value; }
-        }
+        public TGCVector2 Init { get; set; }
 
-        TGCVector2 end;
         /// <summary>
-        /// Posicion final
+        ///     Posicion final
         /// </summary>
-        public TGCVector2 End
-        {
-            get { return end; }
-            set { end = value; }
-        }
-
-        public Position2dInterpolator()
-        {
-        }
+        public TGCVector2 End { get; set; }
 
         public void reset()
         {
-            dir = end - init;
+            dir = End - Init;
             distanceToTravel = dir.Length();
-            dir.Normalize(); 
-            current = init;
+            dir.Normalize();
+            current = Init;
         }
 
         /// <summary>
-        /// Actualizar estado del interpolador
+        ///     Actualizar estado del interpolador
         /// </summary>
         /// <returns>Nueva posicion</returns>
         public TGCVector2 update(float elapsedTime)
         {
-            float movement = speed * elapsedTime;
+            var movement = Speed * elapsedTime;
             distanceToTravel -= movement;
             if (distanceToTravel < 0)
             {
                 distanceToTravel = 0;
-                current = end;
+                current = End;
             }
             else
             {
                 current += TGCVector2.Scale(dir, movement);
             }
+
             return current;
         }
 
         /// <summary>
-        /// Indica si el interpolador llego al final
+        ///     Indica si el interpolador llego al final
         /// </summary>
         public bool isEnd()
         {
             return distanceToTravel == 0;
-        } 
-
+        }
     }
 }

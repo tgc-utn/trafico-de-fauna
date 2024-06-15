@@ -26,48 +26,65 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.Escondites
 {
     /// <summary>
-    /// Modelo en el que el personaje se puede esconder
+    ///     Modelo en el que el personaje se puede esconder
     /// </summary>
     public class EsconditeFijo : IAlphaObject
     {
         /// <summary>
-        /// Radio del bouding sphere de colision
+        ///     Radio del bouding sphere de colision
         /// </summary>
-        const float BSPHERE_RADIUS = 5;
+        private const float BSPHERE_RADIUS = 5;
 
         /// <summary>
-        /// Color para resaltar
+        ///     Color para resaltar
         /// </summary>
-        static readonly int COLOR_RESALTADO = Color.FromArgb(0, 0, 0, 255).ToArgb();
-        static readonly int COLOR_RESALTADO_HIDDEN = Color.FromArgb(0, 255, 0, 0).ToArgb();
+        private static readonly int COLOR_RESALTADO = Color.FromArgb(0, 0, 0, 255).ToArgb();
 
-        TgcBoundingSphere bSphere;
-        public TgcBoundingSphere BSphere
-        {
-            get { return bSphere; }
-        }
+        private static readonly int COLOR_RESALTADO_HIDDEN = Color.FromArgb(0, 255, 0, 0).ToArgb();
 
-        bool escondido;
-        /// <summary>
-        /// Indica si el personaje principal esta escondido ahora en este escondite
-        /// </summary>
-        public bool Escondido
-        {
-            get { return escondido; }
-            set { escondido = value; }
-        }
+        private readonly InterpoladorVaiven interpolador;
 
-        TgcMeshShader mesh;
-        InterpoladorVaiven interpolador;
+        private TgcMeshShader mesh;
 
         public EsconditeFijo(TgcMeshData meshDataNode, string texturePath, TgcSceneData originalSceneData)
         {
             //Cargar mesh
             mesh = GameUtils.loadMeshShaderFromSceneData(meshDataNode, texturePath, originalSceneData);
-            bSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), BSPHERE_RADIUS);
+            BSphere = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), BSPHERE_RADIUS);
 
-            escondido = false;
+            Escondido = false;
             interpolador = new InterpoladorVaiven(0, 0.7f, 0.65f);
+        }
+
+        public TgcBoundingSphere BSphere { get; private set; }
+
+        /// <summary>
+        ///     Indica si el personaje principal esta escondido ahora en este escondite
+        /// </summary>
+        public bool Escondido { get; set; }
+
+        public void renderWithAlpha()
+        {
+            if (Escondido)
+            {
+                var shaders = GameModel.instance.shaders;
+                mesh.Technique = shaders.RESALTADO;
+                shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
+                shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
+                mesh.executeRender();
+            }
+            else
+            {
+                //Dibujar si esta en rango visible
+                if (GameModel.instance.mainCharacter.isInProximityRange(BSphere.Center))
+                {
+                    var shaders = GameModel.instance.shaders;
+                    mesh.Technique = shaders.RESALTADO;
+                    shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
+                    shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
+                    mesh.executeRender();
+                }
+            }
         }
 
         public void render()
@@ -82,39 +99,13 @@ namespace Trafico.De.Fauna.Model.Escondites
             }
         }
 
-        public void renderWithAlpha()
-        {
-            if (escondido)
-            {
-                Shaders shaders = GameModel.instance.shaders;
-                mesh.Technique = shaders.RESALTADO;
-                shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
-                shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
-                mesh.executeRender();
-
-            }
-            else
-            {
-                //Dibujar si esta en rango visible
-                if (GameModel.instance.mainCharacter.isInProximityRange(bSphere.Center))
-                {
-                    Shaders shaders = GameModel.instance.shaders;
-                    mesh.Technique = shaders.RESALTADO;
-                    shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
-                    shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
-                    mesh.executeRender();
-                }
-            }
-        }
-
-
 
         public void dispose()
         {
             mesh.Dispose();
             mesh = null;
-            bSphere.Dispose();
-            bSphere = null;
+            BSphere.Dispose();
+            BSphere = null;
         }
     }
 }

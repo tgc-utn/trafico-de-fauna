@@ -27,69 +27,76 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.Escondites
 {
     /// <summary>
-    /// Objetos 3D para agarrar y esconderse
+    ///     Objetos 3D para agarrar y esconderse
     /// </summary>
     public class EsconditeMovil : IAlphaObject
     {
-
         /// <summary>
-        /// Color para resaltar
+        ///     Color para resaltar
         /// </summary>
-        static readonly int COLOR_RESALTADO = Color.FromArgb(0, 0, 0, 255).ToArgb();
-        static readonly int COLOR_RESALTADO_HIDDEN = Color.FromArgb(0, 255, 0, 0).ToArgb();
+        private static readonly int COLOR_RESALTADO = Color.FromArgb(0, 0, 0, 255).ToArgb();
 
-        public TgcBoundingAxisAlignBox BoundingBox
-        {
-            get { return mesh.BoundingBox; }
-        }
+        private static readonly int COLOR_RESALTADO_HIDDEN = Color.FromArgb(0, 255, 0, 0).ToArgb();
 
-        bool agarrado;
-        /// <summary>
-        /// Indica si el escondite esta siendo cargado por el personaje
-        /// </summary>
-        public bool Agarrado
-        {
-            get { return agarrado; }
-            set { agarrado = value; }
-        }
+        private readonly InterpoladorVaiven interpolador;
 
-        bool escondido;
-        /// <summary>
-        /// Indica si el personaje principal esta escondido ahora en este escondite
-        /// </summary>
-        public bool Escondido
-        {
-            get { return escondido; }
-            set { escondido = value; }
-        }
-
-        TGCVector3 originalPos;
-        InterpoladorVaiven interpolador;
-
-        TgcMeshShader mesh;
-        /// <summary>
-        /// Mesh del escondite
-        /// </summary>
-        public TgcMeshShader Mesh
-        {
-            get { return mesh; }
-        }
+        private readonly TGCVector3 originalPos;
 
         public EsconditeMovil(TgcMeshData meshDataNode, string texturePath, TgcSceneData originalSceneData)
         {
-
             //Cargar mesh
-            mesh = GameUtils.loadMeshShaderFromSceneData(meshDataNode, texturePath, originalSceneData);
+            Mesh = GameUtils.loadMeshShaderFromSceneData(meshDataNode, texturePath, originalSceneData);
 
-            agarrado = false;
-            escondido = false;
+            Agarrado = false;
+            Escondido = false;
             interpolador = new InterpoladorVaiven(0, 0.7f, 0.65f);
-            this.originalPos = mesh.Position;
+            originalPos = Mesh.Position;
+        }
+
+        public TgcBoundingAxisAlignBox BoundingBox => Mesh.BoundingBox;
+
+        /// <summary>
+        ///     Indica si el escondite esta siendo cargado por el personaje
+        /// </summary>
+        public bool Agarrado { get; set; }
+
+        /// <summary>
+        ///     Indica si el personaje principal esta escondido ahora en este escondite
+        /// </summary>
+        public bool Escondido { get; set; }
+
+        /// <summary>
+        ///     Mesh del escondite
+        /// </summary>
+        public TgcMeshShader Mesh { get; private set; }
+
+        public void renderWithAlpha()
+        {
+            if ( /*agarrado*/ Escondido)
+            {
+                var shaders = GameModel.instance.shaders;
+                Mesh.Technique = shaders.RESALTADO;
+                shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
+                shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
+                Mesh.executeRender();
+            }
+            else
+            {
+                //Dibujar si esta en rango visible
+                if (GameModel.instance.mainCharacter.isInProximityRange(Mesh.BoundingBox.PMin))
+                {
+                    var shaders = GameModel.instance.shaders;
+                    Mesh.Technique = shaders.RESALTADO;
+                    shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
+                    shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
+                    Mesh.executeRender();
+                }
+            }
         }
 
         public void render()
         {
-            if (mesh.AlphaBlendEnable)
+            if (Mesh.AlphaBlendEnable)
             {
                 GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
@@ -99,45 +106,19 @@ namespace Trafico.De.Fauna.Model.Escondites
             }
         }
 
-        public void renderWithAlpha()
-        {
-            if (/*agarrado*/ escondido)
-            {
-                Shaders shaders = GameModel.instance.shaders;
-                mesh.Technique = shaders.RESALTADO;
-                shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO_HIDDEN);
-                shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
-                mesh.executeRender();
-            }
-            else
-            {
-                //Dibujar si esta en rango visible
-                if (GameModel.instance.mainCharacter.isInProximityRange(mesh.BoundingBox.PMin))
-                {
-                    Shaders shaders = GameModel.instance.shaders;
-                    mesh.Technique = shaders.RESALTADO;
-                    shaders.effect.SetValue("color_resaltado", COLOR_RESALTADO);
-                    shaders.effect.SetValue("scaleFactor", interpolador.update(GameModel.instance.ElapsedTime));
-                    mesh.executeRender();
-                }
-            }
-        }
-
 
         /// <summary>
-        /// Volver a su posicion inicial
+        ///     Volver a su posicion inicial
         /// </summary>
         public void restorePosition()
         {
-            mesh.Position = originalPos;
+            Mesh.Position = originalPos;
         }
 
         public void dispose()
         {
-            mesh.Dispose();
-            mesh = null;
+            Mesh.Dispose();
+            Mesh = null;
         }
     }
-
-
 }

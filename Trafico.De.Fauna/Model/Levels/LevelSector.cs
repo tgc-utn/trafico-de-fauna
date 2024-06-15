@@ -25,7 +25,6 @@ using TGC.Core.Collision;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using Trafico.De.Fauna.Model.Bananas;
-using Trafico.De.Fauna.Model.Camera;
 using Trafico.De.Fauna.Model.CustomEvents;
 using Trafico.De.Fauna.Model.Enemies;
 using Trafico.De.Fauna.Model.Enemies.Ataque;
@@ -34,226 +33,148 @@ using Trafico.De.Fauna.Model.ItemsAnimal;
 using Trafico.De.Fauna.Model.MainCharacters;
 using Trafico.De.Fauna.Model.Meshes;
 using Trafico.De.Fauna.Model.Saltos;
-using Trafico.De.Fauna.Model.Sonidos;
 
 namespace Trafico.De.Fauna.Model.Levels
 {
     /// <summary>
-    /// Representa un sector de un nivel
+    ///     Representa un sector de un nivel
     /// </summary>
     public class LevelSector
     {
-
-        private List<TgcMeshShader> staticMeshes;
-        /// <summary>
-        /// Objetos estaticos del sector
-        /// </summary>
-        public List<TgcMeshShader> StaticMeshes
-        {
-            get { return staticMeshes; }
-        }
-
-        private List<TgcMeshShader> meshesSinColision;
-        /// <summary>
-        /// Objetos estaticos del sector que no participan en la deteccion
-        /// de colisiones (son decorativos, sprites, etc)
-        /// </summary>
-        public List<TgcMeshShader> MeshesSinColision
-        {
-            get { return meshesSinColision; }
-        }
-        
-        private List<Conector> conectores;
-        /// <summary>
-        /// Conectores con otros sectores
-        /// </summary>
-        public List<Conector> Conectores
-        {
-            get { return conectores; }
-        }
-
-        private Conector currentConector;
-        /// <summary>
-        /// Ultimo conector utilizado
-        /// </summary>
-        public Conector CurrentConector
-        {
-            get { return currentConector; }
-        }
-
-        private List<Llave> llaves;
-        /// <summary>
-        /// Llaves
-        /// </summary>
-        public List<Llave> Llaves
-        {
-            get { return llaves; }
-        }
-
-        private List<ItemAnimal> itemsAnimal;
-        /// <summary>
-        /// Items animales a rescatar
-        /// </summary>
-        public List<ItemAnimal> ItemsAnimal
-        {
-            get { return itemsAnimal; }
-        }
-
-        private List<EsconditeFijo> esconditesFijos;
-        /// <summary>
-        /// Lugares fijos para esconderse
-        /// </summary>
-        public List<EsconditeFijo> EsconditesFijos
-        {
-            get { return esconditesFijos; }
-        }
-
-        private List<EsconditeMovil> esconditesMoviles;
-        /// <summary>
-        /// Objetos para agarrar y esconderse
-        /// </summary>
-        public List<EsconditeMovil> EsconditesMoviles
-        {
-            get { return esconditesMoviles; }
-        }
-
-        private List<TgcBoundingAxisAlignBox> colisionesLogicas;
-        /// <summary>
-        /// Objetos invisibles pero que igual se usan para colision en el sector
-        /// </summary>
-        public List<TgcBoundingAxisAlignBox> ColisionesLogicas
-        {
-            get { return colisionesLogicas; }
-        }
-
-        string sectorName;
-        /// <summary>
-        /// Nombre del sector
-        /// </summary>
-        public string SectorName
-        {
-            get { return sectorName; }
-        }
-
-        string displaySectorName;
-        /// <summary>
-        /// Nombre del sector que se muestra en pantalla al usuario
-        /// </summary>
-        public string DisplaySectorName
-        {
-            get { return displaySectorName; }
-        }
-
-        List<ColliderObject> objetosColisionables;
-        /// <summary>
-        /// Lista de todos los objetos colisionables del sector
-        /// </summary>
-        public List<ColliderObject> ObjetosColisionables
-        {
-            get { return objetosColisionables; }
-        }
-
-        WaypointsAtaqueManager waypointsAtaqueManager;
-        /// <summary>
-        /// Utilidad para manejar los Waypoints de Ataque de este sector para los guardias
-        /// </summary>
-        public WaypointsAtaqueManager WaypointsAtaqueManager
-        {
-            get { return waypointsAtaqueManager; }
-        }
-
-        SaltosManager saltosManager;
-        /// <summary>
-        /// Utilidad para manejar los Saltos entre plataformas
-        /// </summary>
-        public SaltosManager SaltosManager
-        {
-            get { return saltosManager; }
-        }
-
-        List<Banana> bananas;
-        /// <summary>
-        /// Bananas del sector
-        /// </summary>
-        public List<Banana> Bananas
-        {
-            get { return bananas; }
-        }
-
-        List<CajaBanana> cajasBananas;
-        /// <summary>
-        /// Cajas con bananas del sector
-        /// </summary>
-        public List<CajaBanana> CajasBananas
-        {
-            get { return cajasBananas; }
-        }
-
-        List<CustomEvent> customEvents;
-        /// <summary>
-        /// Eventos especificos del sector
-        /// </summary>
-        public List<CustomEvent> CustomEvents
-        {
-            get { return customEvents; }
-        }
-
-        GuardiasManager guardiasManager;
-        /// <summary>
-        /// Manejador de Guardias del sector
-        /// </summary>
-        public GuardiasManager GuardiasManager
-        {
-            get { return guardiasManager; }
-            set { guardiasManager = value; }
-        }
-        
-
-
-
-        Level level;
-        
+        private Level level;
 
 
         public LevelSector()
         {
-            conectores = new List<Conector>();
-            objetosColisionables = new List<ColliderObject>();
-            guardiasManager = new GuardiasManager(this);
-            colisionesLogicas = new List<TgcBoundingAxisAlignBox>();
-            llaves = new List<Llave>();
-            itemsAnimal = new List<ItemAnimal>();
-            esconditesFijos = new List<EsconditeFijo>();
-            esconditesMoviles = new List<EsconditeMovil>();
-            waypointsAtaqueManager = new WaypointsAtaqueManager();
-            customEvents = new List<CustomEvent>();
-            saltosManager = new SaltosManager();
-            bananas = new List<Banana>();
-            cajasBananas = new List<CajaBanana>();
+            Conectores = new List<Conector>();
+            ObjetosColisionables = new List<ColliderObject>();
+            GuardiasManager = new GuardiasManager(this);
+            ColisionesLogicas = new List<TgcBoundingAxisAlignBox>();
+            Llaves = new List<Llave>();
+            ItemsAnimal = new List<ItemAnimal>();
+            EsconditesFijos = new List<EsconditeFijo>();
+            EsconditesMoviles = new List<EsconditeMovil>();
+            WaypointsAtaqueManager = new WaypointsAtaqueManager();
+            CustomEvents = new List<CustomEvent>();
+            SaltosManager = new SaltosManager();
+            Bananas = new List<Banana>();
+            CajasBananas = new List<CajaBanana>();
         }
 
         /// <summary>
-        /// Cargar el sector con todos sus modelos
+        ///     Objetos estaticos del sector
         /// </summary>
-        public void loadScene(Level level, string sectorName, string sectorPath, string texturePath, string lightmapPath)
+        public List<TgcMeshShader> StaticMeshes { get; private set; }
+
+        /// <summary>
+        ///     Objetos estaticos del sector que no participan en la deteccion
+        ///     de colisiones (son decorativos, sprites, etc)
+        /// </summary>
+        public List<TgcMeshShader> MeshesSinColision { get; private set; }
+
+        /// <summary>
+        ///     Conectores con otros sectores
+        /// </summary>
+        public List<Conector> Conectores { get; private set; }
+
+        /// <summary>
+        ///     Ultimo conector utilizado
+        /// </summary>
+        public Conector CurrentConector { get; private set; }
+
+        /// <summary>
+        ///     Llaves
+        /// </summary>
+        public List<Llave> Llaves { get; private set; }
+
+        /// <summary>
+        ///     Items animales a rescatar
+        /// </summary>
+        public List<ItemAnimal> ItemsAnimal { get; private set; }
+
+        /// <summary>
+        ///     Lugares fijos para esconderse
+        /// </summary>
+        public List<EsconditeFijo> EsconditesFijos { get; private set; }
+
+        /// <summary>
+        ///     Objetos para agarrar y esconderse
+        /// </summary>
+        public List<EsconditeMovil> EsconditesMoviles { get; private set; }
+
+        /// <summary>
+        ///     Objetos invisibles pero que igual se usan para colision en el sector
+        /// </summary>
+        public List<TgcBoundingAxisAlignBox> ColisionesLogicas { get; private set; }
+
+        /// <summary>
+        ///     Nombre del sector
+        /// </summary>
+        public string SectorName { get; private set; }
+
+        /// <summary>
+        ///     Nombre del sector que se muestra en pantalla al usuario
+        /// </summary>
+        public string DisplaySectorName { get; private set; }
+
+        /// <summary>
+        ///     Lista de todos los objetos colisionables del sector
+        /// </summary>
+        public List<ColliderObject> ObjetosColisionables { get; private set; }
+
+        /// <summary>
+        ///     Utilidad para manejar los Waypoints de Ataque de este sector para los guardias
+        /// </summary>
+        public WaypointsAtaqueManager WaypointsAtaqueManager { get; private set; }
+
+        /// <summary>
+        ///     Utilidad para manejar los Saltos entre plataformas
+        /// </summary>
+        public SaltosManager SaltosManager { get; private set; }
+
+        /// <summary>
+        ///     Bananas del sector
+        /// </summary>
+        public List<Banana> Bananas { get; private set; }
+
+        /// <summary>
+        ///     Cajas con bananas del sector
+        /// </summary>
+        public List<CajaBanana> CajasBananas { get; private set; }
+
+        /// <summary>
+        ///     Eventos especificos del sector
+        /// </summary>
+        public List<CustomEvent> CustomEvents { get; private set; }
+
+        /// <summary>
+        ///     Manejador de Guardias del sector
+        /// </summary>
+        public GuardiasManager GuardiasManager { get; set; }
+
+        /// <summary>
+        ///     Cargar el sector con todos sus modelos
+        /// </summary>
+        public void loadScene(Level level, string sectorName, string sectorPath, string texturePath,
+            string lightmapPath)
         {
             this.level = level;
-            this.sectorName = sectorName;
+            this.SectorName = sectorName;
 
-            string filePath = sectorPath + "Scene-TgcScene.xml";
-            string xmlString = File.ReadAllText(filePath);
+            var filePath = sectorPath + "Scene-TgcScene.xml";
+            var xmlString = File.ReadAllText(filePath);
 
 
             //Cargar meshes
-            TgcSceneParser parser = new TgcSceneParser();
-            TgcSceneData sceneData = parser.parseSceneFromString(xmlString);
-            List<TgcMeshData> staticMeshesData = new List<TgcMeshData>();
-            List<TgcMeshData> sinColisionMeshesData = new List<TgcMeshData>();
-            this.displaySectorName = sceneData.name;
+            var parser = new TgcSceneParser();
+            var sceneData = parser.parseSceneFromString(xmlString);
+            var staticMeshesData = new List<TgcMeshData>();
+            var sinColisionMeshesData = new List<TgcMeshData>();
+            DisplaySectorName = sceneData.name;
 
 
             //Diferenciar info segun layer
-            foreach (TgcMeshData meshData in sceneData.meshesData)
+            foreach (var meshData in sceneData.meshesData)
             {
                 switch (meshData.layerName)
                 {
@@ -310,7 +231,7 @@ namespace Trafico.De.Fauna.Model.Levels
                         {
                             staticMeshesData.Add(meshData);
                         }
-                        
+
                         break;
                 }
             }
@@ -321,114 +242,106 @@ namespace Trafico.De.Fauna.Model.Levels
             loadMeshesSinColision(texturePath, lightmapPath, sceneData, sinColisionMeshesData);
 
             //Configurar nodos de Guardias
-            guardiasManager.arrangeNodes();
+            GuardiasManager.arrangeNodes();
 
             //Configurar waypoints de Ataque de Guardias
-            waypointsAtaqueManager.arrangeNodes();
+            WaypointsAtaqueManager.arrangeNodes();
 
             //Configurar plataformas de salto
-            saltosManager.arrangeNodes();
+            SaltosManager.arrangeNodes();
 
             //Agregar colisionadores
             addColliderObjects();
         }
 
-        
-
-        
-
-        
-
-        
-
-        
 
         /// <summary>
-        /// Cargar los objetos contra los que se colisiona en el sector
+        ///     Cargar los objetos contra los que se colisiona en el sector
         /// </summary>
         private void addColliderObjects()
         {
             //Mesh estaticos
-            foreach (TgcMeshShader mesh in staticMeshes)
+            foreach (var mesh in StaticMeshes)
             {
-                objetosColisionables.Add(new ColliderObject(mesh));
+                ObjetosColisionables.Add(new ColliderObject(mesh));
             }
 
             //Agregar colisiones logicas
-            foreach (TgcBoundingAxisAlignBox collider in colisionesLogicas)
+            foreach (var collider in ColisionesLogicas)
             {
-                objetosColisionables.Add(new ColliderObject(collider));
+                ObjetosColisionables.Add(new ColliderObject(collider));
             }
 
             //Agregar ItemsAnimal para colisionar
-            foreach (ItemAnimal itemAnimal in itemsAnimal)
+            foreach (var itemAnimal in ItemsAnimal)
             {
-                objetosColisionables.Add(itemAnimal.ColliderObject);
+                ObjetosColisionables.Add(itemAnimal.ColliderObject);
             }
 
             //Agregar cajas de bananas
-            foreach (CajaBanana caja in cajasBananas)
+            foreach (var caja in CajasBananas)
             {
-                objetosColisionables.Add(caja.ColliderObject);
+                ObjetosColisionables.Add(caja.ColliderObject);
             }
 
             //Agregar CustomEvents que sean colisionables
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
-                ColliderObject collider = customEvent.getColliderObject();
+                var collider = customEvent.getColliderObject();
                 if (collider != null)
                 {
-                    objetosColisionables.Add(collider);
+                    ObjetosColisionables.Add(collider);
                 }
             }
         }
 
-        
 
         /// <summary>
-        /// Carga los meshes staticos
+        ///     Carga los meshes staticos
         /// </summary>
-        private void loadStaticMeshes(string texturePath, string lightmapPath, TgcSceneData sceneData, List<TgcMeshData> staticMeshesData)
+        private void loadStaticMeshes(string texturePath, string lightmapPath, TgcSceneData sceneData,
+            List<TgcMeshData> staticMeshesData)
         {
             //Usar TgcMeshShader
             sceneData.meshesData = staticMeshesData.ToArray();
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            TgcScene scene = loader.loadScene(sceneData, texturePath);
-            staticMeshes = new List<TgcMeshShader>();
-            foreach (TgcMesh mesh in scene.Meshes)
+            var scene = loader.loadScene(sceneData, texturePath);
+            StaticMeshes = new List<TgcMeshShader>();
+            foreach (var mesh in scene.Meshes)
             {
                 mesh.AutoTransformEnable = true;
-                staticMeshes.Add((TgcMeshShader)mesh);
+                StaticMeshes.Add((TgcMeshShader)mesh);
             }
         }
 
         /// <summary>
-        /// Carga los meshes que son sin sin colision
+        ///     Carga los meshes que son sin sin colision
         /// </summary>
-        private void loadMeshesSinColision(string texturePath, string lightmapPath, TgcSceneData sceneData, List<TgcMeshData> sinColisionMeshesData)
+        private void loadMeshesSinColision(string texturePath, string lightmapPath, TgcSceneData sceneData,
+            List<TgcMeshData> sinColisionMeshesData)
         {
             //Usar TgcMeshShader
             sceneData.meshesData = sinColisionMeshesData.ToArray();
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            TgcScene scene = loader.loadScene(sceneData, texturePath);
-            meshesSinColision = new List<TgcMeshShader>();
-            foreach (TgcMesh mesh in scene.Meshes)
+            var scene = loader.loadScene(sceneData, texturePath);
+            MeshesSinColision = new List<TgcMeshShader>();
+            foreach (var mesh in scene.Meshes)
             {
                 mesh.AutoTransformEnable = true;
-                meshesSinColision.Add((TgcMeshShader)mesh);
+                MeshesSinColision.Add((TgcMeshShader)mesh);
             }
         }
 
-        
+
         /// <summary>
-        /// Cargar conector
+        ///     Cargar conector
         /// </summary>
         private void loadConector(Level level, TgcMeshData meshData)
         {
-            Conector conector = new Conector(this, meshData);
-            this.conectores.Add(conector);
+            var conector = new Conector(this, meshData);
+            Conectores.Add(conector);
             try
             {
                 level.Conectores.Add(conector.Id, conector);
@@ -441,166 +354,167 @@ namespace Trafico.De.Fauna.Model.Levels
 
         private void loadSonido(TgcMeshData meshData)
         {
-            
         }
 
         /// <summary>
-        /// Cargar llaves del sector
+        ///     Cargar llaves del sector
         /// </summary>
         private void loadLlave(TgcMeshData meshData)
         {
-            Llave llave = new Llave(meshData);
-            this.llaves.Add(llave);
+            var llave = new Llave(meshData);
+            Llaves.Add(llave);
             level.setLlave(llave);
         }
 
         /// <summary>
-        /// Cargar items de animales a rescatar
+        ///     Cargar items de animales a rescatar
         /// </summary>
         private void loadItemAnimal(TgcMeshData meshData)
         {
-            ItemAnimal item = new ItemAnimal(meshData);
-            this.itemsAnimal.Add(item);
+            var item = new ItemAnimal(meshData);
+            ItemsAnimal.Add(item);
         }
 
         /// <summary>
-        /// Cargar guardia
+        ///     Cargar guardia
         /// </summary>
         private void loadGuardia(TgcMeshData meshData)
         {
-            guardiasManager.addNode(meshData);
+            GuardiasManager.addNode(meshData);
         }
 
         /// <summary>
-        /// Cargar colisiones logicas
+        ///     Cargar colisiones logicas
         /// </summary>
         private void loadColisionesLogicas(TgcMeshData meshData)
         {
-            TgcBoundingAxisAlignBox boundingBox = GameUtils.createBBFromMeshData(meshData);
-            colisionesLogicas.Add(boundingBox);
+            var boundingBox = GameUtils.createBBFromMeshData(meshData);
+            ColisionesLogicas.Add(boundingBox);
         }
 
         /// <summary>
-        /// Cargar escondites moviles
+        ///     Cargar escondites moviles
         /// </summary>
         private void loadEsconditesMoviles(TgcMeshData meshData, string texturePath, TgcSceneData sceneData)
         {
-            EsconditeMovil escondite = new EsconditeMovil(meshData, texturePath, sceneData);
-            this.esconditesMoviles.Add(escondite);
+            var escondite = new EsconditeMovil(meshData, texturePath, sceneData);
+            EsconditesMoviles.Add(escondite);
         }
 
         /// <summary>
-        /// Cargar escondites fijos
+        ///     Cargar escondites fijos
         /// </summary>
         private void loadEsconditesFijos(TgcMeshData meshData, string texturePath, TgcSceneData sceneData)
         {
-            EsconditeFijo escondite = new EsconditeFijo(meshData, texturePath, sceneData);
-            this.esconditesFijos.Add(escondite);
+            var escondite = new EsconditeFijo(meshData, texturePath, sceneData);
+            EsconditesFijos.Add(escondite);
         }
 
         /// <summary>
-        /// Cargar Waypoints y relaciones entre Waypoints
+        ///     Cargar Waypoints y relaciones entre Waypoints
         /// </summary>
         private void loadWaypointsAtaque(TgcMeshData meshData)
         {
-            waypointsAtaqueManager.addNode(meshData);
+            WaypointsAtaqueManager.addNode(meshData);
         }
 
         /// <summary>
-        /// Cargar CustomEvent
+        ///     Cargar CustomEvent
         /// </summary>
         private void loadCustomEvent(TgcMeshData meshData, string texturePath, TgcSceneData sceneData)
         {
-            CustomEvent customEvent = GameModel.instance.customEventsManager.loadCustomEvent(meshData, texturePath, sceneData);
-            this.customEvents.Add(customEvent);
+            var customEvent = GameModel.instance.customEventsManager.loadCustomEvent(meshData, texturePath, sceneData);
+            CustomEvents.Add(customEvent);
         }
 
         /// <summary>
-        /// Cargar un salto
+        ///     Cargar un salto
         /// </summary>
         private void loadSalto(TgcMeshData meshData)
         {
-            this.saltosManager.addNode(meshData);
+            SaltosManager.addNode(meshData);
         }
 
         /// <summary>
-        /// Cargar banana
+        ///     Cargar banana
         /// </summary>
         private void loadBanana(TgcMeshData meshData)
         {
-            Banana b = new Banana(meshData);
-            this.bananas.Add(b);
+            var b = new Banana(meshData);
+            Bananas.Add(b);
         }
 
         /// <summary>
-        /// Cargar Caja de bananas
+        ///     Cargar Caja de bananas
         /// </summary>
         private void loadCajaBananas(TgcMeshData meshData)
         {
-            CajaBanana caja = new CajaBanana(meshData);
-            this.cajasBananas.Add(caja);
+            var caja = new CajaBanana(meshData);
+            CajasBananas.Add(caja);
         }
 
         /// <summary>
-        /// Buscar un sector por su ID
+        ///     Buscar un sector por su ID
         /// </summary>
         public Conector findSector(string conectorId)
         {
-            foreach (Conector c in conectores)
+            foreach (var c in Conectores)
             {
                 if (c.Id == conectorId)
                 {
                     return c;
                 }
             }
+
             throw new Exception("Conector: " + conectorId + " no encontrado");
         }
 
         /// <summary>
-        /// Irse de un sector
+        ///     Irse de un sector
         /// </summary>
         public void hideSector()
         {
             //deshabilitar Sonidos
-            guardiasManager.hideGuardias();
+            GuardiasManager.hideGuardias();
             stopSounds();
             GameModel.instance.postProcessEffects.setAlarmModeEnable(false);
 
             //Liberar bananas
             GameModel.instance.bananasPool.freeAllMeshes();
-            foreach (Banana b in bananas)
+            foreach (var b in Bananas)
             {
                 b.hide();
             }
 
             //Liberar cajas de bananas
             GameModel.instance.cajasBananasPool.freeAllMeshes();
-            foreach (CajaBanana caja in cajasBananas)
+            foreach (var caja in CajasBananas)
             {
                 caja.hide();
             }
 
             //Terminar CustomEvents
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
                 customEvent.end();
             }
 
             //Soltar todos los escondites moviles
-            foreach (EsconditeMovil esm in esconditesMoviles)
+            foreach (var esm in EsconditesMoviles)
             {
                 esm.Agarrado = false;
                 esm.Escondido = false;
             }
+
             //Soltar todos los escondites fijos
-            foreach (EsconditeFijo esf in esconditesFijos)
+            foreach (var esf in EsconditesFijos)
             {
                 esf.Escondido = false;
             }
         }
 
         /// <summary>
-        /// Iniciar un sector
+        ///     Iniciar un sector
         /// </summary>
         public void initSector(MainCharacter mainCharacter, Conector nextConector)
         {
@@ -608,45 +522,45 @@ namespace Trafico.De.Fauna.Model.Levels
             GameModel.instance.sonidos.playMusic(GameModel.instance.sonidos.music_default);
 
             //Restaurar posicion de escondites moviles
-            foreach (EsconditeMovil esc in esconditesMoviles)
+            foreach (var esc in EsconditesMoviles)
             {
                 esc.restorePosition();
             }
 
             //Iniciar personaje en sector
-            currentConector = nextConector;
-            mainCharacter.initInConectorPos(currentConector.Center, currentConector.Orientacion);
-            guardiasManager.initGuardias();
+            CurrentConector = nextConector;
+            mainCharacter.initInConectorPos(CurrentConector.Center, CurrentConector.Orientacion);
+            GuardiasManager.initGuardias();
 
             //Iniciar modelos de bananas
-            foreach (Banana b in bananas)
+            foreach (var b in Bananas)
             {
                 b.init();
             }
 
             //Iniciar modelos de cajas de bananas
-            foreach (CajaBanana caja in cajasBananas)
+            foreach (var caja in CajasBananas)
             {
                 caja.init();
             }
 
             //Iniciar CustomEvents
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
                 customEvent.init();
             }
         }
 
         /// <summary>
-        /// Actualizar estado del sector
+        ///     Actualizar estado del sector
         /// </summary>
         public void update(float elapsedTime)
         {
             //Actualizar posicion de enemigos
-            guardiasManager.update(elapsedTime);
+            GuardiasManager.update(elapsedTime);
 
             //Actualizar estado de customEvents
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
                 if (customEvent.Enabled)
                 {
@@ -656,7 +570,7 @@ namespace Trafico.De.Fauna.Model.Levels
         }
 
         /// <summary>
-        /// Render del sector
+        ///     Render del sector
         /// </summary>
         public void render(float elapsedTime, TgcFrustum frustum)
         {
@@ -665,70 +579,70 @@ namespace Trafico.De.Fauna.Model.Levels
 
             //Ajustar distancia de camara por colision contra objetos
             adaptCameraPosition();
-            
+
 
             //Render de mallas estaticas
-            foreach (TgcMeshShader mesh in staticMeshes)
+            foreach (var mesh in StaticMeshes)
             {
                 GameModel.instance.shaders.setCorrectTechnique(mesh);
                 mesh.render();
             }
 
             //Render de mallas sin colision
-            foreach (TgcMeshShader mesh in meshesSinColision)
+            foreach (var mesh in MeshesSinColision)
             {
                 GameModel.instance.shaders.setCorrectTechnique(mesh);
                 mesh.render();
             }
 
             //Guaridas
-            guardiasManager.render(elapsedTime);
+            GuardiasManager.render(elapsedTime);
 
             //Llaves
-            foreach (Llave llave in llaves)
+            foreach (var llave in Llaves)
             {
                 llave.render();
             }
 
             //Items animal
-            foreach (ItemAnimal item in itemsAnimal)
+            foreach (var item in ItemsAnimal)
             {
                 item.render();
             }
 
             //Escondites moviles
-            foreach (EsconditeMovil escondite in esconditesMoviles)
+            foreach (var escondite in EsconditesMoviles)
             {
                 escondite.render();
             }
 
             //Escondites fijos
-            foreach (EsconditeFijo escondite in esconditesFijos)
+            foreach (var escondite in EsconditesFijos)
             {
                 escondite.render();
             }
 
             //Ver si el personaje principal colisiona con algun conector (para mostrar su cartel)
-            Conector conectorColision = checkConectores(GameModel.instance.mainCharacter);
+            var conectorColision = checkConectores(GameModel.instance.mainCharacter);
             if (conectorColision != null)
             {
                 conectorColision.render();
             }
 
             //Bananas
-            foreach (Banana b in bananas)
+            foreach (var b in Bananas)
             {
                 b.render();
             }
 
             //Cajas de bananas
-            foreach (CajaBanana caja in cajasBananas)
+            foreach (var caja in CajasBananas)
             {
                 caja.render(elapsedTime);
             }
 
             //CustomEvents
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
                 if (customEvent.Enabled)
                 {
@@ -738,17 +652,18 @@ namespace Trafico.De.Fauna.Model.Levels
         }
 
         /// <summary>
-        /// Hacer FrustumCulling de meshes estaticos y meshes sin colision
-        /// Por fuerza bruta
+        ///     Hacer FrustumCulling de meshes estaticos y meshes sin colision
+        ///     Por fuerza bruta
         /// </summary>
         private void frustumCulling(TgcFrustum frustum)
         {
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var mainCharacter = GameModel.instance.mainCharacter;
             //Frustum Culling meshes estaticos
-            foreach (TgcMeshShader mesh in staticMeshes)
+            foreach (var mesh in StaticMeshes)
             {
                 //Frustum Culling brute force
-                if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
+                if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) ==
+                    TgcCollisionUtils.FrustumResult.OUTSIDE)
                 {
                     mesh.Enabled = false;
                 }
@@ -757,14 +672,16 @@ namespace Trafico.De.Fauna.Model.Levels
                     mesh.Enabled = true;
                 }
             }
+
             //Frustum Culling meshes sin colision
-            foreach (TgcMeshShader mesh in meshesSinColision)
+            foreach (var mesh in MeshesSinColision)
             {
                 //Ver primero si esta dentro de un cierto radio de alcance del personaje
                 if (mainCharacter.isInProximityRange(mesh.BoundingBox.PMin))
                 {
                     //Frustum Culling brute force
-                    if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) == TgcCollisionUtils.FrustumResult.OUTSIDE)
+                    if (TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox) ==
+                        TgcCollisionUtils.FrustumResult.OUTSIDE)
                     {
                         mesh.Enabled = false;
                     }
@@ -781,13 +698,13 @@ namespace Trafico.De.Fauna.Model.Levels
         }
 
         /// <summary>
-        /// Ajustar distancia de camara por colision contra objetos
+        ///     Ajustar distancia de camara por colision contra objetos
         /// </summary>
         private void adaptCameraPosition()
         {
-            GameThirdPersonCamera camera = GameModel.instance.mainCharacter.Camera;
-            GameConfig.Camara camaraConfig = GameModel.instance.gameConfig.camara;
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var camera = GameModel.instance.mainCharacter.Camera;
+            var camaraConfig = GameModel.instance.gameConfig.camara;
+            var mainCharacter = GameModel.instance.mainCharacter;
             camera.OffsetForward = mainCharacter.CurrentCameraOffsetForward;
             camera.OffsetHeight = camaraConfig.offsetY;
 
@@ -795,14 +712,14 @@ namespace Trafico.De.Fauna.Model.Levels
             TGCVector3 segmentB;
             camera.generateViewMatrix(out segmentA, out segmentB);
             TGCVector3 q;
-            float minDistSq = FastMath.Pow2(camera.OffsetForward);
-            foreach (ColliderObject collObj in objetosColisionables)
+            var minDistSq = FastMath.Pow2(camera.OffsetForward);
+            foreach (var collObj in ObjetosColisionables)
             {
                 if (collObj.Enabled)
                 {
                     if (TgcCollisionUtils.intersectSegmentAABB(segmentB, segmentA, collObj.BoundingBox, out q))
                     {
-                        float distSq = (TGCVector3.Subtract(q, segmentB)).LengthSq();
+                        var distSq = TGCVector3.Subtract(q, segmentB).LengthSq();
                         if (distSq < minDistSq)
                         {
                             minDistSq = distSq;
@@ -810,6 +727,7 @@ namespace Trafico.De.Fauna.Model.Levels
                     }
                 }
             }
+
             //Ajustar distancia de camara si llego al minimo tolerable de cercania
             camera.OffsetForward = -FastMath.Sqrt(minDistSq);
             if (FastMath.Abs(camera.OffsetForward) < FastMath.Abs(camaraConfig.minOffsetZ))
@@ -820,22 +738,22 @@ namespace Trafico.De.Fauna.Model.Levels
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con un conector.
-        /// En caso de que si, devuelve el proximo conector con el que conecta este, para que se pueda
-        /// hacer el cambio de sector
+        ///     Busca si el personaje principal colisiona con un conector.
+        ///     En caso de que si, devuelve el proximo conector con el que conecta este, para que se pueda
+        ///     hacer el cambio de sector
         /// </summary>
         public Conector checkConectoresGetNext(MainCharacter mainCharacter)
         {
-            Conector conector = checkConectores(mainCharacter);
+            var conector = checkConectores(mainCharacter);
             if (conector != null)
             {
-                
             }
+
             return null;
         }
 
         /// <summary>
-        /// Ejecutar la accion del conector, que puede ser cambiar de sector o cambiar de nivel.
+        ///     Ejecutar la accion del conector, que puede ser cambiar de sector o cambiar de nivel.
         /// </summary>
         public void executeConector(Conector conector)
         {
@@ -854,51 +772,53 @@ namespace Trafico.De.Fauna.Model.Levels
                 }
                 else
                 {
-                    throw new Exception("El conector: " + conector.Id + " quiere pasar al siguienteId inexistente: " + conector.SiguienteId);
+                    throw new Exception("El conector: " + conector.Id + " quiere pasar al siguienteId inexistente: " +
+                                        conector.SiguienteId);
                 }
             }
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con un conector.
-        /// Devuelve el conector colisionado o null.
+        ///     Busca si el personaje principal colisiona con un conector.
+        ///     Devuelve el conector colisionado o null.
         /// </summary>
         public Conector checkConectores(MainCharacter mainCharacter)
         {
-            foreach (Conector conector in conectores)
+            foreach (var conector in Conectores)
             {
                 if (conector.Activo && mainCharacter.collideWithAABB(conector.BoundingBox))
                 {
                     return conector;
                 }
             }
+
             return null;
         }
 
 
         /// <summary>
-        /// Activar el modo alarma.
-        /// El personaje ha sido visto por un guardia
+        ///     Activar el modo alarma.
+        ///     El personaje ha sido visto por un guardia
         /// </summary>
         public void setAlarmMode()
         {
             //No alertar a los otros
             //guardiasManager.alertAll();
 
-            GameSounds sonidos = GameModel.instance.sonidos;
+            var sonidos = GameModel.instance.sonidos;
             //sonidos.playMusic(sonidos.music_alarm);
-            sonidos.mp3Player.stop();
-            sonidos.alarma_guardias.play(true);
+            sonidos.mp3Player.Stop();
+            sonidos.alarma_guardias.Play(true);
             GameModel.instance.postProcessEffects.setAlarmModeEnable(true);
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con alguna llave del sector.
-        /// Si colisiona la agarra.
+        ///     Busca si el personaje principal colisiona con alguna llave del sector.
+        ///     Si colisiona la agarra.
         /// </summary>
         public Llave checkLlaves(MainCharacter mainCharacter)
         {
-            foreach (Llave llave in llaves)
+            foreach (var llave in Llaves)
             {
                 if (!llave.Agarrada)
                 {
@@ -909,15 +829,16 @@ namespace Trafico.De.Fauna.Model.Levels
                     }
                 }
             }
+
             return null;
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con algun item animal para rescatar.
+        ///     Busca si el personaje principal colisiona con algun item animal para rescatar.
         /// </summary>
         public ItemAnimal checkItemsAnimal(MainCharacter mainCharacter)
         {
-            foreach (ItemAnimal item in itemsAnimal)
+            foreach (var item in ItemsAnimal)
             {
                 if (!item.Liberado)
                 {
@@ -927,197 +848,206 @@ namespace Trafico.De.Fauna.Model.Levels
                     }
                 }
             }
+
             return null;
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con algun escondite fijo
+        ///     Busca si el personaje principal colisiona con algun escondite fijo
         /// </summary>
         public EsconditeFijo checkEsconditesFijos(MainCharacter mainCharacter)
         {
-            foreach (EsconditeFijo escondite in esconditesFijos)
+            foreach (var escondite in EsconditesFijos)
             {
                 if (mainCharacter.collideWithBSphere(escondite.BSphere))
                 {
                     return escondite;
                 }
             }
+
             return null;
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con algun escondite movil
+        ///     Busca si el personaje principal colisiona con algun escondite movil
         /// </summary>
         public EsconditeMovil checkEsconditesMoviles(MainCharacter mainCharacter)
         {
-            foreach (EsconditeMovil escondite in esconditesMoviles)
+            foreach (var escondite in EsconditesMoviles)
             {
                 if (mainCharacter.collideWithAABB(escondite.BoundingBox))
                 {
                     return escondite;
                 }
             }
+
             return null;
         }
 
         /// <summary>
-        /// Busca si el personaje principal colisiona con alguna plataforma de salto
+        ///     Busca si el personaje principal colisiona con alguna plataforma de salto
         /// </summary>
         public Salto.Plataforma checkSaltos(MainCharacter mainCharacter)
         {
-            return saltosManager.checkSaltos(mainCharacter);
+            return SaltosManager.checkSaltos(mainCharacter);
         }
 
         /// <summary>
-        /// Agarrar todas las bananas del sector que colisionan con el personaje
+        ///     Agarrar todas las bananas del sector que colisionan con el personaje
         /// </summary>
         public void checkBananas(MainCharacter mainCharacter)
         {
-            foreach (Banana b in bananas)
+            foreach (var b in Bananas)
             {
                 b.agarrar(mainCharacter);
             }
         }
 
         /// <summary>
-        /// Golpear todas las cajas de bananas que colisionan con el personaje
+        ///     Golpear todas las cajas de bananas que colisionan con el personaje
         /// </summary>
         public void golpearCajasBananas(MainCharacter mainCharacter)
         {
-            foreach (CajaBanana caja in cajasBananas)
+            foreach (var caja in CajasBananas)
             {
                 caja.golpear(mainCharacter);
             }
         }
 
         /// <summary>
-        /// Para los sonidos del sector
+        ///     Para los sonidos del sector
         /// </summary>
         public void stopSounds()
         {
-            GameSounds sonidos = GameModel.instance.sonidos;
-            sonidos.alarma_guardias.stop();
-            sonidos.mp3Player.closeFile();
+            var sonidos = GameModel.instance.sonidos;
+            sonidos.alarma_guardias.Stop();
+            sonidos.mp3Player.CloseFile();
         }
 
         /// <summary>
-        /// Elimina todos los recursos del sector
+        ///     Elimina todos los recursos del sector
         /// </summary>
         public void unload()
         {
             //staticMeshes
-            foreach (TgcMeshShader mesh in staticMeshes)
+            foreach (var mesh in StaticMeshes)
             {
                 mesh.Dispose();
             }
-            staticMeshes.Clear();
-            staticMeshes = null;
+
+            StaticMeshes.Clear();
+            StaticMeshes = null;
 
             //meshesSinColision
-            foreach (TgcMeshShader mesh in meshesSinColision)
+            foreach (var mesh in MeshesSinColision)
             {
                 mesh.Dispose();
             }
-            meshesSinColision.Clear();
-            meshesSinColision = null;
+
+            MeshesSinColision.Clear();
+            MeshesSinColision = null;
 
             //guardias
-            guardiasManager.dispose();
-            guardiasManager = null;
+            GuardiasManager.dispose();
+            GuardiasManager = null;
 
             //Llaves
-            llaves.Clear();
-            llaves = null;
+            Llaves.Clear();
+            Llaves = null;
 
             //Items animal
-            foreach (ItemAnimal item in itemsAnimal)
+            foreach (var item in ItemsAnimal)
             {
                 item.dispose();
             }
-            itemsAnimal.Clear();
-            itemsAnimal = null;
+
+            ItemsAnimal.Clear();
+            ItemsAnimal = null;
 
             //Escondites moviles
-            foreach (EsconditeMovil escondite in esconditesMoviles)
+            foreach (var escondite in EsconditesMoviles)
             {
                 escondite.dispose();
             }
-            esconditesMoviles.Clear();
-            esconditesMoviles = null;
+
+            EsconditesMoviles.Clear();
+            EsconditesMoviles = null;
 
             //Escondites fijos
-            foreach (EsconditeFijo escondite in esconditesFijos)
+            foreach (var escondite in EsconditesFijos)
             {
                 escondite.dispose();
             }
-            esconditesFijos.Clear();
-            esconditesFijos = null;
+
+            EsconditesFijos.Clear();
+            EsconditesFijos = null;
 
             //Conectores
-            foreach (Conector conector in conectores)
+            foreach (var conector in Conectores)
             {
                 conector.dispose();
             }
-            conectores.Clear();
-            conectores = null;
-            currentConector = null;
+
+            Conectores.Clear();
+            Conectores = null;
+            CurrentConector = null;
 
             //colisionesLogicas
-            foreach (TgcBoundingAxisAlignBox colLogicas in colisionesLogicas)
+            foreach (var colLogicas in ColisionesLogicas)
             {
                 colLogicas.Dispose();
             }
-            colisionesLogicas.Clear();
-            colisionesLogicas = null;
+
+            ColisionesLogicas.Clear();
+            ColisionesLogicas = null;
 
             //waypointsAtaqueManager
-            waypointsAtaqueManager.dispose();
-            waypointsAtaqueManager = null;
+            WaypointsAtaqueManager.dispose();
+            WaypointsAtaqueManager = null;
 
             //customEvents
-            foreach (CustomEvent customEvent in customEvents)
+            foreach (var customEvent in CustomEvents)
             {
                 customEvent.dispose();
             }
-            customEvents.Clear();
-            customEvents = null;
+
+            CustomEvents.Clear();
+            CustomEvents = null;
 
             //saltosManager
-            saltosManager.dispose();
-            saltosManager = null;
+            SaltosManager.dispose();
+            SaltosManager = null;
 
             //Bananas
-            foreach (Banana b in bananas)
+            foreach (var b in Bananas)
             {
                 b.dispose();
             }
-            bananas.Clear();
-            bananas = null;
+
+            Bananas.Clear();
+            Bananas = null;
 
             //CajaBanana
-            foreach (CajaBanana c in cajasBananas)
+            foreach (var c in CajasBananas)
             {
                 c.dispose();
             }
-            cajasBananas.Clear();
-            cajasBananas = null;
 
-            
+            CajasBananas.Clear();
+            CajasBananas = null;
+
+
             //objetosColisionables
-            foreach (ColliderObject c in objetosColisionables)
+            foreach (var c in ObjetosColisionables)
             {
                 c.dispose();
             }
-            objetosColisionables.Clear();
-            objetosColisionables = null;
+
+            ObjetosColisionables.Clear();
+            ObjetosColisionables = null;
 
             //otros
             level = null;
         }
-
-
-
-
-        
     }
 }

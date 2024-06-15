@@ -25,18 +25,16 @@ using Trafico.De.Fauna.Model.Menu;
 namespace Trafico.De.Fauna.Model.GameModes
 {
     /// <summary>
-    /// Utilidad para manejar transiciones especiales del juego: loading de nivel, loading de sector, etc
+    ///     Utilidad para manejar transiciones especiales del juego: loading de nivel, loading de sector, etc
     /// </summary>
     public class Transiciones
     {
-
-        Temporizador temporizadorLoadingSector;
-        Temporizador temporizadorGameOver;
-        Temporizador temporizadorGameWin;
-        Drawer2D drawer2D;
-        GameSprite backgroundGameOver;
-        GameSprite backgroundGameWin;
-
+        private readonly GameSprite backgroundGameOver;
+        private readonly GameSprite backgroundGameWin;
+        private readonly Drawer2D drawer2D;
+        private readonly Temporizador temporizadorGameOver;
+        private readonly Temporizador temporizadorGameWin;
+        private readonly Temporizador temporizadorLoadingSector;
 
         public Transiciones(Device device)
         {
@@ -45,20 +43,21 @@ namespace Trafico.De.Fauna.Model.GameModes
             temporizadorGameOver = new Temporizador();
             temporizadorGameWin = new Temporizador();
 
-            string menuPath = GameModel.instance.gameConfig.menuPath;
+            var menuPath = GameModel.instance.gameConfig.menuPath;
 
             //Background game over
             backgroundGameOver = new GameSprite();
-            Texture d3dTextureGameOver = TextureLoader.FromFile(device, menuPath + "gameover_background.jpg", 1024, 600, 1,
+            var d3dTextureGameOver = TextureLoader.FromFile(device, menuPath + "gameover_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundGameOver.Texture = TgcTexture.createTexture(device, "gameover_background", menuPath + "gameover_background.jpg", d3dTextureGameOver);
+            backgroundGameOver.Texture = TGCTexture.CreateTexture(device, "gameover_background",
+                menuPath + "gameover_background.jpg", d3dTextureGameOver);
 
             //Background game win
             backgroundGameWin = new GameSprite();
-            Texture d3dTextureGameWin = TextureLoader.FromFile(device, menuPath + "gamewin_background.jpg", 1024, 600, 1,
+            var d3dTextureGameWin = TextureLoader.FromFile(device, menuPath + "gamewin_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundGameWin.Texture = TgcTexture.createTexture(device, "gamewin_background", menuPath + "gamewin_background.jpg", d3dTextureGameWin);
-
+            backgroundGameWin.Texture = TGCTexture.CreateTexture(device, "gamewin_background",
+                menuPath + "gamewin_background.jpg", d3dTextureGameWin);
         }
 
         public void initLoadingSector()
@@ -71,7 +70,7 @@ namespace Trafico.De.Fauna.Model.GameModes
         {
             if (temporizadorLoadingSector.update(GameModel.instance.ElapsedTime))
             {
-                GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
+                GameModel.instance.currentGameMode = GameMode.Playing;
             }
             else
             {
@@ -79,11 +78,10 @@ namespace Trafico.De.Fauna.Model.GameModes
             }
         }
 
-
         public void initGameOver()
         {
             temporizadorGameOver.setValues(5f);
-            GameModel.instance.sonidos.game_over.play();
+            GameModel.instance.sonidos.game_over.Play();
         }
 
         public void renderGameOver()
@@ -91,7 +89,7 @@ namespace Trafico.De.Fauna.Model.GameModes
             if (temporizadorGameOver.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar desde el primer nivel del juego
-                GameModel.instance.loadFirstLevel();
+                GameModel.instance.LoadFirstLevel();
             }
             else
             {
@@ -102,7 +100,7 @@ namespace Trafico.De.Fauna.Model.GameModes
         public void initGameWin()
         {
             temporizadorGameWin.setValues(10f);
-            GameModel.instance.sonidos.game_win.play();
+            GameModel.instance.sonidos.game_win.Play();
         }
 
         public void renderGameWin()
@@ -110,13 +108,12 @@ namespace Trafico.De.Fauna.Model.GameModes
             if (temporizadorGameWin.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar desde el primer nivel del juego
-                GameModel.instance.loadFirstLevel();
+                GameModel.instance.LoadFirstLevel();
             }
             else
             {
                 drawer2D.DrawSpriteAtomic(backgroundGameWin);
             }
         }
-
     }
 }

@@ -32,42 +32,42 @@ using Trafico.De.Fauna.Model.Menu.Error;
 namespace Trafico.De.Fauna.Form
 {
     /// <summary>
-    /// Formulario principal de la aplicación
+    ///     Formulario principal de la aplicación
     /// </summary>
     public partial class GameForm : System.Windows.Forms.Form
     {
-        /// <summary>
-        /// Ejemplo del juego a correr
-        /// </summary>
-        private TGCExample Modelo { get; set; }
-
-        /// <summary>
-        /// Obtener o parar el estado del RenderLoop.
-        /// </summary>
-        private bool ApplicationRunning { get; set; }
-
-        /// <summary>
-        /// Permite manejar el sonido
-        /// </summary>
-        private TgcDirectSound DirectSound { get; set; }
-
-        /// <summary>
-        /// Permite manejar los inputs de la computadora
-        /// </summary>
-        private TgcD3dInput Input { get; set; }
-
         public GameForm()
         {
             InitializeComponent();
             //TODO check this.
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
         }
+
+        /// <summary>
+        ///     Ejemplo del juego a correr
+        /// </summary>
+        private TGCExample Modelo { get; set; }
+
+        /// <summary>
+        ///     Obtener o parar el estado del RenderLoop.
+        /// </summary>
+        private bool ApplicationRunning { get; set; }
+
+        /// <summary>
+        ///     Permite manejar el sonido
+        /// </summary>
+        private TGCDirectSound DirectSound { get; set; }
+
+        /// <summary>
+        ///     Permite manejar los inputs de la computadora
+        /// </summary>
+        private TgcD3dInput Input { get; set; }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             //FullScreen, van en este orden para que queda oculta la barra de Windows.
-            this.WindowState = FormWindowState.Normal;
-            this.FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Normal;
+            FormBorderStyle = FormBorderStyle.None;
             //this.WindowState = FormWindowState.Maximized;
 
             //OriginalBorderStyle
@@ -87,7 +87,7 @@ namespace Trafico.De.Fauna.Form
         }
 
         /// <summary>
-        /// Cerrando el formulario
+        ///     Cerrando el formulario
         /// </summary>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -98,7 +98,7 @@ namespace Trafico.De.Fauna.Form
         }
 
         /// <summary>
-        /// Inicio todos los objetos necesarios para cargar el ejemplo y directx
+        ///     Inicio todos los objetos necesarios para cargar el ejemplo y directx
         /// </summary>
         public void InitGraphics()
         {
@@ -113,7 +113,7 @@ namespace Trafico.De.Fauna.Form
             Input.Initialize(this, panel3D);
 
             //Inicio sonido
-            DirectSound = new TgcDirectSound();
+            DirectSound = new TGCDirectSound();
             DirectSound.InitializeD3DDevice(panel3D);
 
             //Directorio actual de ejecucion
@@ -123,14 +123,15 @@ namespace Trafico.De.Fauna.Form
             TGCShaders.Instance.LoadCommonShaders(currentDirectory + Game.Default.ShadersDirectory, D3DDevice.Instance);
 
             //Juego a ejecutar
-            Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
+            Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory,
+                currentDirectory + Game.Default.ShadersDirectory);
 
             //Cargar juego
             ExecuteModel();
         }
 
         /// <summary>
-        /// Comienzo el loop del juego
+        ///     Comienzo el loop del juego
         /// </summary>
         public void InitRenderLoop()
         {
@@ -152,6 +153,7 @@ namespace Trafico.De.Fauna.Form
                             Thread.Sleep(100);
                         }
                     }
+
                     // Process application messages
                     Application.DoEvents();
                 }
@@ -160,7 +162,7 @@ namespace Trafico.De.Fauna.Form
             {
                 //Error Window
                 new ErrorWindow().showError(e.Message, e);
-                this.ShutDown();
+                ShutDown();
             }
         }
 
@@ -205,7 +207,7 @@ namespace Trafico.De.Fauna.Form
             {
                 //Error Window
                 new ErrorWindow().showError(e.Message, e);
-                this.ShutDown();
+                ShutDown();
             }
         }
 
@@ -235,7 +237,7 @@ namespace Trafico.De.Fauna.Form
 
             //Liberar Device al finalizar la aplicacion
             D3DDevice.Instance.Dispose();
-            TexturesPool.Instance.clearAll();
+            TexturesPool.Instance.ClearAll();
         }
     }
 }

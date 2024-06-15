@@ -23,15 +23,13 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents
 {
-
     /// <summary>
-    /// CustomEvent de ejemplo.
-    /// Si pasas por arriba del BoundingBox puesto reproduce un sonido.
+    ///     CustomEvent de ejemplo.
+    ///     Si pasas por arriba del BoundingBox puesto reproduce un sonido.
     /// </summary>
     public class Prueba : CustomEvent
     {
-
-        TgcBoundingAxisAlignBox boundingBox;
+        private TgcBoundingAxisAlignBox boundingBox;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -40,12 +38,10 @@ namespace Trafico.De.Fauna.Model.CustomEvents
 
         public override void init()
         {
-            
         }
 
         public override void end()
         {
-            
         }
 
         public override void update(float elapsedTime)
@@ -56,7 +52,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents
         {
             if (GameModel.instance.mainCharacter.collideWithAABB(boundingBox))
             {
-                GameModel.instance.sonidos.game_over.play();
+                GameModel.instance.sonidos.game_over.Play();
             }
         }
 

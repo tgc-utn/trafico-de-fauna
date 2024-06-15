@@ -20,14 +20,14 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 namespace Trafico.De.Fauna.Model.Interpolators
 {
     /// <summary>
-    /// Utilidad para interpolar un valor que arranca en INIT y va hasta END, a una velocidad determinada.
-    /// El metodo isEnd() indica si termino.
+    ///     Utilidad para interpolar un valor que arranca en INIT y va hasta END, a una velocidad determinada.
+    ///     El metodo isEnd() indica si termino.
     /// </summary>
     public class InterpoladorLineal
     {
-        float current;
-        float end;
-        float speed;
+        private float current;
+        private float end;
+        private float speed;
 
         public InterpoladorLineal()
         {
@@ -40,17 +40,17 @@ namespace Trafico.De.Fauna.Model.Interpolators
 
         public void setValues(float init, float end, float speed)
         {
-            this.current = init;
+            current = init;
             this.end = end;
             this.speed = speed;
         }
 
         /// <summary>
-        /// Interpolar y devolver incremento
+        ///     Interpolar y devolver incremento
         /// </summary>
         public float update(float elapsedTime)
         {
-            float n = speed * elapsedTime;
+            var n = speed * elapsedTime;
             current += n;
             if (speed > 0)
             {
@@ -71,12 +71,11 @@ namespace Trafico.De.Fauna.Model.Interpolators
         }
 
         /// <summary>
-        /// Indica si el interpolador llego al final
+        ///     Indica si el interpolador llego al final
         /// </summary>
         public bool isEnd()
         {
             return current == end;
         }
-
     }
 }

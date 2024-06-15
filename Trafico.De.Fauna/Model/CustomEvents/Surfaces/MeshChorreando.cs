@@ -25,24 +25,23 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
 {
-
     /// <summary>
-    /// Efecto de mesh que le chorrea la textura para abajo
+    ///     Efecto de mesh que le chorrea la textura para abajo
     /// </summary>
-    public class MeshChorreando: CustomEvent
+    public class MeshChorreando : CustomEvent
     {
-        MeshAnimatedTexture mesh;
-        InterpoladorVaiven vaiven;
-        ColliderObject collider;
-        float speed;
+        private ColliderObject collider;
+        private MeshAnimatedTexture mesh;
+        private float speed;
+        private InterpoladorVaiven vaiven;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             //Cargar MeshAnimatedTexture
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new MeshAnimatedTexture.MeshAnimatedTextureFactory();
-            TgcSceneData sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshData);
-            TgcScene scene = loader.loadScene(sceneData, texturePath);
+            var sceneData = GameUtils.createSceneDataForMeshData(originalSceneData, meshData);
+            var scene = loader.loadScene(sceneData, texturePath);
             mesh = (MeshAnimatedTexture)scene.Meshes[0];
             mesh.AutoTransformEnable = true;
 
@@ -56,11 +55,10 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
                 {
                     throw new Exception("El campo collision no es boolean: " + meshData.name);
                 }
-                else
-                {
-                    collider = new ColliderObject(mesh);
-                }
+
+                collider = new ColliderObject(mesh);
             }
+
             //Propiedad: speed=3 (default=1, velocidad vertical) 
             if (GameUtils.containsUserProp(meshData.userProperties, "speed"))
             {
@@ -113,9 +111,5 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
         {
             mesh.Dispose();
         }
-
-
-        
-
     }
 }

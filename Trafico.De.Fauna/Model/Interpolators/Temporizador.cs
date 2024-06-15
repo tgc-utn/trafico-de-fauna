@@ -20,25 +20,21 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 namespace Trafico.De.Fauna.Model.Interpolators
 {
     /// <summary>
-    /// Utilidad para controlar el avance del tiempo hasta un tope determinado (como una cuenta regresiva)
+    ///     Utilidad para controlar el avance del tiempo hasta un tope determinado (como una cuenta regresiva)
     /// </summary>
     public class Temporizador
     {
-        float current;
-        float stopSegs;
-
-        public Temporizador()
-        {
-        }
+        private float current;
+        private float stopSegs;
 
         public void setValues(float stopSegs)
         {
             this.stopSegs = stopSegs;
-            this.current = 0;
+            current = 0;
         }
 
         /// <summary>
-        /// Avanzar el tiempo
+        ///     Avanzar el tiempo
         /// </summary>
         /// <returns>True si llego a su fin</returns>
         public bool update(float elapsedTime)
@@ -49,8 +45,8 @@ namespace Trafico.De.Fauna.Model.Interpolators
                 current = stopSegs;
                 return true;
             }
+
             return false;
         }
-
     }
 }

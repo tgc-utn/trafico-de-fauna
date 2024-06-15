@@ -26,45 +26,44 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
 {
-
     /// <summary>
-    /// Lanza piedras en forma intermitente desde un punto del BoundingBox hacia el otro.
-    /// Chocan contra el personaje principal.
+    ///     Lanza piedras en forma intermitente desde un punto del BoundingBox hacia el otro.
+    ///     Chocan contra el personaje principal.
     /// </summary>
     public class LanzadorPiedras : CustomEvent
     {
-        readonly float ROTACION_VELOCIDAD = FastMath.PI;
+        private readonly float ROTACION_VELOCIDAD = FastMath.PI;
+        private float acumTime;
+        private bool axisX;
+        private TgcBoundingAxisAlignBox boundingBox;
+        private float distanceToTravel;
+        private float frecuencia;
+        private bool lanzando;
 
-        TgcMeshShader mesh;
-        TGCVector3 posOrigen;
-        TGCVector3 posFinal;
-        float frecuencia;
-        float velocidad;
-        bool lanzando;
-        float acumTime;
-        TGCVector3 movementDir;
-        float origDistanceToTravel;
-        float distanceToTravel;
-        InterpoladorVaiven vaiven;
-        float meshOriginalPosY;
-        bool axisX;
-        float rotAngle;
-        TgcBoundingAxisAlignBox boundingBox;
+        private TgcMeshShader mesh;
+        private float meshOriginalPosY;
+        private TGCVector3 movementDir;
+        private float origDistanceToTravel;
+        private TGCVector3 posFinal;
+        private TGCVector3 posOrigen;
+        private float rotAngle;
+        private InterpoladorVaiven vaiven;
+        private float velocidad;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             //Mesh
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
-            TgcScene scene = loader.loadSceneFromFile(meshPath);
+            var meshPath = GameModel.instance.gameConfig.basePath + "Piedras\\PiedraNormal\\PiedraNormal-TgcScene.xml";
+            var scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.AutoTransformEnable = true;
 
             //Extremos y direccion de movimiento
             axisX = GameUtils.getBBExtremeCentersXZ(meshData, out posOrigen, out posFinal);
             boundingBox = GameUtils.createBBFromMeshData(meshData);
-            TGCVector3 axisRadius = mesh.BoundingBox.calculateAxisRadius();
+            var axisRadius = mesh.BoundingBox.calculateAxisRadius();
             meshOriginalPosY = axisRadius.Y;
             posOrigen.Y = meshOriginalPosY;
             posFinal.Y = meshOriginalPosY;
@@ -98,6 +97,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
             {
                 frecuencia = 3;
             }
+
             //Propiedad: velocidad=100 (default=300) es en segundos
             if (GameUtils.containsUserProp(meshData.userProperties, "velocidad"))
             {
@@ -118,9 +118,10 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
             acumTime = 0;
             mesh.Enabled = false;
         }
+
         public override void end()
         {
-            GameModel.instance.sonidos.piedra_rodando.stop();
+            GameModel.instance.sonidos.piedra_rodando.Stop();
         }
 
         public override void update(float elapsedTime)
@@ -128,7 +129,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
             //Mover piedra actual
             if (lanzando)
             {
-                float movement = velocidad * elapsedTime;
+                var movement = velocidad * elapsedTime;
                 distanceToTravel -= movement;
                 if (distanceToTravel < 0)
                 {
@@ -137,7 +138,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
                     mesh.Enabled = false;
 
                     //Apagar sonido de girando
-                    GameModel.instance.sonidos.piedra_rodando.stop();
+                    GameModel.instance.sonidos.piedra_rodando.Stop();
                 }
                 else
                 {
@@ -152,8 +153,8 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
                     }
 
                     //Desplazar en XZ y mover en Y con vaiven 
-                    TGCVector3 move = TGCVector3.Scale(movementDir, movement);
-                    TGCVector3 newPos = mesh.Position + move;
+                    var move = TGCVector3.Scale(movementDir, movement);
+                    var newPos = mesh.Position + move;
                     newPos.Y = meshOriginalPosY + vaiven.update(elapsedTime);
                     mesh.Position = newPos;
                 }
@@ -162,12 +163,11 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
                 if (GameModel.instance.mainCharacter.collideWithAABB(mesh.BoundingBox))
                 {
                     //Sonido de golpe de piedra
-                    GameModel.instance.sonidos.piedra_golpear_personaje.play(false);
+                    GameModel.instance.sonidos.piedra_golpear_personaje.Play(false);
 
                     //Quitar vida
                     GameModel.instance.currentLevel.removeLifeToPlayer();
                 }
-
             }
             //Ver si paso el tiempo para lanzar una nueva piedra
             else
@@ -185,7 +185,7 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Piedras
                     mesh.Rotation = new TGCVector3(0, 0, 0);
 
                     //Activar sonido de rodando
-                    GameModel.instance.sonidos.piedra_rodando.play(true);
+                    GameModel.instance.sonidos.piedra_rodando.Play(true);
                 }
             }
         }

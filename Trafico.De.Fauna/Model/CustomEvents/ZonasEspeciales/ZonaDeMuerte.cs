@@ -23,14 +23,12 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.ZonasEspeciales
 {
-
     /// <summary>
-    /// Si el personaje colisiona con el BoundingBox pierde una vida
+    ///     Si el personaje colisiona con el BoundingBox pierde una vida
     /// </summary>
     public class ZonaDeMuerte : CustomEvent
     {
-
-        TgcBoundingAxisAlignBox boundingBox;
+        private TgcBoundingAxisAlignBox boundingBox;
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -39,12 +37,10 @@ namespace Trafico.De.Fauna.Model.CustomEvents.ZonasEspeciales
 
         public override void init()
         {
-            
         }
 
         public override void end()
         {
-            
         }
 
         public override void update(float elapsedTime)

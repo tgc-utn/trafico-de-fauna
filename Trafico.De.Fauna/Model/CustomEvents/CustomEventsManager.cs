@@ -30,11 +30,11 @@ using Trafico.De.Fauna.Model.CustomEvents.ZonasEspeciales;
 namespace Trafico.De.Fauna.Model.CustomEvents
 {
     /// <summary>
-    /// Herramienta para manejar la carga de CustomEvents
+    ///     Herramienta para manejar la carga de CustomEvents
     /// </summary>
     public class CustomEventsManager
     {
-        Dictionary<string, Type> events = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> events = new Dictionary<string, Type>();
 
         public CustomEventsManager()
         {
@@ -51,8 +51,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents
             addEvent(typeof(ZonaDeMuerte));
             addEvent(typeof(MeshChorreando));
             addEvent(typeof(ParticulasAgua));
-            
-            
         }
 
         private void addEvent(Type eventType)
@@ -64,23 +62,23 @@ namespace Trafico.De.Fauna.Model.CustomEvents
         {
             try
             {
-                Type eventType = events[eventName];
+                var eventType = events[eventName];
                 return eventType;
             }
             catch (Exception e)
             {
                 throw new Exception("CustomEvent inexistente: " + eventName, e);
             }
-            
         }
 
         /// <summary>
-        /// Crear instancia de evento
+        ///     Crear instancia de evento
         /// </summary>
-        public CustomEvent createEvent(string eventName, TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
+        public CustomEvent createEvent(string eventName, TgcMeshData meshData, string texturePath,
+            TgcSceneData originalSceneData)
         {
-            Type eventType = getCustomEventType(eventName);
-            CustomEvent customEvent = (CustomEvent)Activator.CreateInstance(eventType);
+            var eventType = getCustomEventType(eventName);
+            var customEvent = (CustomEvent)Activator.CreateInstance(eventType);
 
             //enabled
             if (GameUtils.containsUserProp(meshData.userProperties, "enabled"))
@@ -93,17 +91,17 @@ namespace Trafico.De.Fauna.Model.CustomEvents
         }
 
         /// <summary>
-        /// Parsear info de CustomEvent
+        ///     Parsear info de CustomEvent
         /// </summary>
         public CustomEvent loadCustomEvent(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            string[] split = meshData.name.Split('_');
+            var split = meshData.name.Split('_');
             if (split.Length != 2)
             {
                 throw new Exception("CustomEvent con nombre icorrecto: " + meshData.name);
             }
 
-            string eventName = split[0].ToUpper();
+            var eventName = split[0].ToUpper();
             return createEvent(eventName, meshData, texturePath, originalSceneData);
         }
     }

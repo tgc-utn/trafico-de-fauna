@@ -20,14 +20,13 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
-    /// Objeto que se renderiza con AlphaBlendng
+    ///     Objeto que se renderiza con AlphaBlendng
     /// </summary>
     public interface IAlphaObject
     {
         /// <summary>
-        /// Dibjar objeto
+        ///     Dibjar objeto
         /// </summary>
         void renderWithAlpha();
-
     }
 }

@@ -17,77 +17,46 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using Microsoft.DirectX.DirectInput;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Text;
-using Trafico.De.Fauna.Model.CustomEvents;
-using Trafico.De.Fauna.Model.Enemies;
-using Trafico.De.Fauna.Model.Escondites;
+using TGC.Core.Textures;
 using Trafico.De.Fauna.Model.ItemsAnimal;
 using Trafico.De.Fauna.Model.Levels;
-using Trafico.De.Fauna.Model.Meshes;
-using Trafico.De.Fauna.Model.Saltos;
+using Trafico.De.Fauna.Model.Menu.Error;
 
 namespace Trafico.De.Fauna.Model.DebugTools
 {
     /// <summary>
-    /// Utilidades de Debug
+    ///     Utilidades de Debug
     /// </summary>
     public class DebugMode
     {
-        bool enabled;
-        /// <summary>
-        /// Habilitado
-        /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
-
-        bool showBoundingVolumes;
-        /// <summary>
-        /// Mostrar Bounding Volumes
-        /// </summary>
-        public bool ShowBoundingVolumes
-        {
-            get { return showBoundingVolumes; }
-            set { showBoundingVolumes = value; }
-        }
-
-        bool guardiasEnabled;
-        /// <summary>
-        /// Guardias Habilitados
-        /// </summary>
-        public bool GuardiasEnabled
-        {
-            get { return guardiasEnabled; }
-            set { guardiasEnabled = value; }
-        }
-
-        TgcText2D textDebug;
-        TgcBoundingSphere radioVisionPersonaje;
-        bool showConectorList;
-        List<Conector> conectoresList;
+        private readonly List<Conector> conectoresList;
+        private readonly TgcBoundingSphere radioVisionPersonaje;
+        private readonly TGCText2D textDebug;
+        private bool showConectorList;
 
         public DebugMode()
         {
-            enabled = false;
-            showBoundingVolumes = false;
+            Enabled = false;
+            ShowBoundingVolumes = false;
             showConectorList = false;
-            guardiasEnabled = true;
+            GuardiasEnabled = true;
 
             //texto debug
-            textDebug = new TgcText2D();
-            int width = D3DDevice.Instance.Device.Viewport.Width;
-            int height = D3DDevice.Instance.Device.Viewport.Height;
+            textDebug = new TGCText2D();
+            var width = D3DDevice.Instance.Device.Viewport.Width;
+            var height = D3DDevice.Instance.Device.Viewport.Height;
             textDebug.Position = new Point(0, height / 2);
-            textDebug.Align = TgcText2D.TextAlign.LEFT;
+            textDebug.Align = TGCText2D.TextAlign.LEFT;
             textDebug.Color = Color.Yellow;
             textDebug.Size = new Size(width, height / 2);
 
@@ -96,107 +65,41 @@ namespace Trafico.De.Fauna.Model.DebugTools
         }
 
         /// <summary>
-        /// Texto debug
+        ///     Habilitado
         /// </summary>
-        public void setText(string text)
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        ///     Mostrar Bounding Volumes
+        /// </summary>
+        public bool ShowBoundingVolumes { get; set; }
+
+        /// <summary>
+        ///     Guardias Habilitados
+        /// </summary>
+        public bool GuardiasEnabled { get; set; }
+
+        public void Render()
         {
-            textDebug.Text = text;
-        }
-
-        public void render()
-        {
-            if (!enabled)
-            {
-                return;
-            }
-
-            TgcD3dInput d3dInput = GameModel.instance.Input;
-
-            //Habilitar modo debug por teclado
-            if (d3dInput.keyPressed(Key.D))
-            {
-                this.enabled = !this.enabled;
-            }
-
-            //Activar ver BoundingVolume
-            if (d3dInput.keyPressed(Key.B))
-            {
-                showBoundingVolumes = !showBoundingVolumes;
-            }
-
-            //Ganar vida
-            if (d3dInput.keyPressed(Key.V))
-            {
-                GameModel.instance.mainCharacter.agregarBananas(100);
-            }
-
-            //Obtener todas las llaves
-            if (d3dInput.keyPressed(Key.K))
-            {
-                GameModel.instance.currentLevel.getLlave(Llave.ColorType.AMARILLA).agarrar();
-                GameModel.instance.currentLevel.getLlave(Llave.ColorType.ROJA).agarrar();
-                GameModel.instance.currentLevel.getLlave(Llave.ColorType.VERDE).agarrar();
-            }
-
-            //Otorgar 1 item animal
-            if (d3dInput.keyPressed(Key.I))
-            {
-                GameModel.instance.mainCharacter.agregarItemAnimalLiberado(null);
-            }
-
-            //Desactivar guardias
-            if (d3dInput.keyPressed(Key.G))
-            {
-                guardiasEnabled = !guardiasEnabled;
-            }
-
-            //Mostrar lista de conectores
-            if (d3dInput.keyPressed(Key.S))
-            {
-                showConectorList = !showConectorList;
-                if (showConectorList)
-                {
-                    Dictionary<string, Conector> conectores = GameModel.instance.currentLevel.Conectores;
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine("Conectores: (Presionar el numero, o Alt + numero si es mayor a 9)");
-                    int n = 0;
-                    conectoresList.Clear();
-                    foreach (KeyValuePair<string, Conector> entry in conectores)
-                    {
-                        sb.AppendLine(n + ") " + entry.Value.Id);
-                        conectoresList.Add(entry.Value);
-                        n++;
-                    }
-                    setText(sb.ToString());
-                }
-                else
-                {
-                    setText("");
-                }
-            }
-
-            //Ir hacia un conector especifico de la lista
-            jumpToConector(d3dInput);
-
             //Render
 
             //Hay que renderizar devuelta estas cosas porque se pierden con el RenderTarget
-            //TODO Render de Axis and FPS.
+            //TODO Render the Axis and FPS.
             //GuiController.Instance.Text3d.drawText("FPS: " + GameModel.instance.HighResolutionTimer.FramesPerSecond, 0, 0, Color.Yellow);
-            //GuiController.Instance.AxisLines.render();
+            //GuiController.Instance.AxisLines.Render();
 
             //Render de texto debug
-            textDebug.render();
+            textDebug.Render();
 
             //Bounding Volumes
-            if (showBoundingVolumes)
+            if (ShowBoundingVolumes)
             {
-                LevelSector CurrentSector = GameModel.instance.currentLevel.CurrentSector;
+                var CurrentSector = GameModel.instance.currentLevel.CurrentSector;
 
                 //Objetos colsionables
                 GameModel.instance.mainCharacter.CharacterSphere.Render();
-                List<ColliderObject> objetosColisionables = CurrentSector.ObjetosColisionables;
-                foreach (ColliderObject obj in objetosColisionables)
+                var objetosColisionables = CurrentSector.ObjetosColisionables;
+                foreach (var obj in objetosColisionables)
                 {
                     if (obj.Enabled)
                     {
@@ -205,49 +108,142 @@ namespace Trafico.De.Fauna.Model.DebugTools
                 }
 
                 //conectores
-                List<Conector> conectores = CurrentSector.Conectores;
-                foreach (Conector c in conectores)
+                var conectores = CurrentSector.Conectores;
+                foreach (var c in conectores)
                 {
                     c.BoundingBox.Render();
                 }
 
                 //radioVisionPersonaje
-                radioVisionPersonaje.setValues(GameModel.instance.mainCharacter.CurrentPos, GameModel.instance.gameConfig.camara.distanciaVisual);
+                radioVisionPersonaje.setValues(GameModel.instance.mainCharacter.CurrentPos,
+                    GameModel.instance.gameConfig.camara.distanciaVisual);
                 radioVisionPersonaje.Render();
 
                 //saltos
-                List<Salto> saltos = CurrentSector.SaltosManager.Saltos;
-                foreach (Salto salto in saltos)
+                var saltos = CurrentSector.SaltosManager.Saltos;
+                foreach (var salto in saltos)
                 {
                     salto.renderDebug();
                 }
 
                 //CustomEvents
-                List<CustomEvent> events = CurrentSector.CustomEvents;
-                foreach (CustomEvent cEvent in events)
+                var events = CurrentSector.CustomEvents;
+                foreach (var cEvent in events)
                 {
                     cEvent.renderDebug();
                 }
 
                 //EsconditesFijos
-                List<EsconditeFijo> esconditesFijos = CurrentSector.EsconditesFijos;
-                foreach (EsconditeFijo esc in esconditesFijos)
+                var esconditesFijos = CurrentSector.EsconditesFijos;
+                foreach (var esc in esconditesFijos)
                 {
                     esc.BSphere.Render();
                 }
 
                 //Waypoints de guardias
-                List<Guardia> guardias = CurrentSector.GuardiasManager.Guardias;
-                foreach (Guardia g in guardias)
+                var guardias = CurrentSector.GuardiasManager.Guardias;
+                foreach (var g in guardias)
+                foreach (var w in g.Waypoints)
                 {
-                    foreach (GuardiaWaypoint w in g.Waypoints)
+                    w.Bsphere.Render();
+                }
+            }
+        }
+
+        public void Update(TgcD3dInput input, GameModel gameModel)
+        {
+            //Habilitar modo debug por teclado
+            if (input.keyPressed(Key.D))
+            {
+                if (Enabled)
+                {
+                    DisableDebugMode();
+                }
+
+                Enabled = !Enabled;
+                gameModel.FPSText = !gameModel.FPSText;
+                gameModel.AxisLinesEnable = !gameModel.AxisLinesEnable;
+            }
+
+            if (!Enabled || gameModel.currentLevel == null)
+            {
+                return;
+            }
+
+            //Activar ver BoundingVolume
+            if (input.keyPressed(Key.B))
+            {
+                ShowBoundingVolumes = !ShowBoundingVolumes;
+            }
+
+            //Ganar vida
+            if (input.keyPressed(Key.V))
+            {
+                gameModel.mainCharacter.agregarBananas(100);
+            }
+
+            //Obtener todas las llaves
+            if (input.keyPressed(Key.K))
+            {
+                gameModel.currentLevel.getLlave(Llave.ColorType.AMARILLA).agarrar();
+                gameModel.currentLevel.getLlave(Llave.ColorType.ROJA).agarrar();
+                gameModel.currentLevel.getLlave(Llave.ColorType.VERDE).agarrar();
+            }
+
+            //Otorgar 1 item animal
+            if (input.keyPressed(Key.I))
+            {
+                gameModel.mainCharacter.agregarItemAnimalLiberado(null);
+            }
+
+            //Desactivar guardias
+            if (input.keyPressed(Key.G))
+            {
+                GuardiasEnabled = !GuardiasEnabled;
+            }
+
+            //Mostrar lista de conectores
+            if (input.keyPressed(Key.S))
+            {
+                showConectorList = !showConectorList;
+                if (showConectorList)
+                {
+                    var conectores = gameModel.currentLevel.Conectores;
+                    var sb = new StringBuilder();
+                    sb.AppendLine("Conectores: (Presionar el numero, o Alt + numero si es mayor a 9)");
+                    var n = 0;
+                    conectoresList.Clear();
+                    foreach (var entry in conectores)
                     {
-                        w.Bsphere.Render();
+                        sb.AppendLine(n + ") " + entry.Value.Id);
+                        conectoresList.Add(entry.Value);
+                        n++;
                     }
+
+                    textDebug.Text = sb.ToString();
+                }
+                else
+                {
+                    textDebug.Text = "";
+                    conectoresList.Clear();
                 }
             }
 
-            printTexturesMemory(d3dInput);
+            //Ir hacia un conector especifico de la lista
+            if (showConectorList)
+            {
+                jumpToConector(input);
+            }
+
+            printTexturesMemory(input);
+        }
+
+        private void DisableDebugMode()
+        {
+            GuardiasEnabled = true;
+            ShowBoundingVolumes = false;
+            showConectorList = false;
+            textDebug.Text = "";
         }
 
         private void printTexturesMemory(TgcD3dInput d3dInput)
@@ -255,34 +251,32 @@ namespace Trafico.De.Fauna.Model.DebugTools
             //Ver uso de memoria
             if (d3dInput.keyPressed(Key.M))
             {
-                /*List<TgcTexture.Pool.PoolItem> textures =TexturesPool.getAllTextures();
-                List<TextureMemory> texturesMem = new List<TextureMemory>();
-                foreach (TgcTexture.Pool.PoolItem t in textures)
+                var textures = TexturesPool.Instance.GetAllTextures();
+                var texturesMem = new List<TextureMemory>();
+                foreach (var t in textures)
                 {
-                    TextureMemory tm = new TextureMemory();
+                    var tm = new TextureMemory();
                     tm.FilePath = t.FilePath;
                     tm.Length = new FileInfo(t.FilePath).Length / 1024f;
                     tm.References = t.References;
                     texturesMem.Add(tm);
                 }
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 texturesMem.Sort();
                 texturesMem.Reverse();
-                foreach (TextureMemory tm in texturesMem)
+                foreach (var tm in texturesMem)
                 {
                     sb.Append(tm.FilePath + "; " + tm.Length + "; " + tm.References);
                     sb.AppendLine();
                 }
 
-                MessageBox.Show(sb.ToString(), "Memoria de texturas", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // TODO check this.
-                //GameModel.instance.errorWindow.showError(, new Exception(sb.ToString()));*/
+                new ErrorWindow().showError("Memoria de texturas", new Exception(sb.ToString()));
             }
         }
 
         /// <summary>
-        /// Ir hacia un conector especifico
+        ///     Ir hacia un conector especifico
         /// </summary>
         private void jumpToConector(TgcD3dInput d3dInput)
         {
@@ -293,41 +287,50 @@ namespace Trafico.De.Fauna.Model.DebugTools
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[10]);
                 }
+
                 if (d3dInput.keyPressed(Key.D1))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[11]);
                 }
+
                 if (d3dInput.keyPressed(Key.D2))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[12]);
                 }
+
                 if (d3dInput.keyPressed(Key.D3))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[13]);
                 }
+
                 if (d3dInput.keyPressed(Key.D4))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[14]);
                 }
+
                 if (d3dInput.keyPressed(Key.D5))
                 {
-                    GameModel.instance.currentLevel.changeSector(conectoresList[15]);
+                    //GameModel.instance.currentLevel.changeSector(conectoresList[15]);
                 }
+
                 if (d3dInput.keyPressed(Key.D6))
                 {
-                    GameModel.instance.currentLevel.changeSector(conectoresList[16]);
+                    //GameModel.instance.currentLevel.changeSector(conectoresList[16]);
                 }
+
                 if (d3dInput.keyPressed(Key.D7))
                 {
-                    GameModel.instance.currentLevel.changeSector(conectoresList[17]);
+                    //GameModel.instance.currentLevel.changeSector(conectoresList[17]);
                 }
+
                 if (d3dInput.keyPressed(Key.D8))
                 {
-                    GameModel.instance.currentLevel.changeSector(conectoresList[18]);
+                    //GameModel.instance.currentLevel.changeSector(conectoresList[18]);
                 }
+
                 if (d3dInput.keyPressed(Key.D9))
                 {
-                    GameModel.instance.currentLevel.changeSector(conectoresList[19]);
+                    //GameModel.instance.currentLevel.changeSector(conectoresList[19]);
                 }
             }
             //Abajo de 10
@@ -337,38 +340,47 @@ namespace Trafico.De.Fauna.Model.DebugTools
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[0]);
                 }
+
                 if (d3dInput.keyPressed(Key.D1))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[1]);
                 }
+
                 if (d3dInput.keyPressed(Key.D2))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[2]);
                 }
+
                 if (d3dInput.keyPressed(Key.D3))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[3]);
                 }
+
                 if (d3dInput.keyPressed(Key.D4))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[4]);
                 }
+
                 if (d3dInput.keyPressed(Key.D5))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[5]);
                 }
+
                 if (d3dInput.keyPressed(Key.D6))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[6]);
                 }
+
                 if (d3dInput.keyPressed(Key.D7))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[7]);
                 }
+
                 if (d3dInput.keyPressed(Key.D8))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[8]);
                 }
+
                 if (d3dInput.keyPressed(Key.D9))
                 {
                     GameModel.instance.currentLevel.changeSector(conectoresList[9]);

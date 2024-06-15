@@ -20,41 +20,30 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 namespace Trafico.De.Fauna.Model.Enemies.Ataque
 {
     /// <summary>
-    /// Arista que uno dos Waypoints
+    ///     Arista que uno dos Waypoints
     /// </summary>
     public class WaypointAtaqueArista
     {
-
-        WaypointAtaque w1;
-        /// <summary>
-        /// Waypoint 1
-        /// </summary>
-        public WaypointAtaque W1
-        {
-            get { return w1; }
-        }
-
-        WaypointAtaque w2;
-        /// <summary>
-        /// Waypoint 2
-        /// </summary>
-        public WaypointAtaque W2
-        {
-            get { return w2; }
-        }
-
-
         public WaypointAtaqueArista(WaypointAtaque w1, WaypointAtaque w2)
         {
-            this.w1 = w1;
-            this.w2 = w2;
+            this.W1 = w1;
+            this.W2 = w2;
         }
+
+        /// <summary>
+        ///     Waypoint 1
+        /// </summary>
+        public WaypointAtaque W1 { get; private set; }
+
+        /// <summary>
+        ///     Waypoint 2
+        /// </summary>
+        public WaypointAtaque W2 { get; private set; }
 
         public void dispose()
         {
-            w1 = null;
-            w2 = null;
+            W1 = null;
+            W2 = null;
         }
-
     }
 }
