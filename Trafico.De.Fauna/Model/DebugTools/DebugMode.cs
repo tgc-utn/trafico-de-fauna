@@ -23,6 +23,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using Microsoft.DirectX.DirectInput;
+using TGC.Core;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
@@ -81,12 +82,11 @@ namespace Trafico.De.Fauna.Model.DebugTools
 
         public void Render()
         {
-            //Render
-
-            //Hay que renderizar devuelta estas cosas porque se pierden con el RenderTarget
-            //TODO Render the Axis and FPS.
-            //GuiController.Instance.Text3d.drawText("FPS: " + GameModel.instance.HighResolutionTimer.FramesPerSecond, 0, 0, Color.Yellow);
-            //GuiController.Instance.AxisLines.Render();
+            // TODO: axis should be enabled using AxisLinesEnable from TGC.Core, but it doesn't work at this point.
+            if (GameModel.instance.AxisLinesEnable)
+            {
+                GameModel.instance.AxisLines.render();
+            }
 
             //Render de texto debug
             textDebug.Render();

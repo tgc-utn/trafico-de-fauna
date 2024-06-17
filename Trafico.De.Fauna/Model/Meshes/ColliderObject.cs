@@ -73,7 +73,7 @@ namespace Trafico.De.Fauna.Model.Meshes
                 BoundingBox = null;
             }
 
-            // TODO in TGC.Core there are some missing validations (like was in Trafico de fauna TgcMesh) if attributes are null.
+            // TODO: in TGC.Core there are some missing validations (like was in Trafico de fauna TgcMesh) if attributes are null.
             if (Mesh != null && Mesh.D3dMesh != null)
             {
                 Mesh.Dispose();

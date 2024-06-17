@@ -39,7 +39,7 @@ namespace Trafico.De.Fauna.Form
         public GameForm()
         {
             InitializeComponent();
-            //TODO check this.
+            // TODO: check this.
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
         }
 
@@ -198,6 +198,8 @@ namespace Trafico.De.Fauna.Form
             try
             {
                 Modelo.ResetDefaultConfig();
+                Modelo.FPSText = false;
+                Modelo.AxisLinesEnable = false;
                 Modelo.DirectSound = DirectSound;
                 Modelo.Input = Input;
                 Modelo.Init();
