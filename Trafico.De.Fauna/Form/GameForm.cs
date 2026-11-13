@@ -116,8 +116,8 @@ namespace Trafico.De.Fauna.Form
             DirectSound = new TGCDirectSound();
             DirectSound.InitializeD3DDevice(panel3D);
 
-            //Directorio actual de ejecucion
-            var currentDirectory = Environment.CurrentDirectory + "\\";
+            //Directorio del ejecutable
+            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             //Cargar shaders del framework
             TGCShaders.Instance.LoadCommonShaders(currentDirectory + Game.Default.ShadersDirectory, D3DDevice.Instance);

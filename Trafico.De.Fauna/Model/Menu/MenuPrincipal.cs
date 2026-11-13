@@ -114,9 +114,84 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
+        ///     Actualizar menu
+        /// </summary>
+        public void update(TgcD3dInput input)
+        {
+            //Cargando la primera vez
+            if (loadingFistLevel)
+            {
+                return;
+            }
+
+            //Controles
+            if (showingControls)
+            {
+                //Volver al menu
+                if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space) || input.keyPressed(Key.Escape))
+                {
+                    showingControls = false;
+                }
+
+                return;
+            }
+
+            //Quitar almenu y volver al juego
+            if (gameStarted && input.keyPressed(Key.Escape))
+            {
+                returnToGame();
+            }
+
+            //Seleccionar opcion
+            if (input.keyPressed(Key.Up))
+            {
+                currentOption--;
+                if (currentOption < 0)
+                {
+                    currentOption = 0;
+                }
+            }
+            else if (input.keyPressed(Key.Down))
+            {
+                currentOption++;
+                currentOption = currentOption % ITEMS_POSITION.Length;
+            }
+
+            //Seleccionar opcion
+            if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space))
+            {
+                //Cargar primer nivel
+                if (currentOption == 0)
+                {
+                    //Si el juego ya empezo, solo ocultar el menu y volver al juego
+                    if (gameStarted)
+                    {
+                        returnToGame();
+                    }
+                    //Si no empezo, cargar primer nivel
+                    else
+                    {
+                        showingControls = false;
+                        loadingFistLevel = true;
+                    }
+                }
+                //Opciones
+                else if (currentOption == 1)
+                {
+                    showingControls = true;
+                }
+                //Salir
+                else if (currentOption == 2)
+                {
+                    Application.Exit();
+                }
+            }
+        }
+
+        /// <summary>
         ///     Dibujar menu
         /// </summary>
-        public void render(Device device, TgcD3dInput input)
+        public void render(Device device)
         {
             //Cargando la primera vez
             if (loadingFistLevel)
@@ -139,76 +214,15 @@ namespace Trafico.De.Fauna.Model.Menu
             //Controles
             else if (showingControls)
             {
-                //Volver al menu
-                if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space) || input.keyPressed(Key.Escape))
-                {
-                    showingControls = false;
-                }
-                //Dibujar
-                else
-                {
-                    //dibujar
-                    device.BeginScene();
-                    drawer2D.DrawSpriteAtomic(backgroundControls);
-                    device.EndScene();
-                }
+                //dibujar
+                device.BeginScene();
+                drawer2D.DrawSpriteAtomic(backgroundControls);
+                device.EndScene();
             }
             //Normal
             else
             {
-                //Quitar almenu y volver al juego
-                if (gameStarted && input.keyPressed(Key.Escape))
-                {
-                    returnToGame();
-                }
-
-                //Seleccionar opcion
-                if (input.keyPressed(Key.Up))
-                {
-                    currentOption--;
-                    if (currentOption < 0)
-                    {
-                        currentOption = 0;
-                    }
-                }
-                else if (input.keyPressed(Key.Down))
-                {
-                    currentOption++;
-                    currentOption = currentOption % ITEMS_POSITION.Length;
-                }
-
                 selectedItem.Position = ITEMS_POSITION[currentOption];
-
-                //Seleccionar opcion
-                if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space))
-                {
-                    //Cargar primer nivel
-                    if (currentOption == 0)
-                    {
-                        //Si el juego ya empezo, solo ocultar el menu y volver al juego
-                        if (gameStarted)
-                        {
-                            returnToGame();
-                        }
-                        //Si no empezo, cargar primer nivel
-                        else
-                        {
-                            showingControls = false;
-                            loadingFistLevel = true;
-                        }
-                    }
-                    //Opciones
-                    else if (currentOption == 1)
-                    {
-                        showingControls = true;
-                    }
-                    //Salir
-                    else if (currentOption == 2)
-                    {
-                        Application.Exit();
-                        return;
-                    }
-                }
 
                 //dibujar
                 device.BeginScene();

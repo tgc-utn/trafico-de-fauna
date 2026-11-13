@@ -195,6 +195,22 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+### VisualStudioCode ###
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+### Rider ###
+.idea/
+*.iml
+*.ipr
+
 # Windows thumbnail cache files
 Thumbs.db
 
@@ -221,3 +237,6 @@ Thumbs.db
 
 ### Linux Library ###
 *.so
+
+### Claude Code ###
+.claude/

@@ -80,10 +80,16 @@ namespace Trafico.De.Fauna.Model
             var d3dDevice = D3DDevice.Instance.Device;
 
             //Utilizando esta propiedad puedo activar el update/Render a intervalos constantes.
+
+            //El juego original corria sin limite: pero en PCs actuales eso puede generar problemas en el desplazamiento.
+            //Cuando queda por debajo del EPSILON de SphereCollisionManager, que lo descarta (el personaje casi no camina).
             FixedTickEnable = true;
 
             //BackgroundColor
             BackgroundColor = Color.Black;
+
+            //Valor del juego original
+            d3dDevice.RenderState.ReferenceAlpha = 100;
 
             //Singleton trucho
             instance = this;
@@ -178,9 +184,33 @@ namespace Trafico.De.Fauna.Model
             currentGameMode = GameMode.Playing;
         }
 
+        /// <summary>
+        ///     Logica del juego.
+        ///     En el juego original la logica se ejecutaba dentro del render. Con FixedTickEnable tiene que estar aca:
+        ///     el framework llama a Update en pasos constantes (ElapsedTime vale siempre 1/60) y actualiza el teclado
+        ///     antes de cada uno. Desde el Render la velocidad dependeria de los FPS y se perderian pulsaciones.
+        /// </summary>
         public override void Update()
         {
             debugMode.Update(Input, this);
+
+            switch (currentGameMode)
+            {
+                case GameMode.Menu:
+                    menuPrincipal.update(Input);
+                    break;
+                case GameMode.Playing:
+                    mainCharacter.update(ElapsedTime);
+                    currentLevel.update(ElapsedTime);
+                    hud.update(ElapsedTime);
+
+                    //Si termino el juego y ya cambio de modo, esconder sector actual
+                    if (currentGameMode == GameMode.GameWin)
+                    {
+                        currentLevel.CurrentSector.hideSector();
+                    }
+                    break;
+            }
         }
 
         /// <summary>
@@ -188,6 +218,10 @@ namespace Trafico.De.Fauna.Model
         /// </summary>
         public override void Render()
         {
+            //Lo que avanza dentro del render (animaciones, particulas, temporizadores de transicion) usa el tiempo
+            //real desde el ultimo cuadro dibujado, no el paso constante del Update.
+            ElapsedTime = LastRenderTime;
+
             // TODO remove this from the Render method.
             ((GameThirdPersonCamera)Camera).updateViewMatrix(D3DDevice.Instance.Device);
 
@@ -201,7 +235,7 @@ namespace Trafico.De.Fauna.Model
             switch (currentGameMode)
             {
                 case GameMode.Menu:
-                    DoMenu(d3dDevice, Input);
+                    DoMenu(d3dDevice);
                     break;
                 case GameMode.Intro:
                     DoIntro();
@@ -232,9 +266,9 @@ namespace Trafico.De.Fauna.Model
             PostRender();
         }
 
-        private void DoMenu(Device device, TgcD3dInput input)
+        private void DoMenu(Device device)
         {
-            menuPrincipal.render(device, input);
+            menuPrincipal.render(device);
         }
 
         private void DoIntro()
@@ -258,11 +292,6 @@ namespace Trafico.De.Fauna.Model
             //Renderizar todo al RenderTarget secundario
             postProcessEffects.set2DRenderTarget();
 
-            //update
-            mainCharacter.update(elapsedTime);
-            currentLevel.update(elapsedTime);
-            hud.update(elapsedTime);
-
             //Render
             currentLevel.AlphaObjects.Clear();
             mainCharacter.render(elapsedTime);
@@ -273,12 +302,6 @@ namespace Trafico.De.Fauna.Model
             debugMode.Render();
 
             postProcessEffects.renderAndRestoreTarget();
-
-            //Si termino el juego y ya cambido de modo, esconder sector actual
-            if (currentGameMode == GameMode.GameWin)
-            {
-                currentLevel.CurrentSector.hideSector();
-            }
         }
 
         /// <summary>

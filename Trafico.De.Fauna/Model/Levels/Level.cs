@@ -112,6 +112,8 @@ namespace Trafico.De.Fauna.Model.Levels
             skyBox = new TGCSkyBox();
             skyBox.Center = new TGCVector3(0, 0, 0);
             skyBox.Size = new TGCVector3(10000, 10000, 10000);
+            //Valor del juego original
+            skyBox.SkyEpsilon = 5f;
             skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Up, skyboxTexturesPath + "Up.jpg");
             skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Down, skyboxTexturesPath + "Down.jpg");
             skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Left, skyboxTexturesPath + "Left.jpg");

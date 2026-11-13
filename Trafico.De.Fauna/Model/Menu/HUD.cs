@@ -66,7 +66,7 @@ namespace Trafico.De.Fauna.Model.Menu
             drawer2D = new Drawer2D(device);
 
             //Cargar fuente
-            var font = new SystemFont("JungleFever", 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            var font = GameFonts.JungleFever(24);
 
             //Sprite para contador de bananas
             spriteContadorBananas = new GameSprite();

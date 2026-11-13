@@ -53,7 +53,7 @@ namespace Trafico.De.Fauna.Model.Dialogs
             //Cuadro de texto
             text2d = new TGCText2D();
             text2d.Color = Color.White;
-            var font = new SystemFont("JungleFever", 20, FontStyle.Regular, GraphicsUnit.Pixel);
+            var font = GameFonts.JungleFever(20);
             text2d.changeFont(font);
             text2d.Position = new Point((int)background.Position.X + 10, (int)background.Position.Y + 16);
             text2d.Align = TGCText2D.TextAlign.CENTER;

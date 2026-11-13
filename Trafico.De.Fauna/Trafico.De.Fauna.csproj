@@ -52,7 +52,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -65,11 +65,21 @@
     <Reference Include="BulletSharp, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BulletSharp.0.11.1\lib\net40-client\BulletSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="Microsoft.DirectX.DirectSound, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectSound, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.VisualC" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -94,6 +104,7 @@
     <Compile Include="Model\DebugTools\TextureMemory.cs" />
     <Compile Include="Model\GameModes\GameMode.cs" />
     <Compile Include="Model\GameModel.cs" />
+    <Compile Include="Model\Menu\GameFonts.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form\GameForm.resx">
@@ -385,6 +396,13 @@
       <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BulletSharp.0.11.1\build\net40-client\BulletSharp.targets'))" />
+  </Target>
+  <!-- Copia Media y Shaders junto al ejecutable: la carpeta de salida queda como la carpeta completa del juego. -->
+  <Target Name="CopyGameContent" AfterTargets="Build">
+    <ItemGroup>
+      <GameContent Include="Media\**\*;Shaders\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(GameContent)" DestinationFiles="@(GameContent->'$(OutDir)%(Identity)')" SkipUnchangedFiles="true" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
