@@ -25,14 +25,17 @@ using TGC.Core.Mathematica;
 namespace Trafico.De.Fauna.Utils.Render
 {
     /// <summary>
-    /// Implementación Default del Framework para la cola de renderizado.
+    ///     Implementación Default del Framework para la cola de renderizado.
     /// </summary>
     public class TgcDefaultRenderQueue : TgcRenderQueue
     {
-        List<IRenderQueueElement> opaqueList;
-        List<IRenderQueueElement> alphaList;
-        Dictionary<IRenderQueueElement, float> elementsViewDistance = new Dictionary<IRenderQueueElement, float>();
-        AlphaElementComparer alphaComparer;
+        private readonly AlphaElementComparer alphaComparer;
+        private readonly List<IRenderQueueElement> alphaList;
+
+        private readonly Dictionary<IRenderQueueElement, float> elementsViewDistance =
+            new Dictionary<IRenderQueueElement, float>();
+
+        private readonly List<IRenderQueueElement> opaqueList;
 
         public TgcDefaultRenderQueue()
         {
@@ -41,11 +44,6 @@ namespace Trafico.De.Fauna.Utils.Render
             alphaComparer = new AlphaElementComparer();
         }
 
-        /// <summary>
-        /// Agregar un elemento a renderizar a la cola de renderizado
-        /// </summary>
-        /// <param name="element">Elemento a renderizar</param>
-        /// <param name="hasAlpa">True si tiene translucidez</param>
         public void clearAll()
         {
             opaqueList.Clear();
@@ -53,7 +51,7 @@ namespace Trafico.De.Fauna.Utils.Render
         }
 
         /// <summary>
-        /// Agregar un elemento a renderizar a la cola de renderizado
+        ///     Agregar un elemento a renderizar a la cola de renderizado
         /// </summary>
         /// <param name="element">Elemento a renderizar</param>
         /// <param name="hasAlpha">True si tiene translucidez</param>
@@ -70,17 +68,17 @@ namespace Trafico.De.Fauna.Utils.Render
         }
 
         /// <summary>
-        /// Agregar un elemento opaco a renderizar a la cola de renderizado
+        ///     Agregar un elemento opaco a renderizar a la cola de renderizado
         /// </summary>
         /// <param name="element">Elemento opaco a renderizar</param>
         public void addOpaque(IRenderQueueElement element)
         {
             //opaqueList.Add(element);
-            throw new Exception("No usar RenderQueue: " + element.ToString());
+            throw new Exception("No usar RenderQueue: " + element);
         }
 
         /// <summary>
-        /// Agregar un elemento con translucidez a renderizar a la cola de renderizado
+        ///     Agregar un elemento con translucidez a renderizar a la cola de renderizado
         /// </summary>
         /// <param name="element">Elemento translucido a renderizar</param>
         public void addAlpha(IRenderQueueElement element)
@@ -89,7 +87,7 @@ namespace Trafico.De.Fauna.Utils.Render
         }
 
         /// <summary>
-        /// Renderizar todos los elementos de la cola de renderizado
+        ///     Renderizar todos los elementos de la cola de renderizado
         /// </summary>
         public void renderAll(Device d3dDevice, TGCVector3 cameraPos)
         {
@@ -98,12 +96,14 @@ namespace Trafico.De.Fauna.Utils.Render
         }
 
         /// <summary>
-        /// Renderizar elementos con alpha
+        ///     Renderizar elementos con alpha
         /// </summary>
         private void renderAlphaElements(Device d3dDevice, TGCVector3 cameraPos)
         {
             if (alphaList.Count == 0)
+            {
                 return;
+            }
 
             //Ordenar por view-distance
             sortAlphaList(cameraPos);
@@ -113,7 +113,7 @@ namespace Trafico.De.Fauna.Utils.Render
             d3dDevice.RenderState.AlphaTestEnable = true;
 
             //Renderizar objetos con alpha, en orden
-            foreach (IRenderQueueElement element in alphaList)
+            foreach (var element in alphaList)
             {
                 element.executeRender();
             }
@@ -124,37 +124,37 @@ namespace Trafico.De.Fauna.Utils.Render
         }
 
         /// <summary>
-        /// Ordenar elementos con Alpha según view-distance
+        ///     Ordenar elementos con Alpha según view-distance
         /// </summary>
         private void sortAlphaList(TGCVector3 cameraPos)
         {
-            this.elementsViewDistance.Clear();
+            elementsViewDistance.Clear();
 
             //Calcular la distancia cuadrada de cada elemento hacia la cámara
-            foreach (IRenderQueueElement element in alphaList)
+            foreach (var element in alphaList)
             {
-                TGCVector3 v = cameraPos - element.Position;
+                var v = cameraPos - element.Position;
                 elementsViewDistance.Add(element, v.LengthSq());
             }
 
             //Ordenar ascendentemente por view-distance
-            alphaComparer.elementsViewDistance = this.elementsViewDistance;
+            alphaComparer.elementsViewDistance = elementsViewDistance;
             alphaList.Sort(alphaComparer);
         }
 
         /// <summary>
-        /// Renderizar elementos opacos
+        ///     Renderizar elementos opacos
         /// </summary>
         private void renderOpaqueElements(Device d3dDevice)
         {
-            foreach (IRenderQueueElement element in opaqueList)
+            foreach (var element in opaqueList)
             {
                 element.executeRender();
             }
         }
 
         /// <summary>
-        /// Comparardor de view-distance para elementos con Alpha.
+        ///     Comparardor de view-distance para elementos con Alpha.
         /// </summary>
         private class AlphaElementComparer : Comparer<IRenderQueueElement>
         {
@@ -162,8 +162,8 @@ namespace Trafico.De.Fauna.Utils.Render
 
             public override int Compare(IRenderQueueElement x, IRenderQueueElement y)
             {
-                float distX = elementsViewDistance[x];
-                float distY = elementsViewDistance[y];
+                var distX = elementsViewDistance[x];
+                var distY = elementsViewDistance[y];
                 return distX.CompareTo(distY);
             }
         }

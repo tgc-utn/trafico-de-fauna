@@ -18,71 +18,65 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System.Drawing;
-using System.Drawing.Text;
-using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectInput;
-using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Core.Textures;
 using Trafico.De.Fauna.Model.Interpolators;
 using Trafico.De.Fauna.Model.ItemsAnimal;
-using Trafico.De.Fauna.Model.Levels;
-using Trafico.De.Fauna.Model.MainCharacters;
 using Device = Microsoft.DirectX.Direct3D.Device;
 using SystemFont = System.Drawing.Font;
 
 namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
-    /// Controles visuales del juego
+    ///     Controles visuales del juego
     /// </summary>
     public class HUD
     {
-        readonly TGCVector2 SCREEN_CENTRAL_POS;
+        private readonly Drawer2D drawer2D;
+        private readonly Position2dInterpolator interpoladorBananaAgarrada;
+        private readonly Position2dInterpolator interpoladorItemAnimalLiberado;
+        private readonly Position2dInterpolator interpoladorLifeAgarrada;
+        private readonly Position2dInterpolator interpoladorVariasBananasAgarradas;
+        private readonly TGCVector2 SCREEN_CENTRAL_POS;
+        private readonly GameSprite spriteBananaAgarrada;
+        private readonly GameSprite spriteContadorBananas;
+        private readonly GameSprite spriteItemAnimal;
+        private readonly GameSprite spriteItemAnimalLiberado;
+        private readonly GameSprite spriteLife;
+        private readonly GameSprite spriteLifeAgarrada;
+        private readonly GameSprite spriteLlaveAmarilla;
+        private readonly GameSprite spriteLlaveRoja;
+        private readonly GameSprite spriteLlaveVerde;
+        private readonly GameSprite spriteVariasBananasAgarradas;
 
-        TgcText2D textoContadorBananas;
-        TgcText2D textoContadorItemsAnimal;
-        TgcText2D textoContadorVidas;
-        GameSprite spriteLlaveRoja;
-        GameSprite spriteLlaveVerde;
-        GameSprite spriteLlaveAmarilla;
-        GameSprite spriteContadorBananas;
-        GameSprite spriteBananaAgarrada;
-        GameSprite spriteVariasBananasAgarradas;
-        GameSprite spriteLife;
-        GameSprite spriteLifeAgarrada;
-        GameSprite spriteItemAnimal;
-        GameSprite spriteItemAnimalLiberado;
-        Drawer2D drawer2D;
-        Position2dInterpolator interpoladorBananaAgarrada;
-        Position2dInterpolator interpoladorVariasBananasAgarradas;
-        Position2dInterpolator interpoladorLifeAgarrada;
-        Position2dInterpolator interpoladorItemAnimalLiberado;
-        TgcText2D textoCurrentSectorName;
-
+        private readonly TGCText2D textoContadorBananas;
+        private readonly TGCText2D textoContadorItemsAnimal;
+        private readonly TGCText2D textoContadorVidas;
+        private readonly TGCText2D textoCurrentSectorName;
 
         public HUD(Device device)
         {
-            int width = device.Viewport.Width;
-            int height = device.Viewport.Height;
+            var width = device.Viewport.Width;
+            var height = device.Viewport.Height;
             SCREEN_CENTRAL_POS = new TGCVector2(width / 2, height / 2);
 
-            string hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
+            var hudPath = GameModel.instance.gameConfig.menuPath + "HUD\\";
             drawer2D = new Drawer2D(device);
 
             //Cargar fuente
-            SystemFont font = new SystemFont("JungleFever", 20, FontStyle.Regular, GraphicsUnit.Pixel);
-            
+            var font = GameFonts.JungleFever(24);
+
             //Sprite para contador de bananas
             spriteContadorBananas = new GameSprite();
-            spriteContadorBananas.Texture = TgcTexture.createTexture(device, hudPath + "hud_bananas.png");
+            spriteContadorBananas.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_bananas.png");
             spriteContadorBananas.Position = new TGCVector2(2, 2);
 
             //Contador de bananas
-            textoContadorBananas = new TgcText2D();
+            textoContadorBananas = new TGCText2D();
             textoContadorBananas.Color = Color.White;
-            textoContadorBananas.Align = TgcText2D.TextAlign.LEFT;
+            textoContadorBananas.Align = TGCText2D.TextAlign.LEFT;
             textoContadorBananas.Position = new Point(64 + 5, 20);
             textoContadorBananas.Size = new Size(200, 100);
             textoContadorBananas.Text = ": 0";
@@ -90,13 +84,13 @@ namespace Trafico.De.Fauna.Model.Menu
 
             //Sprite items animal liberados
             spriteItemAnimal = new GameSprite();
-            spriteItemAnimal.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
+            spriteItemAnimal.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_items_animal.png");
             spriteItemAnimal.Position = new TGCVector2(width - 64 - 180, 2);
 
             //Contador de items animal liberados
-            textoContadorItemsAnimal = new TgcText2D();
+            textoContadorItemsAnimal = new TGCText2D();
             textoContadorItemsAnimal.Color = Color.White;
-            textoContadorItemsAnimal.Align = TgcText2D.TextAlign.LEFT;
+            textoContadorItemsAnimal.Align = TGCText2D.TextAlign.LEFT;
             textoContadorItemsAnimal.Position = new Point(width - 160, 20);
             textoContadorItemsAnimal.Size = new Size(150, 100);
             textoContadorItemsAnimal.Text = ": 0";
@@ -104,13 +98,13 @@ namespace Trafico.De.Fauna.Model.Menu
 
             //Sprite para vidas
             spriteLife = new GameSprite();
-            spriteLife.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
+            spriteLife.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_life.png");
             spriteLife.Position = new TGCVector2(width / 2 - 32, 2);
 
             //Contador de vidas del personaje
-            textoContadorVidas = new TgcText2D();
+            textoContadorVidas = new TGCText2D();
             textoContadorVidas.Color = Color.White;
-            textoContadorVidas.Align = TgcText2D.TextAlign.LEFT;
+            textoContadorVidas.Align = TGCText2D.TextAlign.LEFT;
             textoContadorVidas.Position = new Point(width / 2 + 36, 20);
             textoContadorVidas.Size = new Size(100, 100);
             textoContadorVidas.Text = ": 0";
@@ -118,11 +112,12 @@ namespace Trafico.De.Fauna.Model.Menu
 
             //Sprite para cuando se agarra una banana
             spriteBananaAgarrada = new GameSprite();
-            spriteBananaAgarrada.Texture = TgcTexture.createTexture(device, hudPath + "hud_banana_agarrada.png");
+            spriteBananaAgarrada.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_banana_agarrada.png");
             spriteBananaAgarrada.Position = spriteContadorBananas.Position;
             spriteBananaAgarrada.Enabled = false;
             spriteVariasBananasAgarradas = new GameSprite();
-            spriteVariasBananasAgarradas.Texture = TgcTexture.createTexture(device, hudPath + "hud_varias_bananas_agarradas.png");
+            spriteVariasBananasAgarradas.Texture =
+                TGCTexture.CreateTexture(device, hudPath + "hud_varias_bananas_agarradas.png");
             spriteVariasBananasAgarradas.Position = spriteContadorBananas.Position;
             spriteVariasBananasAgarradas.Enabled = false;
 
@@ -133,10 +128,10 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorVariasBananasAgarradas = new Position2dInterpolator();
             interpoladorVariasBananasAgarradas.End = spriteContadorBananas.Position;
             interpoladorVariasBananasAgarradas.Speed = 1500f;
-            
+
             //Sprite para cuando se agarra una vida
             spriteLifeAgarrada = new GameSprite();
-            spriteLifeAgarrada.Texture = TgcTexture.createTexture(device, hudPath + "hud_life.png");
+            spriteLifeAgarrada.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_life.png");
             spriteLifeAgarrada.Position = spriteLife.Position;
             spriteLifeAgarrada.Enabled = false;
 
@@ -144,10 +139,10 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorLifeAgarrada = new Position2dInterpolator();
             interpoladorLifeAgarrada.End = spriteLife.Position;
             interpoladorLifeAgarrada.Speed = 400f;
-            
+
             //Sprite para cuando se libera un item animal
             spriteItemAnimalLiberado = new GameSprite();
-            spriteItemAnimalLiberado.Texture = TgcTexture.createTexture(device, hudPath + "hud_items_animal.png");
+            spriteItemAnimalLiberado.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_items_animal.png");
             spriteItemAnimalLiberado.Position = spriteLife.Position;
             spriteItemAnimalLiberado.Enabled = false;
 
@@ -155,27 +150,26 @@ namespace Trafico.De.Fauna.Model.Menu
             interpoladorItemAnimalLiberado = new Position2dInterpolator();
             interpoladorItemAnimalLiberado.End = spriteItemAnimal.Position;
             interpoladorItemAnimalLiberado.Speed = 1000f;
-            
+
             //Sprite de llave roja
             spriteLlaveRoja = new GameSprite();
-            spriteLlaveRoja.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_roja.png");
+            spriteLlaveRoja.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_llave_roja.png");
             spriteLlaveRoja.Position = new TGCVector2(width - 70, 100);
 
             //Sprite de llave verde
             spriteLlaveVerde = new GameSprite();
-            spriteLlaveVerde.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_verde.png");
+            spriteLlaveVerde.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_llave_verde.png");
             spriteLlaveVerde.Position = new TGCVector2(width - 70, 140);
 
             //Sprite de llave amarilla
             spriteLlaveAmarilla = new GameSprite();
-            spriteLlaveAmarilla.Texture = TgcTexture.createTexture(device, hudPath + "hud_llave_amarilla.png");
+            spriteLlaveAmarilla.Texture = TGCTexture.CreateTexture(device, hudPath + "hud_llave_amarilla.png");
             spriteLlaveAmarilla.Position = new TGCVector2(width - 70, 180);
 
-            
             //Texto con el nombre del sector actual
-            textoCurrentSectorName = new TgcText2D();
+            textoCurrentSectorName = new TGCText2D();
             textoCurrentSectorName.Color = Color.White;
-            textoCurrentSectorName.Align = TgcText2D.TextAlign.LEFT;
+            textoCurrentSectorName.Align = TGCText2D.TextAlign.LEFT;
             textoCurrentSectorName.Position = new Point(50, height - 50);
             textoCurrentSectorName.Size = new Size(500, 50);
             textoCurrentSectorName.Text = ": 0";
@@ -183,19 +177,18 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Actualizar estado de HUD
+        ///     Actualizar estado de HUD
         /// </summary>
         public void update(float elapsedTime)
         {
             //Salir al menu
-            TgcD3dInput d3dInput = GameModel.instance.Input;
+            var d3dInput = GameModel.instance.Input;
             if (d3dInput.keyPressed(Key.Escape))
             {
-                GameModel.instance.currentGameMode = GameModel.GameMode.Menu;
+                GameModel.instance.currentGameMode = GameMode.Menu;
             }
 
-
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var mainCharacter = GameModel.instance.mainCharacter;
 
             //Contador de bananas
             textoContadorBananas.Text = ": " + mainCharacter.BananasAgarradas;
@@ -209,6 +202,7 @@ namespace Trafico.De.Fauna.Model.Menu
                     spriteBananaAgarrada.Enabled = false;
                 }
             }
+
             if (spriteVariasBananasAgarradas.Enabled)
             {
                 spriteVariasBananasAgarradas.Position = interpoladorVariasBananasAgarradas.update(elapsedTime);
@@ -227,6 +221,7 @@ namespace Trafico.De.Fauna.Model.Menu
                     spriteLifeAgarrada.Enabled = false;
                 }
             }
+
             //Item animal liberado
             if (spriteItemAnimalLiberado.Enabled)
             {
@@ -236,9 +231,10 @@ namespace Trafico.De.Fauna.Model.Menu
                     spriteItemAnimalLiberado.Enabled = false;
                 }
             }
-            
+
             //Contador de items animal liberados
-            textoContadorItemsAnimal.Text = ": " + mainCharacter.ItemsAnimalLiberados + "/" + GameModel.instance.currentLevel.TotalItemsAnimal;
+            textoContadorItemsAnimal.Text = ": " + mainCharacter.ItemsAnimalLiberados + "/" +
+                                            GameModel.instance.currentLevel.TotalItemsAnimal;
 
             //Vidas
             textoContadorVidas.Text = ": " + mainCharacter.Vidas;
@@ -248,20 +244,20 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Dibujar HUD
+        ///     Dibujar HUD
         /// </summary>
         public void render(Device device)
         {
             //textos
-            textoContadorBananas.render();
-            textoContadorItemsAnimal.render();
-            textoContadorVidas.render();
+            textoContadorBananas.Render();
+            textoContadorItemsAnimal.Render();
+            textoContadorVidas.Render();
 
             //Sprites
             drawer2D.BeginDrawSprite();
 
             //Dibujar las llaves agarradas
-            Level level = GameModel.instance.currentLevel;
+            var level = GameModel.instance.currentLevel;
             Llave llave;
 
             llave = level.getLlave(Llave.ColorType.ROJA);
@@ -269,11 +265,13 @@ namespace Trafico.De.Fauna.Model.Menu
             {
                 drawer2D.DrawSprite(spriteLlaveRoja);
             }
+
             llave = level.getLlave(Llave.ColorType.AMARILLA);
             if (llave != null && llave.Agarrada)
             {
                 drawer2D.DrawSprite(spriteLlaveAmarilla);
             }
+
             llave = level.getLlave(Llave.ColorType.VERDE);
             if (llave != null && llave.Agarrada)
             {
@@ -284,11 +282,11 @@ namespace Trafico.De.Fauna.Model.Menu
             drawer2D.DrawSprite(spriteContadorBananas);
             drawer2D.DrawSprite(spriteLife);
             drawer2D.DrawSprite(spriteItemAnimal);
-            
+
             //animacion de bananas agarradas
             drawer2D.DrawSprite(spriteBananaAgarrada);
             drawer2D.DrawSprite(spriteVariasBananasAgarradas);
-            
+
             //animacion de vidas agarradas
             drawer2D.DrawSprite(spriteLifeAgarrada);
 
@@ -296,21 +294,20 @@ namespace Trafico.De.Fauna.Model.Menu
             drawer2D.DrawSprite(spriteItemAnimalLiberado);
 
             //Nombre de sector actual
-            textoCurrentSectorName.render();
+            textoCurrentSectorName.Render();
 
             drawer2D.EndDrawSprite();
         }
-        
+
         /// <summary>
-        /// Cuando se intenta liberar un Item Animal sin tener su llave aun
+        ///     Cuando se intenta liberar un Item Animal sin tener su llave aun
         /// </summary>
         public void efectoFaltaLlaveParaLiberarItem(ItemAnimal item)
         {
-
         }
 
         /// <summary>
-        /// Cuando se libera satisfactoriamente un Item Animal
+        ///     Cuando se libera satisfactoriamente un Item Animal
         /// </summary>
         public void efectoLiberarItem(ItemAnimal item)
         {
@@ -320,7 +317,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Efecto de agarrar una banana
+        ///     Efecto de agarrar una banana
         /// </summary>
         public void efectoAgarrarBanana()
         {
@@ -330,7 +327,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Efecto de agarrar muchas bananas juntas de una caja de bananas
+        ///     Efecto de agarrar muchas bananas juntas de una caja de bananas
         /// </summary>
         public void efectoAgarrarVariasBananas(int cantidadBananas)
         {
@@ -340,7 +337,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Efecto de ganar una vida
+        ///     Efecto de ganar una vida
         /// </summary>
         public void efectoGanarVida()
         {

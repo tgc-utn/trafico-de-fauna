@@ -26,96 +26,24 @@ using TGC.Core.Textures;
 namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
-    /// Utilidad para Sprites 2D animados en forma de tile dentro de una textura
+    ///     Utilidad para Sprites 2D animados en forma de tile dentro de una textura
     /// </summary>
     public class AnimatedSprite
     {
-        Size frameSize;
-        int totalFrames;
-        float currentTime;
-        float animationTimeLenght;
-        int framesPerRow;
-        int framesPerColumn;
-        float textureWidth;
-        float textureHeight;
+        private readonly float animationTimeLenght;
 
-        private bool enabled;
-        /// <summary>
-        /// Indica si el sprite esta habilitado para ser renderizada
-        /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
+        private float currentTime;
 
-        private bool playing;
-        /// <summary>
-        /// Arrancar o parar avance de animacion
-        /// </summary>
-        public bool Playing
-        {
-            get { return playing; }
-            set { playing = value; }
-        }
+        private Size frameSize;
+        private readonly int framesPerColumn;
+        private readonly int framesPerRow;
 
-        GameSprite sprite;
-        /// <summary>
-        /// Sprite con toda la textura a animar
-        /// </summary>
-        public GameSprite Sprite
-        {
-            get { return sprite; }
-        }
-
-        private float frameRate;
-        /// <summary>
-        /// Velocidad de la animacion medida en cuadros por segundo.
-        /// </summary>
-        public float FrameRate
-        {
-            get { return frameRate; }
-        }
-
-        int currentFrame;
-        /// <summary>
-        /// Frame actual de la textura animada
-        /// </summary>
-        public int CurrentFrame
-        {
-            get { return currentFrame; }
-            set { currentFrame = value; }
-        }
+        private readonly float textureHeight;
+        private readonly float textureWidth;
+        private int totalFrames;
 
         /// <summary>
-        /// Posicion del sprite
-        /// </summary>
-        public TGCVector2 Position
-        {
-            get { return sprite.Position; }
-            set { sprite.Position = value; }
-        }
-
-        /// <summary>
-        /// The scaling factors in the x and y axes.
-        /// </summary>
-        public TGCVector2 Scaling
-        {
-            get { return sprite.Scaling; }
-            set { sprite.Scaling = value; }
-        }
-
-        /// <summary>
-        /// The angle of rotation in radians.
-        /// </summary>
-        public float Rotation
-        {
-            get { return sprite.Rotation; }
-            set { sprite.Rotation = value; }
-        }
-
-        /// <summary>
-        /// Crear un nuevo Sprite animado
+        ///     Crear un nuevo Sprite animado
         /// </summary>
         /// <param name="texturePath">path de la textura animada</param>
         /// <param name="frameSize">tamaño de un tile de la animacion</param>
@@ -123,42 +51,97 @@ namespace Trafico.De.Fauna.Model.Menu
         /// <param name="frameRate">velocidad en cuadros por segundo</param>
         public AnimatedSprite(string texturePath, Size frameSize, int totalFrames, float frameRate)
         {
-            this.enabled = true;
-            this.currentFrame = 0;
+            Enabled = true;
+            CurrentFrame = 0;
             this.frameSize = frameSize;
             this.totalFrames = totalFrames;
-            this.currentTime = 0;
-            this.frameRate = frameRate;
-            this.playing = true;
+            currentTime = 0;
+            this.FrameRate = frameRate;
+            Playing = true;
 
             //Crear textura
             var d3dDevice = D3DDevice.Instance.Device;
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, texturePath);
+            var texture = TGCTexture.CreateTexture(d3dDevice, texturePath);
 
             //GameSprite
-            sprite = new GameSprite();
-            sprite.Texture = texture;
+            Sprite = new GameSprite();
+            Sprite.Texture = texture;
 
             //Calcular valores de frames de la textura
             textureWidth = texture.Width;
             textureHeight = texture.Height;
             framesPerColumn = (int)textureWidth / frameSize.Width;
             framesPerRow = (int)textureHeight / frameSize.Height;
-            int realTotalFrames = framesPerRow * framesPerColumn;
+            var realTotalFrames = framesPerRow * framesPerColumn;
             if (realTotalFrames > totalFrames)
             {
-                throw new Exception("Error en AnimatedSprite. No coinciden la cantidad de frames y el tamaño de la textura: " + totalFrames);
+                throw new Exception(
+                    "Error en AnimatedSprite. No coinciden la cantidad de frames y el tamaño de la textura: " +
+                    totalFrames);
             }
-            animationTimeLenght = (float)totalFrames / frameRate;
+
+            animationTimeLenght = totalFrames / frameRate;
         }
 
         /// <summary>
-        /// Actualizar frame de animacion
+        ///     Indica si el sprite esta habilitado para ser renderizada
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        ///     Arrancar o parar avance de animacion
+        /// </summary>
+        public bool Playing { get; set; }
+
+        /// <summary>
+        ///     Sprite con toda la textura a animar
+        /// </summary>
+        public GameSprite Sprite { get; }
+
+        /// <summary>
+        ///     Velocidad de la animacion medida en cuadros por segundo.
+        /// </summary>
+        public float FrameRate { get; }
+
+        /// <summary>
+        ///     Frame actual de la textura animada
+        /// </summary>
+        public int CurrentFrame { get; set; }
+
+        /// <summary>
+        ///     Posicion del sprite
+        /// </summary>
+        public TGCVector2 Position
+        {
+            get => Sprite.Position;
+            set => Sprite.Position = value;
+        }
+
+        /// <summary>
+        ///     The scaling factors in the x and y axes.
+        /// </summary>
+        public TGCVector2 Scaling
+        {
+            get => Sprite.Scaling;
+            set => Sprite.Scaling = value;
+        }
+
+        /// <summary>
+        ///     The angle of rotation in radians.
+        /// </summary>
+        public float Rotation
+        {
+            get => Sprite.Rotation;
+            set => Sprite.Rotation = value;
+        }
+
+        /// <summary>
+        ///     Actualizar frame de animacion
         /// </summary>
         public void update(float elapsedTime)
         {
             //Avanzar tiempo
-            if (playing)
+            if (Playing)
             {
                 currentTime += elapsedTime;
                 if (currentTime > animationTimeLenght)
@@ -169,17 +152,16 @@ namespace Trafico.De.Fauna.Model.Menu
             }
 
             //Obtener cuadro actual
-            currentFrame = (int)(currentTime * frameRate);
+            CurrentFrame = (int)(currentTime * FrameRate);
 
             //Obtener rectangulo de dibujado de la textura para este frame
-            Rectangle srcRect = new Rectangle();
-            srcRect.Y = frameSize.Width * (currentFrame % framesPerRow);
+            var srcRect = new Rectangle();
+            srcRect.Y = frameSize.Width * (CurrentFrame % framesPerRow);
             srcRect.Width = frameSize.Width;
-            srcRect.X = frameSize.Height * (currentFrame % framesPerColumn);
+            srcRect.X = frameSize.Height * (CurrentFrame % framesPerColumn);
             srcRect.Height = frameSize.Height;
 
-            sprite.SrcRect = srcRect;
+            Sprite.SrcRect = srcRect;
         }
-
     }
 }

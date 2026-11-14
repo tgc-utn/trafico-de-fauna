@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.DirectX.Direct3D;
 using TGC.Core.Camara;
 using TGC.Core.Mathematica;
 
@@ -24,84 +25,60 @@ namespace Trafico.De.Fauna.Model.Camera
 {
     public class GameThirdPersonCamera : TgcCamera
     {
-        static readonly TGCVector3 UP_VECTOR = new TGCVector3(0, 1, 0);
+        private static readonly TGCVector3 UP_VECTOR = new TGCVector3(0, 1, 0);
 
-        float offsetHeight;
-        /// <summary>
-        /// Desplazamiento en altura de la camara respecto del target
-        /// </summary>
-        public float OffsetHeight
-        {
-            get { return offsetHeight; }
-            set { offsetHeight = value; }
-        }
+        private TGCVector3 position;
 
-        float offsetForward;
-        /// <summary>
-        /// Desplazamiento hacia adelante o atras de la camara repecto del target.
-        /// Para que sea hacia atras tiene que ser negativo.
-        /// </summary>
-        public float OffsetForward
-        {
-            get { return offsetForward; }
-            set { offsetForward = value; }
-        }
-
-        TGCVector3 targetDisplacement;
-        /// <summary>
-        /// Desplazamiento final que se le hace al target para acomodar la camara en un cierto
-        /// rincon de la pantalla
-        /// </summary>
-        public TGCVector3 TargetDisplacement
-        {
-            get { return targetDisplacement; }
-            set { targetDisplacement = value; }
-        }
-
-        TGCMatrix viewTGCMatrix;
-
-        float rotationY;
-        /// <summary>
-        /// Rotacion absoluta en Y de la camara
-        /// </summary>
-        public float RotationY
-        {
-            get { return rotationY; }
-            set { rotationY = value; }
-        }
-
-        TGCVector3 target;
-        /// <summary>
-        /// Objetivo al cual la camara tiene que apuntar
-        /// </summary>
-        public TGCVector3 Target
-        {
-            get { return target; }
-            set { target = value; }
-        }
-
-        TGCVector3 position;
-        /// <summary>
-        /// Posicion del ojo de la camara
-        /// </summary>
-        public TGCVector3 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
+        private TGCMatrix viewTGCMatrix;
 
         public GameThirdPersonCamera()
         {
-            offsetHeight = 20;
-            offsetForward = -120;
-            rotationY = 0;
-            targetDisplacement = TGCVector3.Empty;
-            target = TGCVector3.Empty;
+            OffsetHeight = 20;
+            OffsetForward = -120;
+            RotationY = 0;
+            TargetDisplacement = TGCVector3.Empty;
+            Target = TGCVector3.Empty;
             position = TGCVector3.Empty;
         }
 
         /// <summary>
-        /// Genera la proxima matriz de view, sin actualizar aun los valores internos
+        ///     Desplazamiento en altura de la camara respecto del target
+        /// </summary>
+        public float OffsetHeight { get; set; }
+
+        /// <summary>
+        ///     Desplazamiento hacia adelante o atras de la camara repecto del target.
+        ///     Para que sea hacia atras tiene que ser negativo.
+        /// </summary>
+        public float OffsetForward { get; set; }
+
+        /// <summary>
+        ///     Desplazamiento final que se le hace al target para acomodar la camara en un cierto
+        ///     rincon de la pantalla
+        /// </summary>
+        public TGCVector3 TargetDisplacement { get; set; }
+
+        /// <summary>
+        ///     Rotacion absoluta en Y de la camara
+        /// </summary>
+        public float RotationY { get; set; }
+
+        /// <summary>
+        ///     Objetivo al cual la camara tiene que apuntar
+        /// </summary>
+        public TGCVector3 Target { get; set; }
+
+        /// <summary>
+        ///     Posicion del ojo de la camara
+        /// </summary>
+        public TGCVector3 Position
+        {
+            get => position;
+            set => position = value;
+        }
+
+        /// <summary>
+        ///     Genera la proxima matriz de view, sin actualizar aun los valores internos
         /// </summary>
         /// <param name="pos">Futura posicion de camara generada</param>
         /// <param name="pos">Futuro centro de camara a generada</param>
@@ -109,8 +86,9 @@ namespace Trafico.De.Fauna.Model.Camera
         public TGCMatrix generateViewMatrix(out TGCVector3 pos, out TGCVector3 targetCenter)
         {
             //alejarse, luego rotar y lueg ubicar camara en el centro deseado
-            targetCenter = TGCVector3.Add(target, targetDisplacement);
-            TGCMatrix m = TGCMatrix.Translation(0, offsetHeight, offsetForward) * TGCMatrix.RotationY(rotationY) * TGCMatrix.Translation(targetCenter);
+            targetCenter = TGCVector3.Add(Target, TargetDisplacement);
+            var m = TGCMatrix.Translation(0, OffsetHeight, OffsetForward) * TGCMatrix.RotationY(RotationY) *
+                    TGCMatrix.Translation(targetCenter);
 
             //Extraer la posicion final de la matriz de transformacion
             pos = new TGCVector3(m.M41, m.M42, m.M43);
@@ -122,16 +100,16 @@ namespace Trafico.De.Fauna.Model.Camera
         public override void UpdateCamera(float elapsedTime)
         {
             TGCVector3 targetCenter;
-            viewTGCMatrix = generateViewMatrix(out position, out targetCenter); 
+            viewTGCMatrix = generateViewMatrix(out position, out targetCenter);
         }
 
         /// <summary>
-        /// Rotar la camara respecto del eje Y
+        ///     Rotar la camara respecto del eje Y
         /// </summary>
         /// <param name="angle">Ángulo de rotación en radianes</param>
         public void rotateY(float angle)
         {
-            rotationY += angle;
+            RotationY += angle;
         }
 
         public TGCVector3 getPosition()
@@ -141,13 +119,12 @@ namespace Trafico.De.Fauna.Model.Camera
 
         public TGCVector3 getLookAt()
         {
-            return target;
+            return Target;
         }
 
-        public void updateViewMatrix(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        public void updateViewMatrix(Device d3dDevice)
         {
             d3dDevice.Transform.View = viewTGCMatrix;
         }
-
     }
 }

@@ -1,12 +1,9 @@
 <config>
 
-
 	<levels>
-		<level name="Level1-SelvaMisionera" sectorInicial="Sector-Area1" conectorInicial="Conector_area1_inicial"/> 
+		<level name="Level1-SelvaMisionera" sectorInicial="Sector-Area1" conectorInicial="Conector_area1_inicial" />
 	</levels>
-	
-	
-	
+
 	<fisica>
 		<velocidadCaminar>210</velocidadCaminar>
 		<velocidadCargandoEsconditeMovil>70</velocidadCargandoEsconditeMovil>
@@ -19,13 +16,13 @@
 		<boundingSphereAgachadoCenterY>10</boundingSphereAgachadoCenterY>
 		<boundingSphereRadio>15</boundingSphereRadio>
 		<boundingSphereRadioAgachado>10</boundingSphereRadioAgachado>
-		<boundingSphereDebug>1</boundingSphereDebug>
+		<boundingSphereDebug>0</boundingSphereDebug>
 		<anguloSalto>45</anguloSalto>
 		<anguloGolpe>45</anguloGolpe>
 		<frecuenciaSonidoCorrer>0.1</frecuenciaSonidoCorrer>
 		<frecuenciaSonidoCaminar>0.1</frecuenciaSonidoCaminar>
 	</fisica>
-	
+
 	<camara>
 		<offsetY>15</offsetY>
 		<offsetZ>-98</offsetZ>
@@ -36,7 +33,7 @@
 		<facingBackwardOffsetZ>-105</facingBackwardOffsetZ>
 		<facingBackwardMinOffsetZ>1</facingBackwardMinOffsetZ>
 	</camara>
-	
+
 	<guardia>
 		<duracionSegundosVigilancia>7</duracionSegundosVigilancia>
 		<velocidadCaminar>100</velocidadCaminar>
@@ -51,7 +48,7 @@
 		<alturaVision>30</alturaVision>
 		<alturaVisionAgachado>15</alturaVisionAgachado>
 	</guardia>
-	
+
 	<keys>
 		<forward>UpArrow</forward>
 		<backward>DownArrow</backward>

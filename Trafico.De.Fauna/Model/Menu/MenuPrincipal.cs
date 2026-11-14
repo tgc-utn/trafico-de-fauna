@@ -29,39 +29,30 @@ using Device = Microsoft.DirectX.Direct3D.Device;
 namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
-    /// Menu principal del juego
+    ///     Menu principal del juego
     /// </summary>
     public class MenuPrincipal
     {
-        static readonly TGCVector2 ITEM_JUGAR_POSITION = new TGCVector2(390, 412 - 15);
-        static readonly TGCVector2 ITEM_OPCIONES_POSITION = new TGCVector2(390, 469 - 15);
-        static readonly TGCVector2 ITEM_SALIR_POSITION = new TGCVector2(390, 525 - 15);
+        private static readonly TGCVector2 ITEM_JUGAR_POSITION = new TGCVector2(390, 412 - 15);
+        private static readonly TGCVector2 ITEM_OPCIONES_POSITION = new TGCVector2(390, 469 - 15);
+        private static readonly TGCVector2 ITEM_SALIR_POSITION = new TGCVector2(390, 525 - 15);
 
-        static readonly TGCVector2[] ITEMS_POSITION = new TGCVector2[]{
+        private static readonly TGCVector2[] ITEMS_POSITION =
+        {
             ITEM_JUGAR_POSITION,
             ITEM_OPCIONES_POSITION,
             ITEM_SALIR_POSITION
         };
 
-        Drawer2D drawer2D;
-        GameSprite background;
-        GameSprite backgroundControls;
-        GameSprite selectedItem;
-        int currentOption;
-        bool gameStarted;
-        bool loadingFistLevel;
-        bool showingControls;
-        Temporizador temporizadorLoading;
-
-        GameSprite backgroundLoading;
-        /// <summary>
-        /// Background de Loading
-        /// </summary>
-        public GameSprite BackgroundLoading
-        {
-            get { return backgroundLoading; }
-        }
-
+        private readonly GameSprite background;
+        private readonly GameSprite backgroundControls;
+        private readonly Drawer2D drawer2D;
+        private readonly GameSprite selectedItem;
+        private readonly Temporizador temporizadorLoading;
+        private int currentOption;
+        private bool gameStarted;
+        private bool loadingFistLevel;
+        private bool showingControls;
 
         public MenuPrincipal(Device d3dDevice)
         {
@@ -70,35 +61,38 @@ namespace Trafico.De.Fauna.Model.Menu
             loadingFistLevel = false;
             showingControls = false;
 
-            int width = d3dDevice.Viewport.Width;
-            int height = d3dDevice.Viewport.Height;
-            string menuPath = GameModel.instance.gameConfig.menuPath;
+            var width = d3dDevice.Viewport.Width;
+            var height = d3dDevice.Viewport.Height;
+            var menuPath = GameModel.instance.gameConfig.menuPath;
 
             //Ocultar cursor del mouse
             Cursor.Hide();
 
             //background
             background = new GameSprite();
-            Texture d3dTexture = TextureLoader.FromFile(d3dDevice, menuPath + "menu_background.jpg", 1024, 600, 1, 
+            var d3dTexture = TextureLoader.FromFile(d3dDevice, menuPath + "menu_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            background.Texture = TgcTexture.createTexture(d3dDevice, "menu_background", menuPath + "menu_background.jpg", d3dTexture);
+            background.Texture = TGCTexture.CreateTexture(d3dDevice, "menu_background",
+                menuPath + "menu_background.jpg", d3dTexture);
 
             //background loading
-            backgroundLoading = new GameSprite();
-            Texture d3dTextureLoading = TextureLoader.FromFile(d3dDevice, menuPath + "loading_background.jpg", 1024, 600, 1,
+            BackgroundLoading = new GameSprite();
+            var d3dTextureLoading = TextureLoader.FromFile(d3dDevice, menuPath + "loading_background.jpg", 1024, 600, 1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundLoading.Texture = TgcTexture.createTexture(d3dDevice, "loading_background", menuPath + "loading_background.jpg", d3dTextureLoading);
+            BackgroundLoading.Texture = TGCTexture.CreateTexture(d3dDevice, "loading_background",
+                menuPath + "loading_background.jpg", d3dTextureLoading);
 
             //background controls
             backgroundControls = new GameSprite();
-            Texture d3dTextureControls = TextureLoader.FromFile(d3dDevice, menuPath + "controls_background.jpg", 1024, 600, 1,
+            var d3dTextureControls = TextureLoader.FromFile(d3dDevice, menuPath + "controls_background.jpg", 1024, 600,
+                1,
                 Usage.None, Format.R8G8B8, Pool.Default, Filter.None, Filter.None, 0);
-            backgroundControls.Texture = TgcTexture.createTexture(d3dDevice, "controls_background", menuPath + "controls_background.jpg", d3dTextureControls);
-
+            backgroundControls.Texture = TGCTexture.CreateTexture(d3dDevice, "controls_background",
+                menuPath + "controls_background.jpg", d3dTextureControls);
 
             //selectedItem
             selectedItem = new GameSprite();
-            selectedItem.Texture = TgcTexture.createTexture(d3dDevice, menuPath + "menu_selected_item.png");
+            selectedItem.Texture = TGCTexture.CreateTexture(d3dDevice, menuPath + "menu_selected_item.png");
             currentOption = 0;
             selectedItem.Position = ITEMS_POSITION[currentOption];
 
@@ -107,7 +101,12 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Arrancar menu
+        ///     Background de Loading
+        /// </summary>
+        public GameSprite BackgroundLoading { get; }
+
+        /// <summary>
+        ///     Arrancar menu
         /// </summary>
         public void init()
         {
@@ -115,101 +114,115 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Dibujar menu
+        ///     Actualizar menu
         /// </summary>
-        public void render(Device device, TgcD3dInput input)
+        public void update(TgcD3dInput input)
         {
             //Cargando la primera vez
             if (loadingFistLevel)
             {
-                if(temporizadorLoading.update(GameModel.instance.ElapsedTime))
-                {
-                    //Cargar nivel
-                    loadingFistLevel = false;
-                    gameStarted = true;
-                    GameModel.instance.loadFirstLevel();
-                }
-                else
-                {
-                    //dibujar
-                    device.BeginScene();
-                    drawer2D.DrawSpriteAtomic(backgroundLoading);
-                    device.EndScene();
-                }
+                return;
             }
+
             //Controles
-            else if (showingControls)
+            if (showingControls)
             {
                 //Volver al menu
                 if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space) || input.keyPressed(Key.Escape))
                 {
                     showingControls = false;
                 }
-                //Dibujar
+
+                return;
+            }
+
+            //Quitar almenu y volver al juego
+            if (gameStarted && input.keyPressed(Key.Escape))
+            {
+                returnToGame();
+            }
+
+            //Seleccionar opcion
+            if (input.keyPressed(Key.Up))
+            {
+                currentOption--;
+                if (currentOption < 0)
+                {
+                    currentOption = 0;
+                }
+            }
+            else if (input.keyPressed(Key.Down))
+            {
+                currentOption++;
+                currentOption = currentOption % ITEMS_POSITION.Length;
+            }
+
+            //Seleccionar opcion
+            if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space))
+            {
+                //Cargar primer nivel
+                if (currentOption == 0)
+                {
+                    //Si el juego ya empezo, solo ocultar el menu y volver al juego
+                    if (gameStarted)
+                    {
+                        returnToGame();
+                    }
+                    //Si no empezo, cargar primer nivel
+                    else
+                    {
+                        showingControls = false;
+                        loadingFistLevel = true;
+                    }
+                }
+                //Opciones
+                else if (currentOption == 1)
+                {
+                    showingControls = true;
+                }
+                //Salir
+                else if (currentOption == 2)
+                {
+                    Application.Exit();
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Dibujar menu
+        /// </summary>
+        public void render(Device device)
+        {
+            //Cargando la primera vez
+            if (loadingFistLevel)
+            {
+                if (temporizadorLoading.update(GameModel.instance.ElapsedTime))
+                {
+                    //Cargar nivel
+                    loadingFistLevel = false;
+                    gameStarted = true;
+                    GameModel.instance.LoadFirstLevel();
+                }
                 else
                 {
                     //dibujar
                     device.BeginScene();
-                    drawer2D.DrawSpriteAtomic(backgroundControls);
+                    drawer2D.DrawSpriteAtomic(BackgroundLoading);
                     device.EndScene();
                 }
+            }
+            //Controles
+            else if (showingControls)
+            {
+                //dibujar
+                device.BeginScene();
+                drawer2D.DrawSpriteAtomic(backgroundControls);
+                device.EndScene();
             }
             //Normal
             else
             {
-                //Quitar almenu y volver al juego
-                if (gameStarted && input.keyPressed(Key.Escape))
-                {
-                    returnToGame();
-                }
-
-                //Seleccionar opcion
-                if (input.keyPressed(Key.Up))
-                {
-                    currentOption--;
-                    if (currentOption < 0)
-                    {
-                        currentOption = 0;
-                    }
-                }
-                else if (input.keyPressed(Key.Down))
-                {
-                    currentOption++;
-                    currentOption = currentOption % ITEMS_POSITION.Length;
-                }
                 selectedItem.Position = ITEMS_POSITION[currentOption];
-
-                //Seleccionar opcion
-                if (input.keyPressed(Key.Return) || input.keyPressed(Key.Space))
-                {
-                    //Cargar primer nivel
-                    if (currentOption == 0)
-                    {
-                        //Si el juego ya empezo, solo ocultar el menu y volver al juego
-                        if (gameStarted)
-                        {
-                            returnToGame();
-                        }
-                        //Si no empezo, cargar primer nivel
-                        else
-                        {
-                            showingControls = false;
-                            loadingFistLevel = true;
-                        }
-
-                    }
-                    //Opciones
-                    else if (currentOption == 1)
-                    {
-                        showingControls = true;
-                    }
-                    //Salir
-                    else if (currentOption == 2)
-                    {
-                        Application.Exit();
-                        return;
-                    }
-                }
 
                 //dibujar
                 device.BeginScene();
@@ -224,13 +237,12 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Continuar con el juego ya arrancado
+        ///     Continuar con el juego ya arrancado
         /// </summary>
         private void returnToGame()
         {
             showingControls = false;
-            GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
+            GameModel.instance.currentGameMode = GameMode.Playing;
         }
-
     }
 }

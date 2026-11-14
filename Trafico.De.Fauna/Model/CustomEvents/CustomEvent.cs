@@ -23,62 +23,56 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.CustomEvents
 {
     /// <summary>
-    /// Evento personalizado que se ejecuta en un sector bajo sus propias condiciones.
-    /// Se posiciona en el sector. Puede tener sus propias propiedades.
+    ///     Evento personalizado que se ejecuta en un sector bajo sus propias condiciones.
+    ///     Se posiciona en el sector. Puede tener sus propias propiedades.
     /// </summary>
     public abstract class CustomEvent
     {
-        bool enabled = true;
         /// <summary>
-        /// Habilitar evento
+        ///     Habilitar evento
         /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// Creacion de instancia del evento
+        ///     Creacion de instancia del evento
         /// </summary>
         public abstract void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData);
 
         /// <summary>
-        /// Iniciar evento en sector
+        ///     Iniciar evento en sector
         /// </summary>
         public abstract void init();
 
         /// <summary>
-        /// Finalizar evento al salir del sector
+        ///     Finalizar evento al salir del sector
         /// </summary>
         public abstract void end();
 
         /// <summary>
-        /// Actualizar estado del evento en cada cuadro
+        ///     Actualizar estado del evento en cada cuadro
         /// </summary>
         public abstract void update(float elapsedTime);
 
         /// <summary>
-        /// Dibujar evento. Se llama luego de update.
+        ///     Dibujar evento. Se llama luego de update.
         /// </summary>
         public abstract void render();
 
         /// <summary>
-        /// Dibujar en modo debug.
+        ///     Dibujar en modo debug.
         /// </summary>
         public abstract void renderDebug();
 
         /// <summary>
-        /// Devolver el objeto colisionable del CustomMesh para que 
-        /// participe en la deteccion de colisiones del personaje.
-        /// Si no necesita, devolver null.
+        ///     Devolver el objeto colisionable del CustomMesh para que
+        ///     participe en la deteccion de colisiones del personaje.
+        ///     Si no necesita, devolver null.
         /// </summary>
         public abstract ColliderObject getColliderObject();
 
         /// <summary>
-        /// Liberar todos los recursos
+        ///     Liberar todos los recursos
         /// </summary>
         public abstract void dispose();
-
     }
 }

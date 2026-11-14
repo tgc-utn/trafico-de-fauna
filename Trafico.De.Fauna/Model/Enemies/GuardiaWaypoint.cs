@@ -25,74 +25,54 @@ namespace Trafico.De.Fauna.Model.Enemies
 {
     public class GuardiaWaypoint
     {
-        Guardia guardia;
-        public Guardia Guardia
-        {
-            get { return guardia; }
-        }
-
-        TGCVector3 center;
-        public TGCVector3 Center
-        {
-            get { return center; }
-        }
-
-        int index;
-        public int Index
-        {
-            get { return index; }
-        }
-
-        bool vigilar;
-        public bool Vigilar
-        {
-            get { return vigilar; }
-        }
-
-        TgcBoundingSphere bsphere;
-        /// <summary>
-        /// BSphere debug
-        /// </summary>
-        public TgcBoundingSphere Bsphere
-        {
-            get { return bsphere; }
-            set { bsphere = value; }
-        }
+        private TGCVector3 center;
 
         public GuardiaWaypoint(Guardia guardia, TGCVector3 center, int index, Dictionary<string, string> userProperties)
         {
-            this.guardia = guardia;
+            Guardia = guardia;
             this.center = center;
-            this.index = index;
-            bsphere = new TgcBoundingSphere(center, 15);
+            Index = index;
+            Bsphere = new TgcBoundingSphere(center, 15);
 
             if (GameUtils.containsUserProp(userProperties, "vigilar"))
             {
-                vigilar = bool.Parse(userProperties["vigilar"]);
+                Vigilar = bool.Parse(userProperties["vigilar"]);
             }
             else
             {
-                vigilar = false;
+                Vigilar = false;
             }
         }
 
+        public Guardia Guardia { get; }
+
+        public TGCVector3 Center => center;
+
+        public int Index { get; }
+
+        public bool Vigilar { get; }
+
+        /// <summary>
+        ///     BSphere debug
+        /// </summary>
+        public TgcBoundingSphere Bsphere { get; set; }
+
         public void setCenterY(float y)
         {
-            this.center.Y = y;
+            center.Y = y;
+        }
+
+        public void dispose()
+        {
+            Bsphere.Dispose();
         }
 
         public class WaypointComparer : IComparer<GuardiaWaypoint>
         {
             public int Compare(GuardiaWaypoint x, GuardiaWaypoint y)
             {
-                return x.index.CompareTo(y.index);
+                return x.Index.CompareTo(y.Index);
             }
         }
-
-        public void dispose()
-        {
-            bsphere.Dispose();
-        }
-
     }
 }

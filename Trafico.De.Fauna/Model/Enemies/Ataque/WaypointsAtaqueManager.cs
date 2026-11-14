@@ -26,114 +26,109 @@ using TGC.Core.SceneLoader;
 namespace Trafico.De.Fauna.Model.Enemies.Ataque
 {
     /// <summary>
-    /// Utilidad para manejar todos los Waypoints que se usan para cuando los Guardias atacan
+    ///     Utilidad para manejar todos los Waypoints que se usan para cuando los Guardias atacan
     /// </summary>
     public class WaypointsAtaqueManager
     {
-
-        List<WaypointAtaque> waypoints;
-        /// <summary>
-        /// Waypoints
-        /// </summary>
-        public List<WaypointAtaque> Waypoints
-        {
-            get { return waypoints; }
-        }
-
-
-        List<WaypointAtaqueArista> aristas;
+        private List<WaypointAtaqueArista> aristas;
 
 
         public WaypointsAtaqueManager()
         {
-            waypoints = new List<WaypointAtaque>();
+            Waypoints = new List<WaypointAtaque>();
             aristas = new List<WaypointAtaqueArista>();
         }
 
         /// <summary>
-        /// Cargar un nodo de Waypoint de ataque
+        ///     Waypoints
+        /// </summary>
+        public List<WaypointAtaque> Waypoints { get; private set; }
+
+        /// <summary>
+        ///     Cargar un nodo de Waypoint de ataque
         /// </summary>
         public void addNode(TgcMeshData meshDataNode)
         {
             //Nombre: Waypont_1 o Waypoint_2
-            string[] split = meshDataNode.name.Split('_');
+            var split = meshDataNode.name.Split('_');
             if (split.Length != 2)
             {
                 throw new Exception("Objeto en layer WaypointsAtaque con nombre icorrecto: " + meshDataNode.name);
             }
 
-            int index = int.Parse(split[1]);
-            TGCVector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
+            var index = int.Parse(split[1]);
+            var nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
             nodeCenter.Y = 0;
 
             //Crear waypoint
-            WaypointAtaque waypoint = new WaypointAtaque(meshDataNode.name, nodeCenter, index);
-            this.waypoints.Add(waypoint);
+            var waypoint = new WaypointAtaque(meshDataNode.name, nodeCenter, index);
+            Waypoints.Add(waypoint);
         }
 
         /// <summary>
-        /// Organizar waypoints cargados
+        ///     Organizar waypoints cargados
         /// </summary>
         public void arrangeNodes()
         {
-            if (waypoints.Count == 1)
+            if (Waypoints.Count == 1)
             {
                 throw new Exception("Hay solo un WaypointAtaque, tiene que haber dos o mas o ninguno.");
             }
 
             //Ordenar waypoints por indice ascendente
-            waypoints.Sort(new WaypointAtaque.WaypointAtaqueComparer());
+            Waypoints.Sort(new WaypointAtaque.WaypointAtaqueComparer());
 
             //Reacomodar indices para que queden igual que en el array
-            for (int i = 0; i < waypoints.Count; i++)
+            for (var i = 0; i < Waypoints.Count; i++)
             {
-                waypoints[i].Index = i;
+                Waypoints[i].Index = i;
             }
 
             //Crear aristas
-            for (int i = 0; i < waypoints.Count - 1; i++)
+            for (var i = 0; i < Waypoints.Count - 1; i++)
             {
-                WaypointAtaqueArista arista = new WaypointAtaqueArista(waypoints[i], waypoints[i + 1]);
+                var arista = new WaypointAtaqueArista(Waypoints[i], Waypoints[i + 1]);
                 aristas.Add(arista);
             }
         }
 
         /// <summary>
-        /// Devuelve el waypoint que le sigue en la lista al waypoint especificado
+        ///     Devuelve el waypoint que le sigue en la lista al waypoint especificado
         /// </summary>
         public WaypointAtaque getNextWaypoint(WaypointAtaque w)
         {
-            int n = (w.Index + 1) % waypoints.Count;
-            return waypoints[n];
+            var n = (w.Index + 1) % Waypoints.Count;
+            return Waypoints[n];
         }
 
         /// <summary>
-        /// Devuelve el waypoint anterior en la lista al waypoint especificado
+        ///     Devuelve el waypoint anterior en la lista al waypoint especificado
         /// </summary>
         public WaypointAtaque getPreviousWaypoint(WaypointAtaque w)
         {
-            int n = w.Index - 1;
+            var n = w.Index - 1;
             if (n < 0)
             {
-                n = waypoints.Count - 1;
+                n = Waypoints.Count - 1;
             }
-            return waypoints[n];
+
+            return Waypoints[n];
         }
 
         /// <summary>
-        /// Obtener la arista mas cercana al punto indicado.
-        /// Devuelve tambien el punto en esa arista que esta mas cerca.
+        ///     Obtener la arista mas cercana al punto indicado.
+        ///     Devuelve tambien el punto en esa arista que esta mas cerca.
         /// </summary>
         public WaypointAtaqueArista getAristaMasCercana(TGCVector3 pos, out TGCVector3 aristaPos)
         {
             float t;
-            TGCVector3 minQ = TGCVector3.Empty;
-            float minDistSq = float.MaxValue;
+            var minQ = TGCVector3.Empty;
+            var minDistSq = float.MaxValue;
             WaypointAtaqueArista minArista = null;
-            foreach (WaypointAtaqueArista arista in aristas)
+            foreach (var arista in aristas)
             {
-                TGCVector3 q = TgcCollisionUtils.closestPointSegment(pos, arista.W1.Position, arista.W2.Position, out t);
-                float lengthSq = TGCVector3.Subtract(q, pos).LengthSq();
+                var q = TgcCollisionUtils.closestPointSegment(pos, arista.W1.Position, arista.W2.Position, out t);
+                var lengthSq = TGCVector3.Subtract(q, pos).LengthSq();
                 if (lengthSq < minDistSq)
                 {
                     minDistSq = lengthSq;
@@ -145,20 +140,21 @@ namespace Trafico.De.Fauna.Model.Enemies.Ataque
             aristaPos = minQ;
             return minArista;
         }
-         
 
 
         public void dispose()
         {
-            foreach (WaypointAtaque w in waypoints)
+            foreach (var w in Waypoints)
             {
                 w.dispose();
             }
-            waypoints = null;
-            foreach (WaypointAtaqueArista a in aristas)
+
+            Waypoints = null;
+            foreach (var a in aristas)
             {
                 a.dispose();
             }
+
             aristas = null;
         }
     }

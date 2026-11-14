@@ -2,7 +2,7 @@
 
 namespace Trafico.De.Fauna.Model.DebugTools
 {
-    class TextureMemory : IComparable
+    internal class TextureMemory : IComparable
     {
         public string FilePath;
         public float Length;

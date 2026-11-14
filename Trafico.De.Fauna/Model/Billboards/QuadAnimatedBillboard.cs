@@ -29,108 +29,30 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.Billboards
 {
     /// <summary>
-    /// Herramienta para crear Billboards animados.
-    /// Crea un rectangulo 3D en XY con una textura de sprites animada en forma de tiles.
+    ///     Herramienta para crear Billboards animados.
+    ///     Crea un rectangulo 3D en XY con una textura de sprites animada en forma de tiles.
     /// </summary>
     public class QuadAnimatedBillboard : IRenderObject, IAlphaObject
     {
-        VertexBuffer vertexBuffer;
-        TgcTexture texture;
-        Size frameSize;
-        int totalFrames;
-        float currentTime;
-        float animationTimeLenght;
-        int framesPerRow;
-        int framesPerColumn;
-        float textureWidth;
-        float textureHeight;
+        private readonly float animationTimeLenght;
+
+        private float currentTime;
 
 
-        private bool enabled;
-        /// <summary>
-        /// Indica si la pared esta habilitada para ser renderizada
-        /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
-
-        private bool playing;
-        /// <summary>
-        /// Arrancar o parar avance de animacion
-        /// </summary>
-        public bool Playing
-        {
-            get { return playing; }
-            set { playing = value; }
-        }
-
-        TGCVector3 position;
-        /// <summary>
-        /// Posicion del billboard.
-        /// El eje Y se toma desde abajo
-        /// </summary>
-        public TGCVector3 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
-
-        float rotationY;
-        /// <summary>
-        /// Rotacion Y del Billboard
-        /// </summary>
-        public float RotationY
-        {
-            get { return rotationY; }
-            set { rotationY = value; }
-        }
+        private Size frameSize;
+        private readonly int framesPerColumn;
+        private readonly int framesPerRow;
 
 
-        TGCVector2 size;
-        /// <summary>
-        /// Tamaño del billboard en XY
-        /// </summary>
-        public TGCVector2 Size
-        {
-            get { return size; }
-            set { size = value; }
-        }
-
-        int currentFrame;
-        /// <summary>
-        /// Frame actual de la textura animada
-        /// </summary>
-        public int CurrentFrame
-        {
-            get { return currentFrame; }
-            set { currentFrame = value; }
-        }
-
-        private bool alphaBlendEnable;
-        /// <summary>
-        /// Habilita el renderizado con AlphaBlending para los modelos
-        /// con textura o colores por vértice de canal Alpha.
-        /// Por default está deshabilitado.
-        /// </summary>
-        public bool AlphaBlendEnable
-        {
-            get { return alphaBlendEnable; }
-            set { alphaBlendEnable = value; }
-        }
-
-        private float frameRate;
-        /// <summary>
-        /// Velocidad de la animacion medida en cuadros por segundo.
-        /// </summary>
-        public float FrameRate
-        {
-            get { return frameRate; }
-        }
+        private TGCVector2 size;
+        private readonly TGCTexture texture;
+        private readonly float textureHeight;
+        private readonly float textureWidth;
+        private int totalFrames;
+        private readonly VertexBuffer vertexBuffer;
 
         /// <summary>
-        /// Crear un nuevo Quad animado
+        ///     Crear un nuevo Quad animado
         /// </summary>
         /// <param name="texturePath">path de la textura animada</param>
         /// <param name="frameSize">tamaño de un tile de la animacion</param>
@@ -138,19 +60,19 @@ namespace Trafico.De.Fauna.Model.Billboards
         /// <param name="frameRate">velocidad en cuadros por segundo</param>
         public QuadAnimatedBillboard(string texturePath, Size frameSize, int totalFrames, float frameRate)
         {
-            this.enabled = true;
-            this.alphaBlendEnable = true;
-            this.currentFrame = 0;
+            Enabled = true;
+            AlphaBlendEnable = true;
+            CurrentFrame = 0;
             this.frameSize = frameSize;
             this.totalFrames = totalFrames;
-            this.currentTime = 0;
-            this.frameRate = frameRate;
-            this.rotationY = 0;
-            this.playing = true;
+            currentTime = 0;
+            this.FrameRate = frameRate;
+            RotationY = 0;
+            Playing = true;
 
             //Crear vertex buffer y textura
-            Device d3dDevice = D3DDevice.Instance.Device;
-            this.texture = TgcTexture.createTexture(d3dDevice, texturePath);
+            var d3dDevice = D3DDevice.Instance.Device;
+            texture = TGCTexture.CreateTexture(d3dDevice, texturePath);
             vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionTextured), 6, d3dDevice,
                 Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionTextured.Format, Pool.Default);
 
@@ -159,28 +81,132 @@ namespace Trafico.De.Fauna.Model.Billboards
             textureHeight = texture.Height;
             framesPerColumn = (int)textureWidth / frameSize.Width;
             framesPerRow = (int)textureHeight / frameSize.Height;
-            int realTotalFrames = framesPerRow * framesPerColumn;
+            var realTotalFrames = framesPerRow * framesPerColumn;
             if (realTotalFrames > totalFrames)
             {
-                throw new Exception("Error en QuadAnimatedBillboard. No coinciden la cantidad de frames y el tamaño de la textura: " + totalFrames);
+                throw new Exception(
+                    "Error en QuadAnimatedBillboard. No coinciden la cantidad de frames y el tamaño de la textura: " +
+                    totalFrames);
             }
-            animationTimeLenght = (float)totalFrames / frameRate;
+
+            animationTimeLenght = totalFrames / frameRate;
         }
 
         /// <summary>
-        /// Actualizar parámetros del plano en base a los valores configurados
+        ///     Indica si la pared esta habilitada para ser renderizada
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        ///     Arrancar o parar avance de animacion
+        /// </summary>
+        public bool Playing { get; set; }
+
+        /// <summary>
+        ///     Posicion del billboard.
+        ///     El eje Y se toma desde abajo
+        /// </summary>
+        public TGCVector3 Position { get; set; }
+
+        /// <summary>
+        ///     Rotacion Y del Billboard
+        /// </summary>
+        public float RotationY { get; set; }
+
+        /// <summary>
+        ///     Tamaño del billboard en XY
+        /// </summary>
+        public TGCVector2 Size
+        {
+            get => size;
+            set => size = value;
+        }
+
+        /// <summary>
+        ///     Frame actual de la textura animada
+        /// </summary>
+        public int CurrentFrame { get; set; }
+
+        /// <summary>
+        ///     Velocidad de la animacion medida en cuadros por segundo.
+        /// </summary>
+        public float FrameRate { get; }
+
+        /// <summary>
+        ///     Dibujar con Alpha
+        /// </summary>
+        public void renderWithAlpha()
+        {
+            if (!Enabled)
+            {
+                return;
+            }
+
+            Render();
+        }
+
+        /// <summary>
+        ///     Habilita el renderizado con AlphaBlending para los modelos
+        ///     con textura o colores por vértice de canal Alpha.
+        ///     Por default está deshabilitado.
+        /// </summary>
+        public bool AlphaBlendEnable { get; set; }
+
+        /// <summary>
+        ///     Dibujar Quad
+        /// </summary>
+        public void Render()
+        {
+            var device = D3DDevice.Instance.Device;
+
+            if (!Enabled)
+            {
+                return;
+            }
+
+            //Activar AlphaBlending
+            if (AlphaBlendEnable)
+            {
+                device.RenderState.AlphaBlendEnable = true;
+                device.RenderState.AlphaTestEnable = true;
+            }
+
+            TexturesManager.Instance.set(0, texture);
+            device.Material = D3DDevice.DEFAULT_MATERIAL;
+            device.Transform.World = TGCMatrix.RotationY(RotationY) * TGCMatrix.Translation(Position);
+
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.SetStreamSource(0, vertexBuffer, 0);
+            device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+
+            //Desactivar AlphaBlending
+            device.RenderState.AlphaBlendEnable = false;
+            device.RenderState.AlphaTestEnable = false;
+        }
+
+        public void Dispose()
+        {
+            texture.Dispose();
+            if (vertexBuffer != null && !vertexBuffer.Disposed)
+            {
+                vertexBuffer.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///     Actualizar parámetros del plano en base a los valores configurados
         /// </summary>
         public void updateValues(float elapsedTime)
         {
-            CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[6];
+            var vertices = new CustomVertex.PositionTextured[6];
 
             //Crear un Quad con dos triángulos sobre XY
-            TGCVector2 halfSize = TGCVector2.Scale(size, 0.5f);
-            TGCVector3 min = new TGCVector3(-halfSize.X, 0, 0);
-            TGCVector3 max = new TGCVector3(halfSize.X, size.Y, 0);
+            var halfSize = TGCVector2.Scale(size, 0.5f);
+            var min = new TGCVector3(-halfSize.X, 0, 0);
+            var max = new TGCVector3(halfSize.X, size.Y, 0);
 
             //Avanzar tiempo
-            if (playing)
+            if (Playing)
             {
                 currentTime += elapsedTime;
                 if (currentTime > animationTimeLenght)
@@ -191,13 +217,13 @@ namespace Trafico.De.Fauna.Model.Billboards
             }
 
             //Obtener cuadro actual
-            currentFrame = (int)(currentTime * frameRate);
+            CurrentFrame = (int)(currentTime * FrameRate);
 
             //Crear coordenadas UV en base al frame que corresponde dibujar
-            float minU = (frameSize.Width * (currentFrame % framesPerRow)) / textureWidth;
-            float maxU = (frameSize.Width * (currentFrame % framesPerRow) + frameSize.Width) / textureWidth;
-            float minV = (frameSize.Height * (currentFrame % framesPerColumn)) / textureHeight;
-            float maxV = (frameSize.Height * (currentFrame % framesPerColumn) + frameSize.Height) / textureHeight;
+            var minU = frameSize.Width * (CurrentFrame % framesPerRow) / textureWidth;
+            var maxU = (frameSize.Width * (CurrentFrame % framesPerRow) + frameSize.Width) / textureWidth;
+            var minV = frameSize.Height * (CurrentFrame % framesPerColumn) / textureHeight;
+            var maxV = (frameSize.Height * (CurrentFrame % framesPerColumn) + frameSize.Height) / textureHeight;
 
             //Craer vertices del Quad
             vertices[0] = new CustomVertex.PositionTextured(min, minU, maxV);
@@ -211,57 +237,5 @@ namespace Trafico.De.Fauna.Model.Billboards
             //Cargar vertexBuffer
             vertexBuffer.SetData(vertices, 0, LockFlags.None);
         }
-
-        /// <summary>
-        /// Dibujar Quad
-        /// </summary>
-        public void Render()
-        {
-            var device = D3DDevice.Instance.Device;
-
-            if (!enabled)
-                return;
-
-            //Activar AlphaBlending
-            if (this.alphaBlendEnable)
-            {
-                device.RenderState.AlphaBlendEnable = true;
-                device.RenderState.AlphaTestEnable = true;
-            }
-
-            TexturesManager.Instance.set(0, texture);
-            device.Material = D3DDevice.DEFAULT_MATERIAL;
-            device.Transform.World = TGCMatrix.RotationY(rotationY) * TGCMatrix.Translation(position);
-
-            device.VertexFormat = CustomVertex.PositionTextured.Format;
-            device.SetStreamSource(0, vertexBuffer, 0);
-            device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
-
-            //Desactivar AlphaBlending
-            device.RenderState.AlphaBlendEnable = false;
-            device.RenderState.AlphaTestEnable = false;
-        }
-
-        /// <summary>
-        /// Dibujar con Alpha
-        /// </summary>
-        public void renderWithAlpha()
-        {
-            if (!enabled)
-                return;
-
-            Render();
-        }
-
-        public void Dispose()
-        {
-            texture.dispose();
-            if (vertexBuffer != null && !vertexBuffer.Disposed)
-            {
-                vertexBuffer.Dispose();
-            }
-        }
-
-
     }
 }

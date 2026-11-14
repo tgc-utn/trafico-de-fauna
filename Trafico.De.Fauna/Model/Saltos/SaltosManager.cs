@@ -27,47 +27,44 @@ namespace Trafico.De.Fauna.Model.Saltos
 {
     public class SaltosManager
     {
-
-        List<Salto> saltos;
-        /// <summary>
-        /// Saltos
-        /// </summary>
-        public List<Salto> Saltos
-        {
-            get { return saltos; }
-        }
-
         private List<SaltoNode> nodos;
 
         public SaltosManager()
         {
             nodos = new List<SaltoNode>();
-            saltos = new List<Salto>();
+            Saltos = new List<Salto>();
         }
 
         /// <summary>
-        /// Cargar una plataforma de salto individual
+        ///     Saltos
+        /// </summary>
+        public List<Salto> Saltos { get; private set; }
+
+        /// <summary>
+        ///     Cargar una plataforma de salto individual
         /// </summary>
         public void addNode(TgcMeshData meshDataNode)
         {
             //Parsear: SaltoXXX_1 y SaltoXXX_2 (NOMBRE_INDICE)
-            string[] split = meshDataNode.name.Split('_');
+            var split = meshDataNode.name.Split('_');
             if (split.Length != 2)
             {
                 throw new Exception("Nombre de Salto incorrecto: " + meshDataNode.name);
             }
-            int index = -1;
+
+            var index = -1;
             if (!int.TryParse(split[1], out index))
             {
                 throw new Exception("Indice del nombre del Salto incorrecto: " + meshDataNode.name);
             }
+
             if (index != 1 && index != 2)
             {
                 throw new Exception("El indice del nombre del Salto debe ser 1 o 2: " + meshDataNode.name);
             }
 
             //Crear nodo
-            SaltoNode node = new SaltoNode();
+            var node = new SaltoNode();
             node.mesh = GameUtils.createBBFromMeshData(meshDataNode);
             node.name = split[0].ToUpper();
             node.index = index;
@@ -75,13 +72,13 @@ namespace Trafico.De.Fauna.Model.Saltos
         }
 
         /// <summary>
-        /// Organizar plataformas individuales en saltos de a pares
+        ///     Organizar plataformas individuales en saltos de a pares
         /// </summary>
         public void arrangeNodes()
         {
             //Agrupar todos los nodos en tuplas de a dos
-            Dictionary<string, SaltoNode[]> names = new Dictionary<string, SaltoNode[]>();
-            foreach (SaltoNode node in nodos)
+            var names = new Dictionary<string, SaltoNode[]>();
+            foreach (var node in nodos)
             {
                 if (names.ContainsKey(node.name))
                 {
@@ -89,26 +86,26 @@ namespace Trafico.De.Fauna.Model.Saltos
                 }
                 else
                 {
-                    SaltoNode[] tupla = new SaltoNode[2];
+                    var tupla = new SaltoNode[2];
                     tupla[node.index - 1] = node;
                     names[node.name] = tupla;
                 }
             }
 
-            
+
             //Crear saltos definitivos
-            foreach (KeyValuePair<string, SaltoNode[]> entry in names)
+            foreach (var entry in names)
             {
                 //Chequear incompletos
-                SaltoNode[] tupla = entry.Value;
+                var tupla = entry.Value;
                 if (tupla[0] == null || tupla[1] == null)
                 {
                     throw new Exception("A un nodo de Salto le falta su compañero. Nombre del salto: " + entry.Key);
                 }
 
                 //Crear salto
-                Salto salto = new Salto(tupla[0].mesh, tupla[1].mesh);
-                this.saltos.Add(salto);
+                var salto = new Salto(tupla[0].mesh, tupla[1].mesh);
+                Saltos.Add(salto);
             }
 
             //Tirar nodos auxiliares
@@ -117,43 +114,44 @@ namespace Trafico.De.Fauna.Model.Saltos
         }
 
 
-
         public void dispose()
         {
-            foreach (Salto s in saltos)
+            foreach (var s in Saltos)
             {
                 s.dispose();
             }
-            saltos.Clear();
-            saltos = null;
+
+            Saltos.Clear();
+            Saltos = null;
         }
 
 
         /// <summary>
-        /// Estructura auxiliar para ir cargando plataformas de salto y luego acomodarlos
-        /// </summary>
-        class SaltoNode
-        {
-            public TgcBoundingAxisAlignBox mesh;
-            public string name;
-            public int index;
-        }
-
-
-        /// <summary>
-        /// Ver si hay colision con alguna plataforma
+        ///     Ver si hay colision con alguna plataforma
         /// </summary>
         public Salto.Plataforma checkSaltos(MainCharacter mainCharacter)
         {
-            foreach (Salto s in saltos)
+            foreach (var s in Saltos)
             {
-                Salto.Plataforma p = s.checkCollision(mainCharacter);
+                var p = s.checkCollision(mainCharacter);
                 if (p != null)
                 {
                     return p;
                 }
             }
+
             return null;
+        }
+
+
+        /// <summary>
+        ///     Estructura auxiliar para ir cargando plataformas de salto y luego acomodarlos
+        /// </summary>
+        private class SaltoNode
+        {
+            public int index;
+            public TgcBoundingAxisAlignBox mesh;
+            public string name;
         }
     }
 }

@@ -25,11 +25,16 @@ using Trafico.De.Fauna.Model.Particles;
 namespace Trafico.De.Fauna.Model.CustomEvents.Particulas
 {
     /// <summary>
-    /// Efecto de hojas de arbol cayendo de arriba
+    ///     Efecto de hojas de arbol cayendo de arriba
     /// </summary>
     public class ParticulasHojasCayendo : CustomEvent, IAlphaObject
     {
-        ParticleEmitter emitter;
+        private ParticleEmitter emitter;
+
+        public void renderWithAlpha()
+        {
+            emitter.render(GameModel.instance.ElapsedTime);
+        }
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
@@ -64,11 +69,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Particulas
             {
                 GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
-        }
-
-        public void renderWithAlpha()
-        {
-            emitter.render(GameModel.instance.ElapsedTime);
         }
 
         public override void renderDebug()

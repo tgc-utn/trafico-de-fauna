@@ -24,18 +24,18 @@ using Trafico.De.Fauna.Model.MainCharacters;
 namespace Trafico.De.Fauna.Model.Saltos
 {
     /// <summary>
-    /// Salto entre dos plataformas
+    ///     Salto entre dos plataformas
     /// </summary>
     public class Salto
     {
-        Plataforma[] plataformas;
+        private Plataforma[] plataformas;
 
         public Salto(TgcBoundingAxisAlignBox bbPlataforma1, TgcBoundingAxisAlignBox bbPlataforma2)
         {
             plataformas = new Plataforma[2];
 
-            Plataforma p1 = new Plataforma(bbPlataforma1, this, 0);
-            Plataforma p2 = new Plataforma(bbPlataforma2, this, 1);
+            var p1 = new Plataforma(bbPlataforma1, this, 0);
+            var p2 = new Plataforma(bbPlataforma2, this, 1);
 
             p1.NextPlatform = p2;
             p2.NextPlatform = p1;
@@ -45,7 +45,7 @@ namespace Trafico.De.Fauna.Model.Saltos
         }
 
         /// <summary>
-        /// Ver si colisiona alguna plataforma
+        ///     Ver si colisiona alguna plataforma
         /// </summary>
         public Plataforma checkCollision(MainCharacter mainCharacter)
         {
@@ -53,15 +53,17 @@ namespace Trafico.De.Fauna.Model.Saltos
             {
                 return plataformas[0];
             }
+
             if (checkCollisionAndAngle(mainCharacter, plataformas[1], plataformas[0]))
             {
                 return plataformas[1];
             }
+
             return null;
         }
 
         /// <summary>
-        /// Colision con BoundingBox de plataforma y consideracion de angulo de vision del personaje
+        ///     Colision con BoundingBox de plataforma y consideracion de angulo de vision del personaje
         /// </summary>
         private bool checkCollisionAndAngle(MainCharacter mainCharacter, Plataforma p1, Plataforma p2)
         {
@@ -69,15 +71,17 @@ namespace Trafico.De.Fauna.Model.Saltos
             if (mainCharacter.collideWithAABB(p1.BoundingBox))
             {
                 //Ver si el personaje esa mirando en un angulo tolerable hacia la prox plataforma
-                TGCVector3 currentVecRot = mainCharacter.getCurrentVecRot();
-                TGCVector3 plataformaDir = TGCVector3.Normalize(TGCVector3.Subtract(p2.Position, p1.Position));
-                float dotAngle = TGCVector3.Dot(currentVecRot, plataformaDir);
+                var currentVecRot = mainCharacter.getCurrentVecRot();
+                var plataformaDir = TGCVector3.Normalize(TGCVector3.Subtract(p2.Position, p1.Position));
+                var dotAngle = TGCVector3.Dot(currentVecRot, plataformaDir);
                 if (dotAngle > GameModel.instance.gameConfig.fisica.anguloSaltoDotValue)
                 {
                     return true;
                 }
+
                 return false;
             }
+
             return false;
         }
 
@@ -95,69 +99,49 @@ namespace Trafico.De.Fauna.Model.Saltos
         }
 
         /// <summary>
-        /// Plataforma individual de salto
+        ///     Plataforma individual de salto
         /// </summary>
         public class Plataforma
         {
+            private readonly TGCVector3 position;
+
             public Plataforma(TgcBoundingAxisAlignBox boundingBox, Salto salto, int index)
             {
-                this.boundingBox = boundingBox;
-                this.salto = salto;
-                this.index = index;
+                BoundingBox = boundingBox;
+                Salto = salto;
+                Index = index;
 
-                this.position = boundingBox.calculateBoxCenter();
-                this.position.Y = boundingBox.PMin.Y;
+                position = boundingBox.calculateBoxCenter();
+                position.Y = boundingBox.PMin.Y;
             }
 
-            TGCVector3 position;
             /// <summary>
-            /// Posicion central en el piso de la plataforma
+            ///     Posicion central en el piso de la plataforma
             /// </summary>
-            public TGCVector3 Position
-            {
-                get { return position; }
-            }
+            public TGCVector3 Position => position;
 
-            TgcBoundingAxisAlignBox boundingBox;
-            public TgcBoundingAxisAlignBox BoundingBox
-            {
-                get { return boundingBox; }
-            }
+            public TgcBoundingAxisAlignBox BoundingBox { get; private set; }
 
-            Salto salto;
-            public Salto Salto
-            {
-                get { return salto; }
-            }
+            public Salto Salto { get; private set; }
 
-            int index;
-            public int Index
-            {
-                get { return index; }
-            }
+            public int Index { get; }
 
-            Plataforma nextPlatform;
             /// <summary>
-            /// La otra plataforma
+            ///     La otra plataforma
             /// </summary>
-            public Plataforma NextPlatform
-            {
-                get { return nextPlatform; }
-                set { nextPlatform = value; }
-            }
+            public Plataforma NextPlatform { get; set; }
 
             public void dispose()
             {
-                if (boundingBox != null)
+                if (BoundingBox != null)
                 {
-                    boundingBox.Dispose();
-                    boundingBox = null;
+                    BoundingBox.Dispose();
+                    BoundingBox = null;
                 }
 
-                salto = null;
-                nextPlatform = null;
+                Salto = null;
+                NextPlatform = null;
             }
         }
-
     }
 }

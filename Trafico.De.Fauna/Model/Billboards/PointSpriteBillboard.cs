@@ -27,53 +27,33 @@ namespace Trafico.De.Fauna.Model.Billboards
 {
     public class PointSpriteBillboard
     {
-
-        TgcTexture texture;
-        SpriteVertexVertex[] spriteVertexArray;
-        VertexDeclaration vertexDeclaration;
-
         /// <summary>
-        /// Estructura de Vertice para el Sprite
+        ///     FVF para formato de vertice del Sprite
         /// </summary>
-        public struct SpriteVertexVertex
-        {
-            public TGCVector3 Position;
-            public float PointSize;
-        }
-
-        /// <summary>
-        /// FVF para formato de vertice del Sprite
-        /// </summary>
-        public static readonly VertexElement[] SpriteVertexVertexElements = new VertexElement[]
+        public static readonly VertexElement[] SpriteVertexVertexElements =
         {
             new VertexElement(0, 0, DeclarationType.Float3,
-                                    DeclarationMethod.Default,
-                                    DeclarationUsage.Position, 0),
-                                    
-            new VertexElement(0, 12, DeclarationType.Float1,
-                                     DeclarationMethod.Default,
-                                     DeclarationUsage.PointSize, 0),
+                DeclarationMethod.Default,
+                DeclarationUsage.Position, 0),
 
-            VertexElement.VertexDeclarationEnd 
+            new VertexElement(0, 12, DeclarationType.Float1,
+                DeclarationMethod.Default,
+                DeclarationUsage.PointSize, 0),
+
+            VertexElement.VertexDeclarationEnd
         };
 
 
-        int currentFrame;
-        /// <summary>
-        /// Frame actual de la textura animada
-        /// </summary>
-        public int CurrentFrame
-        {
-            get { return currentFrame; }
-            set { currentFrame = value; }
-        }
+        private SpriteVertexVertex[] spriteVertexArray;
 
-        
+        private readonly TGCTexture texture;
+        private readonly VertexDeclaration vertexDeclaration;
 
-        public PointSpriteBillboard(TgcTexture texture, Size frameSize, int totalFrames)
+
+        public PointSpriteBillboard(TGCTexture texture, Size frameSize, int totalFrames)
         {
-            currentFrame = 0;
-            SpriteVertexVertex vertex = new SpriteVertexVertex();
+            CurrentFrame = 0;
+            var vertex = new SpriteVertexVertex();
             vertex.PointSize = 10;
             vertex.Position = new TGCVector3(0, 50, 0);
             this.texture = texture;
@@ -84,6 +64,11 @@ namespace Trafico.De.Fauna.Model.Billboards
             spriteVertexArray = new SpriteVertexVertex[1];
             spriteVertexArray[0] = vertex;
         }
+
+        /// <summary>
+        ///     Frame actual de la textura animada
+        /// </summary>
+        public int CurrentFrame { get; set; }
 
         public void render(Device device)
         {
@@ -108,10 +93,17 @@ namespace Trafico.De.Fauna.Model.Billboards
 
         public void dispose()
         {
-            texture.dispose();
+            texture.Dispose();
             spriteVertexArray = null;
         }
 
-
+        /// <summary>
+        ///     Estructura de Vertice para el Sprite
+        /// </summary>
+        public struct SpriteVertexVertex
+        {
+            public TGCVector3 Position;
+            public float PointSize;
+        }
     }
 }

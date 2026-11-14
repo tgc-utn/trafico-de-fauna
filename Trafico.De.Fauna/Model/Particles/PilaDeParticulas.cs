@@ -19,41 +19,43 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Trafico.De.Fauna.Model.Particles
 {
-    class PilaDeParticulas
+    internal class PilaDeParticulas
     {
-        private Particle[] pila = null;
-		private int i_cima;
+        private int i_cima;
+        private readonly Particle[] pila;
 
         public PilaDeParticulas(int iMax)
-		{
-			pila = new Particle[iMax];
-			i_cima = 0;
-		}
+        {
+            pila = new Particle[iMax];
+            i_cima = 0;
+        }
 
         public bool push(Particle p)
-		{
+        {
             //Esta llena la pila.
-			if (i_cima == pila.Length)
-				return false;
+            if (i_cima == pila.Length)
+            {
+                return false;
+            }
 
-			pila[i_cima] = p;
-			i_cima++;
+            pila[i_cima] = p;
+            i_cima++;
 
-			return true;
-		}
+            return true;
+        }
 
         public bool pop(out Particle p)
-		{
-			if (i_cima == 0)
-			{
-				p = null;
-				return false;
-			}
+        {
+            if (i_cima == 0)
+            {
+                p = null;
+                return false;
+            }
 
-			i_cima--;
+            i_cima--;
             p = pila[i_cima];
 
-			return true;
-		}
+            return true;
+        }
     }
 }

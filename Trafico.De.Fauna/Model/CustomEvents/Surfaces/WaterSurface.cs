@@ -27,21 +27,26 @@ using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
 {
-
     /// <summary>
-    /// Efecto de agua animada en el piso
+    ///     Efecto de agua animada en el piso
     /// </summary>
     public class WaterSurface : CustomEvent, IAlphaObject
     {
-        HorizontalDisplacementBillboard billboard;
-        InterpoladorVaiven vaiven;
-        TgcBoundingAxisAlignBox aabb;
+        private TgcBoundingAxisAlignBox aabb;
+        private HorizontalDisplacementBillboard billboard;
+        private InterpoladorVaiven vaiven;
+
+        public void renderWithAlpha()
+        {
+            billboard.Render();
+        }
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
             var device = D3DDevice.Instance.Device;
             aabb = GameUtils.createBBFromMeshData(meshData);
-            billboard = new HorizontalDisplacementBillboard(device, GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
+            billboard = new HorizontalDisplacementBillboard(device,
+                GameModel.instance.gameConfig.basePath + "Billboards\\WaterSurface.png", aabb.PMin, aabb.PMax);
             billboard.Speed = new TGCVector2(0, 0.3f);
 
             vaiven = new InterpoladorVaiven(-0.2f, 0.2f, 0.1f);
@@ -71,11 +76,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
             }
         }
 
-        public void renderWithAlpha()
-        {
-            billboard.Render();
-        }
-
         public override void renderDebug()
         {
             aabb.Render();
@@ -91,9 +91,5 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Surfaces
             billboard.Dispose();
             aabb.Dispose();
         }
-
-
-
-
     }
 }

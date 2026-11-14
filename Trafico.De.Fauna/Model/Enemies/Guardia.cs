@@ -28,108 +28,74 @@ using TGC.Core.Mathematica;
 using TGC.Core.SkeletalAnimation;
 using TGC.Core.Textures;
 using Trafico.De.Fauna.Model.Enemies.Ataque;
-using Trafico.De.Fauna.Model.MainCharacters;
-using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
-    /// Enemigo Guardia
-    /// Tiene la IA del enemigo
+    ///     Enemigo Guardia
+    ///     Tiene la IA del enemigo
     /// </summary>
     public class Guardia
     {
         /// <summary>
-        /// Colores de la vision debug
+        ///     Colores de la vision debug
         /// </summary>
-        static readonly int NORMAL_VISION_COLOR = Color.Green.ToArgb();
-        static readonly int ALARMA_VISION_COLOR = Color.Red.ToArgb();
+        private static readonly int NORMAL_VISION_COLOR = Color.Green.ToArgb();
 
+        private static readonly int ALARMA_VISION_COLOR = Color.Red.ToArgb();
 
-        /// <summary>
-        /// Estados del guardia
-        /// </summary>
-        enum State
-        {
-            Watching,
-            Rotating,
-            Walking,
-            Chasing,
-            RotatingForWatching,
-        }
+        private TgcBoundingSphere bSphereAttack;
+        private TgcBoundingSphere bSphereVisual;
+        private TgcBoundingSphere bSphereVisualEspaldas;
 
-        /// <summary>
-        /// Estados del guardia cuando esta persiguiendo al personaje
-        /// </summary>
-        enum ChasingState
-        {
-            AligningToWaypoints,
-            TravelingWaypoints,
-            Attacking,
-        }
+        private TGCVector3 center;
+        private TGCVector3 chaseAristaNextPos;
+        private ChasingState currentChasingState;
+        private State currentState;
+        private int currentVisionColor;
+        private int currentWaypointIndex;
 
-        string id;
-        public string Id
-        {
-            get { return id; }
-        }
-
-        List<GuardiaWaypoint> waypoints;
-        public List<GuardiaWaypoint> Waypoints
-        {
-            get { return waypoints; }
-        }
-
-        bool activo;
-        public bool Activo
-        {
-            get { return activo; }
-        }
-
-        TGCVector3 center;
-        TgcSkeletalMesh mesh;
-        GameUtils.Orientacion orientacion;
-        State currentState;
-        ChasingState currentChasingState;
-        TgcBoundingSphere bSphereVisual;
-        TgcBoundingSphere bSphereAttack;
-        TgcBoundingSphere bSphereVisualEspaldas;
-
-        //Variables de movimiento
-        float watchingAcumRotation;
-        float watchingRotationDir;
-        float watchingElapsedTime;
-        float rotatingAcumRotation;
-        int currentWaypointIndex;
-        TGCVector3 walkingDir;
-        float rotatingNextAngle;
-        float rotatingNextAngleSign;
-        float walkingDistanceToTravel;
-        float origAngleRot;
-        TGCVector3 origVecRot;
-        
-        //Variables de chasing
-        WaypointAtaque waypointAtaqueA;
-        WaypointAtaque waypointAtaqueB;
-        TGCVector3 chaseAristaNextPos;
+        private TgcSkeletalMesh mesh;
+        private GameUtils.Orientacion orientacion;
+        private float origAngleRot;
+        private TGCVector3 origVecRot;
+        private float rotatingAcumRotation;
+        private float rotatingNextAngle;
+        private float rotatingNextAngleSign;
 
 
         //Para render debug de la vision
-        CustomVertex.PositionColored[] visionVertices = new CustomVertex.PositionColored[3];
-        int currentVisionColor;
-        
+        private CustomVertex.PositionColored[] visionVertices = new CustomVertex.PositionColored[3];
+        private TGCVector3 walkingDir;
+        private float walkingDistanceToTravel;
+
+        //Variables de movimiento
+        private float watchingAcumRotation;
+        private float watchingElapsedTime;
+        private float watchingRotationDir;
+
+        //Variables de chasing
+        private WaypointAtaque waypointAtaqueA;
+        private WaypointAtaque waypointAtaqueB;
+
 
         public Guardia(string id)
-        {  
-            this.waypoints = new List<GuardiaWaypoint>();
-            this.id = id;
+        {
+            Waypoints = new List<GuardiaWaypoint>();
+            Id = id;
         }
+
+        public string Id { get; }
+
+        public List<GuardiaWaypoint> Waypoints { get; }
+
+        public bool Activo { get; private set; }
 
         public void setData(Dictionary<string, string> userProperties)
         {
             if (GameUtils.containsUserProp(userProperties, "orientacion"))
             {
-                string orientacionStr = userProperties["orientacion"].ToUpper();
+                var orientacionStr = userProperties["orientacion"].ToUpper();
                 switch (orientacionStr)
                 {
                     case "NORTE":
@@ -145,7 +111,7 @@ namespace Trafico.De.Fauna.Model.Enemies
                         orientacion = GameUtils.Orientacion.Oeste;
                         break;
                     default:
-                        throw new Exception("Orientacion incorrecta: " + orientacionStr + ", en Guardia: " + id);
+                        throw new Exception("Orientacion incorrecta: " + orientacionStr + ", en Guardia: " + Id);
                 }
             }
             else
@@ -155,11 +121,11 @@ namespace Trafico.De.Fauna.Model.Enemies
 
             if (GameUtils.containsUserProp(userProperties, "activo"))
             {
-                activo = bool.Parse(userProperties["activo"]);
+                Activo = bool.Parse(userProperties["activo"]);
             }
             else
             {
-                activo = true;
+                Activo = true;
             }
 
             //BoundingSpheres
@@ -171,29 +137,26 @@ namespace Trafico.De.Fauna.Model.Enemies
         public void arrangeWaypoints()
         {
             //ordenar por index
-            waypoints.Sort(new GuardiaWaypoint.WaypointComparer());
+            Waypoints.Sort(new GuardiaWaypoint.WaypointComparer());
 
             //Fijar centro del mesh, y ubicar a nivel del piso
-            this.center = waypoints[0].Center;
-            this.center.Y = 0;
-            foreach (GuardiaWaypoint w in waypoints)
+            center = Waypoints[0].Center;
+            center.Y = 0;
+            foreach (var w in Waypoints)
             {
-                w.setCenterY(this.center.Y);
+                w.setCenterY(center.Y);
             }
         }
 
 
-        
-
-
         /// <summary>
-        /// Iniciar en el sector
+        ///     Iniciar en el sector
         /// </summary>
         public void init(TgcSkeletalMesh mesh)
         {
             this.mesh = mesh;
-            mesh.Position = this.center;
-            
+            mesh.Position = center;
+
             //rotar segun orientacion
             mesh.Rotation = TGCVector3.Empty;
             switch (orientacion)
@@ -218,12 +181,13 @@ namespace Trafico.De.Fauna.Model.Enemies
             origVecRot = getCurrentVecRot();
             bSphereVisual.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaVisual);
             bSphereAttack.setValues(mesh.Position, GameModel.instance.gameConfig.guardia.distanciaAtaque);
-            bSphereVisualEspaldas.setValues(mesh.BoundingBox.calculateBoxCenter(), GameModel.instance.gameConfig.guardia.distanciaVisualEspaldas);
+            bSphereVisualEspaldas.setValues(mesh.BoundingBox.calculateBoxCenter(),
+                GameModel.instance.gameConfig.guardia.distanciaVisualEspaldas);
 
 
             //Estado inicial
             currentWaypointIndex = 0;
-            GuardiaWaypoint currentWaypoint = waypoints[currentWaypointIndex];
+            var currentWaypoint = Waypoints[currentWaypointIndex];
             if (currentWaypoint.Vigilar)
             {
                 setRotatingForWataching();
@@ -232,28 +196,48 @@ namespace Trafico.De.Fauna.Model.Enemies
             {
                 setRotating();
             }
-            
         }
 
         /// <summary>
-        /// Esconder del sector
+        ///     Esconder del sector
         /// </summary>
         public void hide()
         {
-            this.mesh = null;
+            mesh = null;
         }
 
+
+        /// <summary>
+        ///     Estados del guardia
+        /// </summary>
+        private enum State
+        {
+            Watching,
+            Rotating,
+            Walking,
+            Chasing,
+            RotatingForWatching
+        }
+
+        /// <summary>
+        ///     Estados del guardia cuando esta persiguiendo al personaje
+        /// </summary>
+        private enum ChasingState
+        {
+            AligningToWaypoints,
+            TravelingWaypoints,
+            Attacking
+        }
 
 
         #region IA de Patrullar
 
-
         /// <summary>
-        /// Actualizar estado de guardia
+        ///     Actualizar estado de guardia
         /// </summary>
         public void update(float elapsedTime)
         {
-            TGCVector3 lastPos = mesh.Position;
+            var lastPos = mesh.Position;
 
             switch (currentState)
             {
@@ -276,39 +260,41 @@ namespace Trafico.De.Fauna.Model.Enemies
                 case State.Chasing:
                     chasing(elapsedTime);
                     break;
-                default:
-                    break;
             }
         }
 
         /// <summary>
-        /// Pasar a estado en el que el guardia esta rotando para enfrentar al proximo
-        /// waypoint y luego empezar a vigilar parado.
+        ///     Pasar a estado en el que el guardia esta rotando para enfrentar al proximo
+        ///     waypoint y luego empezar a vigilar parado.
         /// </summary>
         private void setRotatingForWataching()
         {
             //Alinear hacia el proximo waypoint (si hay mas de uno)
-            if (waypoints.Count > 1)
+            if (Waypoints.Count > 1)
             {
                 //obtener direccion hacia el proximo waypoint (sin cambiar el waypoint actual)
-                TGCVector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
-                TGCVector3 nextWaypointCenter = waypoints[getNextWaypoint()].Center;
+                var lastWaypointCenter = Waypoints[currentWaypointIndex].Center;
+                var nextWaypointCenter = Waypoints[getNextWaypoint()].Center;
                 walkingDir = nextWaypointCenter - lastWaypointCenter;
                 walkingDir.Y = 0;
                 walkingDir.Normalize();
 
                 //Calcular direccion a la que apunta actualmente
-                TGCVector3 currentVecRot = getCurrentVecRot();
+                var currentVecRot = getCurrentVecRot();
 
                 //Obtener siguiente menor angulo de rotacion y signo
-                rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(walkingDir.Z, walkingDir.X);
-                float unsignedAngle = FastMath.Abs(rotatingNextAngle);
-                rotatingNextAngleSign = (float)Math.Sign(rotatingNextAngle);
-                rotatingNextAngle = unsignedAngle < FastMath.PI ? rotatingNextAngle : (FastMath.TWO_PI - unsignedAngle) * -rotatingNextAngleSign;
-                rotatingNextAngleSign = (float)Math.Sign(rotatingNextAngle);
+                rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) -
+                                    FastMath.Atan2(walkingDir.Z, walkingDir.X);
+                var unsignedAngle = FastMath.Abs(rotatingNextAngle);
+                rotatingNextAngleSign = Math.Sign(rotatingNextAngle);
+                rotatingNextAngle = unsignedAngle < FastMath.PI
+                    ? rotatingNextAngle
+                    : (FastMath.TWO_PI - unsignedAngle) * -rotatingNextAngleSign;
+                rotatingNextAngleSign = Math.Sign(rotatingNextAngle);
 
                 //Acomodar medio giro de vigilancia, para arrancar la vigilancia desde cero
-                rotatingNextAngle += (GameModel.instance.gameConfig.guardia.anguloRotacionVigilancia / 2) * rotatingNextAngleSign;
+                rotatingNextAngle += GameModel.instance.gameConfig.guardia.anguloRotacionVigilancia / 2 *
+                                     rotatingNextAngleSign;
 
                 //Cambiar de estado
                 currentState = State.RotatingForWatching;
@@ -324,12 +310,12 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Estado en el que el personaje esta rotando para alinearse al proximo waypoint y, una
-        /// vez que queda alineado, empezar a vigilar parado
+        ///     Estado en el que el personaje esta rotando para alinearse al proximo waypoint y, una
+        ///     vez que queda alineado, empezar a vigilar parado
         /// </summary>
         private void rotatingForWatching(float elapsedTime)
         {
-            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * elapsedTime;
+            var frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacionVigilancia * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.RotateY(rotatingAcumRotation);
@@ -344,7 +330,7 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Pasar a estado vigilando
+        ///     Pasar a estado vigilando
         /// </summary>
         private void setWatching()
         {
@@ -357,11 +343,11 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Estado vigilando
+        ///     Estado vigilando
         /// </summary>
         private void watching(float elapsedTime)
         {
-            GameConfig.Guardia g = GameModel.instance.gameConfig.guardia;
+            var g = GameModel.instance.gameConfig.guardia;
 
             watchingElapsedTime += elapsedTime;
             if (watchingElapsedTime > g.duracionSegundosVigilancia)
@@ -370,7 +356,7 @@ namespace Trafico.De.Fauna.Model.Enemies
             }
             else
             {
-                float rot = g.velocidadRotacionVigilancia * watchingRotationDir * elapsedTime;
+                var rot = g.velocidadRotacionVigilancia * watchingRotationDir * elapsedTime;
                 watchingAcumRotation += rot;
                 if (FastMath.Abs(watchingAcumRotation) > g.anguloRotacionVigilancia)
                 {
@@ -387,9 +373,9 @@ namespace Trafico.De.Fauna.Model.Enemies
         private void setRotating()
         {
             //Cambiar de waypoint
-            TGCVector3 lastWaypointCenter = waypoints[currentWaypointIndex].Center;
+            var lastWaypointCenter = Waypoints[currentWaypointIndex].Center;
             setNextWaypoint();
-            TGCVector3 nextWaypointCenter = waypoints[currentWaypointIndex].Center;
+            var nextWaypointCenter = Waypoints[currentWaypointIndex].Center;
 
             //obtener direccion para caminar hacia el proximo
             walkingDir = nextWaypointCenter - lastWaypointCenter;
@@ -398,14 +384,17 @@ namespace Trafico.De.Fauna.Model.Enemies
             walkingDir.Normalize();
 
             //Calcular direccion a la que apunta actualmente
-            TGCVector3 currentVecRot = getCurrentVecRot();
-            
+            var currentVecRot = getCurrentVecRot();
+
             //Obtener siguiente menor angulo de rotacion y signo
-            rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(walkingDir.Z, walkingDir.X);
-            float unsignedAngle = FastMath.Abs(rotatingNextAngle);
-            rotatingNextAngleSign = (float)Math.Sign(rotatingNextAngle);
-            rotatingNextAngle = unsignedAngle < FastMath.PI ? rotatingNextAngle : (FastMath.TWO_PI - unsignedAngle) * -rotatingNextAngleSign;
-            rotatingNextAngleSign = (float)Math.Sign(rotatingNextAngle);
+            rotatingNextAngle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) -
+                                FastMath.Atan2(walkingDir.Z, walkingDir.X);
+            var unsignedAngle = FastMath.Abs(rotatingNextAngle);
+            rotatingNextAngleSign = Math.Sign(rotatingNextAngle);
+            rotatingNextAngle = unsignedAngle < FastMath.PI
+                ? rotatingNextAngle
+                : (FastMath.TWO_PI - unsignedAngle) * -rotatingNextAngleSign;
+            rotatingNextAngleSign = Math.Sign(rotatingNextAngle);
 
             //Cambiar de estado
             currentState = State.Rotating;
@@ -415,12 +404,12 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Estado en el que el personaje esta rotando para alinearse al proximo
-        /// waypoint y luego empezar a caminar hacia el
+        ///     Estado en el que el personaje esta rotando para alinearse al proximo
+        ///     waypoint y luego empezar a caminar hacia el
         /// </summary>
         private void rotating(float elapsedTime)
         {
-            float frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * elapsedTime;
+            var frameRot = GameModel.instance.gameConfig.guardia.velocidadRotacion * elapsedTime;
             if (FastMath.Abs(frameRot) > FastMath.Abs(rotatingAcumRotation))
             {
                 mesh.RotateY(rotatingAcumRotation);
@@ -436,34 +425,33 @@ namespace Trafico.De.Fauna.Model.Enemies
 
         private TGCVector3 getCurrentVecRot()
         {
-            float currentAngle = mesh.Rotation.Y - origAngleRot;
-            TGCVector3 currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
+            var currentAngle = mesh.Rotation.Y - origAngleRot;
+            var currentVecRot = new TGCVector3(FastMath.Sin(currentAngle), 0, FastMath.Cos(currentAngle));
             return currentVecRot;
         }
 
         /// <summary>
-        /// Receives a position and yaw (from the patrol), and a position (the waypoint or enemy we are following), 
-        /// and returns the yaw increment we should be applying in order to chase the target. 
-        /// It detects which side it stands in, and so on:
+        ///     Receives a position and yaw (from the patrol), and a position (the waypoint or enemy we are following),
+        ///     and returns the yaw increment we should be applying in order to chase the target.
+        ///     It detects which side it stands in, and so on:
         /// </summary>
-       private float computeRotation(TGCVector3 pos, float yaw, TGCVector3 target)
-       {
-           TGCVector3 forward = pos + new TGCVector3(FastMath.Cos(yaw), 0, FastMath.Sin(yaw));
-           TGCVector3 up = pos + new TGCVector3(0, 1, 0);
+        private float computeRotation(TGCVector3 pos, float yaw, TGCVector3 target)
+        {
+            var forward = pos + new TGCVector3(FastMath.Cos(yaw), 0, FastMath.Sin(yaw));
+            var up = pos + new TGCVector3(0, 1, 0);
 
-           TGCPlane pl = TGCPlane.FromPoints(pos, forward, up);
-           if(TgcCollisionUtils.classifyPointPlane(target, pl) == TgcCollisionUtils.PointPlaneResult.IN_FRONT_OF)
-           {
-               return -0.1f;
-           }
-           return 0.1f;
-       }
+            var pl = TGCPlane.FromPoints(pos, forward, up);
+            if (TgcCollisionUtils.classifyPointPlane(target, pl) == TgcCollisionUtils.PointPlaneResult.IN_FRONT_OF)
+            {
+                return -0.1f;
+            }
+
+            return 0.1f;
+        }
 
 
-
-        
         /// <summary>
-        /// Pasar a estado patrullando
+        ///     Pasar a estado patrullando
         /// </summary>
         private void setWalking()
         {
@@ -473,16 +461,16 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Caminar en la patrulla
+        ///     Caminar en la patrulla
         /// </summary>
         private void walking(float elapsedTime)
         {
-            float movement = GameModel.instance.gameConfig.guardia.velocidadCaminar * elapsedTime;
+            var movement = GameModel.instance.gameConfig.guardia.velocidadCaminar * elapsedTime;
             walkingDistanceToTravel -= movement;
             if (walkingDistanceToTravel < 0)
             {
                 //llego al waypoint
-                GuardiaWaypoint currentWaypoint = waypoints[currentWaypointIndex];
+                var currentWaypoint = Waypoints[currentWaypointIndex];
                 mesh.Position = currentWaypoint.Center;
 
                 //Es un nodo de vigilancia
@@ -505,7 +493,7 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Cambiar de waypoint en forma circular
+        ///     Cambiar de waypoint en forma circular
         /// </summary>
         private void setNextWaypoint()
         {
@@ -513,19 +501,19 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Obtener el siguiente waypoint en forma circular, sin cambiar el actual
+        ///     Obtener el siguiente waypoint en forma circular, sin cambiar el actual
         /// </summary>
         private int getNextWaypoint()
         {
-            int n = currentWaypointIndex;
+            var n = currentWaypointIndex;
             n++;
-            n = n % waypoints.Count;
+            n = n % Waypoints.Count;
             return n;
         }
 
 
         /// <summary>
-        /// Ver si el guardia ve al personaje
+        ///     Ver si el guardia ve al personaje
         /// </summary>
         private void checkCollisionVision(TGCVector3 centerMovement)
         {
@@ -534,7 +522,7 @@ namespace Trafico.De.Fauna.Model.Enemies
             bSphereVisualEspaldas.moveCenter(centerMovement);
 
             //Si esta escondido, no se puede detectar (al menos que te este pasando por arriba)
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var mainCharacter = GameModel.instance.mainCharacter;
             if (mainCharacter.Hidden)
             {
                 //Ver si no le pasamos por arriba
@@ -543,6 +531,7 @@ namespace Trafico.De.Fauna.Model.Enemies
                     //Pasar a modo alarma
                     initAttackMode();
                 }
+
                 return;
             }
 
@@ -554,7 +543,9 @@ namespace Trafico.De.Fauna.Model.Enemies
             }
 
             //Detectar colision con angulo de vision: boundingSphere + dot de angulo
-            float visionY = mainCharacter.Crouched ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado : GameModel.instance.gameConfig.guardia.alturaVision;
+            var visionY = mainCharacter.Crouched
+                ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado
+                : GameModel.instance.gameConfig.guardia.alturaVision;
             if (isMainCharacterVisible(visionY, true))
             {
                 //El personaje se esta viendo, pasar a modo alarma
@@ -563,7 +554,7 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Arrancar el modo ataque
+        ///     Arrancar el modo ataque
         /// </summary>
         private void initAttackMode()
         {
@@ -572,15 +563,15 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Indica si el personaje principal es visible por el enemigo.
-        /// Tiene en cuenta un radio de vision y la orientacion actual del enemigo.
+        ///     Indica si el personaje principal es visible por el enemigo.
+        ///     Tiene en cuenta un radio de vision y la orientacion actual del enemigo.
         /// </summary>
         /// <param name="visionY">Altura Y bajo la cual chequear</param>
         /// <param name="checkVisionAngle">En true si tiene en cuenta la orientacion del enemigo, sino se ignora</param>
         /// <returns>True si es visible</returns>
         private bool isMainCharacterVisible(float visionY, bool checkVisionAngle)
         {
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var mainCharacter = GameModel.instance.mainCharacter;
 
             //Detectar colision con esfera de vision
             if (mainCharacter.collideWithBSphere(bSphereVisual))
@@ -588,40 +579,39 @@ namespace Trafico.De.Fauna.Model.Enemies
                 //Ver si esta dentro del angulo de vision, con el dot product
                 if (checkVisionAngle)
                 {
-                    TGCVector3 guardiaCharacterVec = TGCVector3.Normalize(TGCVector3.Subtract(mainCharacter.CurrentPos, mesh.Position));
-                    TGCVector3 currentVecRot = getCurrentVecRot();
-                    float dotAngle = TGCVector3.Dot(currentVecRot, guardiaCharacterVec);
+                    var guardiaCharacterVec =
+                        TGCVector3.Normalize(TGCVector3.Subtract(mainCharacter.CurrentPos, mesh.Position));
+                    var currentVecRot = getCurrentVecRot();
+                    var dotAngle = TGCVector3.Dot(currentVecRot, guardiaCharacterVec);
                     if (dotAngle > GameModel.instance.gameConfig.guardia.anguloVisionDotValue)
                     {
                         //Hay vision, ver que nada se interponga en el camino
-                        return checkDirectViewCollision(mesh.Position, bSphereVisual, mainCharacter.CurrentPos, visionY);
+                        return checkDirectViewCollision(mesh.Position, bSphereVisual, mainCharacter.CurrentPos,
+                            visionY);
                     }
-                    else
-                    {
-                        //Fuera del angulo de vision
-                        return false;
-                    }
+
+                    //Fuera del angulo de vision
+                    return false;
                 }
                 //No importa hacia donde este mirando el enemigo
-                else
-                {
-                    //Hay vision, ver que nada se interponga en el camino
-                    return checkDirectViewCollision(mesh.Position, bSphereVisual, mainCharacter.CurrentPos, visionY);
-                }
-            }       
+
+                //Hay vision, ver que nada se interponga en el camino
+                return checkDirectViewCollision(mesh.Position, bSphereVisual, mainCharacter.CurrentPos, visionY);
+            }
 
             return false;
         }
 
         /// <summary>
-        /// Indica si la vista directa del enemigo choca con algun objeto colisionable del escenario al mirar hacia el jugador.
-        /// Devuelve true si se puede llegar a ver porque nada se interpone.
+        ///     Indica si la vista directa del enemigo choca con algun objeto colisionable del escenario al mirar hacia el jugador.
+        ///     Devuelve true si se puede llegar a ver porque nada se interpone.
         /// </summary>
-        private bool checkDirectViewCollision(TGCVector3 enemyPos, TgcBoundingSphere bsphereVision, TGCVector3 mainCharacterPos, float visionY)
+        private bool checkDirectViewCollision(TGCVector3 enemyPos, TgcBoundingSphere bsphereVision,
+            TGCVector3 mainCharacterPos, float visionY)
         {
             //Ver que nada se interponga en el camino
-            List<ColliderObject> objetosColisionables = GameModel.instance.currentLevel.CurrentSector.ObjetosColisionables;
-            foreach (ColliderObject collider in objetosColisionables)
+            var objetosColisionables = GameModel.instance.currentLevel.CurrentSector.ObjetosColisionables;
+            foreach (var collider in objetosColisionables)
             {
                 if (TgcCollisionUtils.testSphereAABB(bsphereVision, collider.BoundingBox))
                 {
@@ -632,15 +622,17 @@ namespace Trafico.De.Fauna.Model.Enemies
                     }
                 }
             }
+
             //Nada se interpone
             return true;
         }
 
         /// <summary>
-        /// Indica si la vista directa del enemigo choca con el objeto indicado al mirar hacia el jugador.
-        /// Devuelve true si la vista choca contra el objeto.
+        ///     Indica si la vista directa del enemigo choca con el objeto indicado al mirar hacia el jugador.
+        ///     Devuelve true si la vista choca contra el objeto.
         /// </summary>
-        private bool viewCollideWithOccluder(TGCVector3 enemyPos, TGCVector3 mainCharacterPos, TgcBoundingAxisAlignBox objectAabb, float visionY)
+        private bool viewCollideWithOccluder(TGCVector3 enemyPos, TGCVector3 mainCharacterPos,
+            TgcBoundingAxisAlignBox objectAabb, float visionY)
         {
             TGCVector3 q;
             if (TgcCollisionUtils.intersectSegmentAABB(
@@ -650,16 +642,13 @@ namespace Trafico.De.Fauna.Model.Enemies
             {
                 return true;
             }
+
             return false;
         }
 
 
-
-
-
-
         /// <summary>
-        /// Iniciar persecusion
+        ///     Iniciar persecusion
         /// </summary>
         public void setChasing()
         {
@@ -670,14 +659,14 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Rotar hacia el personaje y avanzar.
-        /// Si se acerca lo suficiente pierde.
+        ///     Rotar hacia el personaje y avanzar.
+        ///     Si se acerca lo suficiente pierde.
         /// </summary>
         private void chasing(float elapsedTime)
         {
             //Ver si el personaje esta dentro de la esfera de ataque del guardia
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
-            GameConfig conf = GameModel.instance.gameConfig;
+            var mainCharacter = GameModel.instance.mainCharacter;
+            var conf = GameModel.instance.gameConfig;
             bSphereAttack.setCenter(mesh.Position);
             if (mainCharacter.collideWithBSphere(bSphereAttack))
             {
@@ -691,50 +680,42 @@ namespace Trafico.De.Fauna.Model.Enemies
                 //Estrategia de Rotar y avanzar hacia el enemigo (chase tradicional)
 
                 //Calcular direccion a la que apunta actualmente
-                TGCVector3 currentVecRot = getCurrentVecRot();
+                var currentVecRot = getCurrentVecRot();
 
                 //Orientar guardia hacia el personaje
-                TGCVector3 dir = mainCharacter.CurrentPos - mesh.Position;
+                var dir = mainCharacter.CurrentPos - mesh.Position;
                 dir.Normalize();
-                float angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(dir.Z, dir.X);
+                var angle = FastMath.Atan2(currentVecRot.Z, currentVecRot.X) - FastMath.Atan2(dir.Z, dir.X);
                 mesh.RotateY(angle);
 
                 //Avanzar en esa direccion
-                float movement = -(conf.guardia.velocidadCorrer * elapsedTime);
+                var movement = -(conf.guardia.velocidadCorrer * elapsedTime);
 
-                TGCVector3 movementVector = new TGCVector3(
+                var movementVector = new TGCVector3(
                     FastMath.Sin(mesh.Rotation.Y) * movement,
                     0,
                     FastMath.Cos(mesh.Rotation.Y) * movement
-                    );
+                );
 
                 //Se mueve sin detectar un carajo de colisiones
                 mesh.Move(movementVector);
             }
         }
 
-
-
-
-
-
         #endregion
-
-
-
 
 
         #region IA de Chasing
 
         /*
-         
-        SIN TERMINAR ESTA PARTE
-         
 
-         
-         
-         
-         
+        SIN TERMINAR ESTA PARTE
+
+
+
+
+
+
         /// <summary>
         /// Iniciar persecusion
         /// </summary>
@@ -897,8 +878,6 @@ namespace Trafico.De.Fauna.Model.Enemies
         */
 
 
-
-
         /*
         /// <summary>
         /// Prueba si un movimiento es valido, haciendo deteccion de colisiones con los objetos del escenario.
@@ -982,15 +961,13 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
         */
 
-
         #endregion
 
 
         #region Render del enemigo
 
-
         /// <summary>
-        /// Render de guardia
+        ///     Render de guardia
         /// </summary>
         public void render(float elapsedTime)
         {
@@ -1009,22 +986,24 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Renderizar triangulo de vision, a modo debug
+        ///     Renderizar triangulo de vision, a modo debug
         /// </summary>
         private void renderVision()
         {
-            TGCVector3 currentVecRot = getCurrentVecRot();
+            var currentVecRot = getCurrentVecRot();
 
-            float visionY = GameModel.instance.mainCharacter.Crouched ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado : GameModel.instance.gameConfig.guardia.alturaVision;
-            TGCVector3 meshPos = new TGCVector3(mesh.Position.X, visionY, mesh.Position.Z);
-            TGCVector3 x = meshPos + TGCVector3.Scale(currentVecRot, GameModel.instance.gameConfig.guardia.distanciaVisual);
-            float delta = GameModel.instance.gameConfig.guardia.radioPerpendicularVision;
-            TGCVector3 orthonormal = TGCVector3.Cross((x - meshPos), new TGCVector3(0, 1, 0));
+            var visionY = GameModel.instance.mainCharacter.Crouched
+                ? GameModel.instance.gameConfig.guardia.alturaVisionAgachado
+                : GameModel.instance.gameConfig.guardia.alturaVision;
+            var meshPos = new TGCVector3(mesh.Position.X, visionY, mesh.Position.Z);
+            var x = meshPos + TGCVector3.Scale(currentVecRot, GameModel.instance.gameConfig.guardia.distanciaVisual);
+            var delta = GameModel.instance.gameConfig.guardia.radioPerpendicularVision;
+            var orthonormal = TGCVector3.Cross(x - meshPos, new TGCVector3(0, 1, 0));
             orthonormal.Normalize();
-            TGCVector3 orthonormalScaled = TGCVector3.Scale(orthonormal, delta);
+            var orthonormalScaled = TGCVector3.Scale(orthonormal, delta);
 
             //int color = currentState == State.Alarm ? visionColorAlarm : visionColor;
-            int color = currentVisionColor;
+            var color = currentVisionColor;
             visionVertices[0] = new CustomVertex.PositionColored(meshPos, color);
             visionVertices[1] = new CustomVertex.PositionColored(x + orthonormalScaled, color);
             visionVertices[2] = new CustomVertex.PositionColored(x - orthonormalScaled, color);
@@ -1041,7 +1020,6 @@ namespace Trafico.De.Fauna.Model.Enemies
             d3dDevice.DrawUserPrimitives(PrimitiveType.TriangleList, 1, visionVertices);
 
 
-
             //esfera de colision
             //bSphereVisual.render();
             bSphereVisualEspaldas.Render();
@@ -1049,21 +1027,18 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
 
-
         /// <summary>
-        /// Liberar recursos
+        ///     Liberar recursos
         /// </summary>
         public void dispose()
         {
-            this.mesh = null;
+            mesh = null;
             bSphereVisual.Dispose();
             bSphereAttack.Dispose();
             bSphereVisualEspaldas.Dispose();
             visionVertices = null;
         }
 
-#endregion
-
-
+        #endregion
     }
 }

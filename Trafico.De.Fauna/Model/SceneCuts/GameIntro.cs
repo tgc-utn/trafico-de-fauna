@@ -20,27 +20,16 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 namespace Trafico.De.Fauna.Model.SceneCuts
 {
     /// <summary>
-    /// Escena animada de introduccion al juego
+    ///     Escena animada de introduccion al juego
     /// </summary>
     public class GameIntro
     {
-        public GameIntro()
-        {
-        }
-
         public void init()
         {
         }
 
         public void render()
         {
-
         }
-
-
-
-
-
-
     }
 }

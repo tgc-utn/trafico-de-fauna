@@ -22,68 +22,49 @@ using TGC.Core.Sound;
 namespace Trafico.De.Fauna.Model.Sonidos
 {
     /// <summary>
-    /// Sonido sin loop que se ejecuta con una cierta frecuencia
+    ///     Sonido sin loop que se ejecuta con una cierta frecuencia
     /// </summary>
     public class TemporalSound
     {
-        float acumTime;
-        int currentTimes;
+        private float acumTime;
 
-        TgcStaticSound sound;
-        /// <summary>
-        /// Sonido a reproducir.
-        /// Se reproduce siempre sin loop
-        /// </summary>
-        public TgcStaticSound Sound
-        {
-            get { return sound; }
-            set { sound = value; }
-        }
-
-        float frecuency;
-        /// <summary>
-        /// Frecuencia en segundos en la que se va a reproducir el sonido
-        /// </summary>
-        public float Frecuency
-        {
-            get { return frecuency; }
-            set { frecuency = value; }
-        }
-
-        int amounts;
-        /// <summary>
-        /// Cantidad total de veces que se debe reproducir el sonido.
-        /// Es una vez cada vez que se cumple la frecuencia.
-        /// En -1 indica que es infinita cantidad de veces.
-        /// </summary>
-        public int Amounts
-        {
-            get { return amounts; }
-            set { amounts = value; }
-        }
-
-        bool enabled;
-        /// <summary>
-        /// Habilita la reproduccion
-        /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
+        private int currentTimes;
 
         public TemporalSound()
         {
-            frecuency = 1;
+            Frecuency = 1;
             acumTime = 0;
-            enabled = true;
-            amounts = -1;
+            Enabled = true;
+            Amounts = -1;
             currentTimes = 0;
             GameModel.instance.sonidos.addTemporalSound(this);
         }
 
         /// <summary>
-        /// Iniciar de nuevo
+        ///     Sonido a reproducir.
+        ///     Se reproduce siempre sin loop
+        /// </summary>
+        public TGCStaticSound Sound { get; set; }
+
+        /// <summary>
+        ///     Frecuencia en segundos en la que se va a reproducir el sonido
+        /// </summary>
+        public float Frecuency { get; set; }
+
+        /// <summary>
+        ///     Cantidad total de veces que se debe reproducir el sonido.
+        ///     Es una vez cada vez que se cumple la frecuencia.
+        ///     En -1 indica que es infinita cantidad de veces.
+        /// </summary>
+        public int Amounts { get; set; }
+
+        /// <summary>
+        ///     Habilita la reproduccion
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        ///     Iniciar de nuevo
         /// </summary>
         public void reset()
         {
@@ -92,50 +73,48 @@ namespace Trafico.De.Fauna.Model.Sonidos
         }
 
         /// <summary>
-        /// Actualizar estado y reproducir sonido si corresponde
+        ///     Actualizar estado y reproducir sonido si corresponde
         /// </summary>
         public void update(float elapsedTime)
         {
-            if (!enabled)
+            if (!Enabled)
             {
                 return;
             }
 
             acumTime += elapsedTime;
-            if (acumTime > frecuency)
+            if (acumTime > Frecuency)
             {
                 acumTime = 0;
 
                 //Cantidad ilimitada
-                if (amounts < 0)
+                if (Amounts < 0)
                 {
-                    sound.play(false);
+                    Sound.Play(false);
                 }
 
                 //Cantidad limitada
                 else
                 {
                     currentTimes++;
-                    if (currentTimes < amounts)
+                    if (currentTimes < Amounts)
                     {
-                        sound.play(false);
+                        Sound.Play(false);
                     }
                     else
                     {
-                        currentTimes = amounts;
+                        currentTimes = Amounts;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Indica si ya termino la cantidad de reproducciones que debia hacer
+        ///     Indica si ya termino la cantidad de reproducciones que debia hacer
         /// </summary>
         public bool isEnd()
         {
-            return currentTimes == amounts;
+            return currentTimes == Amounts;
         }
-
-
     }
 }

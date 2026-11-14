@@ -24,13 +24,13 @@ using TGC.Core.SkeletalAnimation;
 namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
-    /// Pool con modelos de guardias para reutilizar
+    ///     Pool con modelos de guardias para reutilizar
     /// </summary>
     public class GuardiasPool
     {
-        const int MAX_GUARDIAS = 3;
+        private const int MAX_GUARDIAS = 3;
 
-        List<TgcSkeletalMesh> meshes;
+        private readonly List<TgcSkeletalMesh> meshes;
 
         public GuardiasPool()
         {
@@ -40,19 +40,20 @@ namespace Trafico.De.Fauna.Model.Enemies
 
         public void loadModels()
         {
-            string meshPath = GameModel.instance.gameConfig.basePath + "Guardia\\";
-            TgcSkeletalLoader loader = new TgcSkeletalLoader();
+            var meshPath = GameModel.instance.gameConfig.basePath + "Guardia\\";
+            var loader = new TgcSkeletalLoader();
 
-            for (int i = 0; i < MAX_GUARDIAS; i++)
+            for (var i = 0; i < MAX_GUARDIAS; i++)
             {
-                TgcSkeletalMesh mesh = loader.loadMeshAndAnimationsFromFile(
-                meshPath + "Guardia-TgcSkeletalMesh.xml",
-                meshPath,
-                new string[] { 
-                    meshPath + "Walk-TgcSkeletalAnim.xml",
-                    meshPath+ "StandBy-TgcSkeletalAnim.xml",
-                    meshPath+ "Run-TgcSkeletalAnim.xml"
-                });
+                var mesh = loader.loadMeshAndAnimationsFromFile(
+                    meshPath + "Guardia-TgcSkeletalMesh.xml",
+                    meshPath,
+                    new[]
+                    {
+                        meshPath + "Walk-TgcSkeletalAnim.xml",
+                        meshPath + "StandBy-TgcSkeletalAnim.xml",
+                        meshPath + "Run-TgcSkeletalAnim.xml"
+                    });
                 mesh.AutoTransformEnable = true;
                 meshes.Add(mesh);
             }
@@ -61,11 +62,11 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Obtener un mesh libre y tomarlo
+        ///     Obtener un mesh libre y tomarlo
         /// </summary>
         public TgcSkeletalMesh getAvaliableMesh()
         {
-            foreach (TgcSkeletalMesh m in meshes)
+            foreach (var m in meshes)
             {
                 if (!m.Enabled)
                 {
@@ -73,19 +74,19 @@ namespace Trafico.De.Fauna.Model.Enemies
                     return m;
                 }
             }
+
             throw new Exception("No hay mas Guardias disponibles para utilizar. Cantidad actual: " + meshes.Count);
         }
 
         /// <summary>
-        /// Liberar todos los meshes
+        ///     Liberar todos los meshes
         /// </summary>
         public void freeAllMeshes()
         {
-            foreach (TgcSkeletalMesh m in meshes)
+            foreach (var m in meshes)
             {
                 m.Enabled = false;
             }
         }
-
     }
 }

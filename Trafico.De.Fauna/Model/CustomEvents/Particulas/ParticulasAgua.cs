@@ -25,15 +25,21 @@ using Trafico.De.Fauna.Model.Particles;
 namespace Trafico.De.Fauna.Model.CustomEvents.Particulas
 {
     /// <summary>
-    /// Efecto de agua salpicando
+    ///     Efecto de agua salpicando
     /// </summary>
     public class ParticulasAgua : CustomEvent, IAlphaObject
     {
-        ParticleEmitter emitter;
+        private ParticleEmitter emitter;
+
+        public void renderWithAlpha()
+        {
+            emitter.render(GameModel.instance.ElapsedTime);
+        }
 
         public override void load(TgcMeshData meshData, string texturePath, TgcSceneData originalSceneData)
         {
-            emitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\particula_agua.png", 5);
+            emitter = new ParticleEmitter(GameModel.instance.gameConfig.shadersPath + "Particles\\particula_agua.png",
+                5);
             emitter.Position = GameUtils.getBBLowerCenterFromMeshData(meshData);
             emitter.Dispersion = 100;
             emitter.ParticleTimeToLive = 3f;
@@ -64,11 +70,6 @@ namespace Trafico.De.Fauna.Model.CustomEvents.Particulas
             {
                 GameModel.instance.currentLevel.AlphaObjects.Add(this);
             }
-        }
-
-        public void renderWithAlpha()
-        {
-            emitter.render(GameModel.instance.ElapsedTime);
         }
 
         public override void renderDebug()

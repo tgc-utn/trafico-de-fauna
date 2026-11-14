@@ -27,19 +27,19 @@ using Trafico.De.Fauna.Model.Interpolators;
 namespace Trafico.De.Fauna.Model.PostProcess
 {
     /// <summary>
-    /// Efectos de post procesado
+    ///     Efectos de post procesado
     /// </summary>
     public class PostProcessEffects
     {
-        VertexBuffer screenQuadVB;
-        Texture render_target2D;
-        Surface pOldRT;
-        Effect effect;
-        InterpoladorLineal intLinealPlayerDead;
-        Temporizador temporizadorPlayerDead;
-        TgcTexture alarmTexture;
-        InterpoladorVaiven intVaivenAlarm;
-        bool alarmMode;
+        private bool alarmMode;
+        private readonly TGCTexture alarmTexture;
+        private readonly Effect effect;
+        private readonly InterpoladorLineal intLinealPlayerDead;
+        private readonly InterpoladorVaiven intVaivenAlarm;
+        private Surface pOldRT;
+        private readonly Texture render_target2D;
+        private readonly VertexBuffer screenQuadVB;
+        private readonly Temporizador temporizadorPlayerDead;
 
 
         public PostProcessEffects(Device d3dDevice)
@@ -48,23 +48,23 @@ namespace Trafico.De.Fauna.Model.PostProcess
             // x = -1 es el extremo izquiedo de la pantalla, x=1 es el extremo derecho
             // Lo mismo para la Y con arriba y abajo
             // la Z en 1 simpre
-            CustomVertex.PositionTextured[] vertices = new CustomVertex.PositionTextured[]
+            CustomVertex.PositionTextured[] vertices =
             {
-                new CustomVertex.PositionTextured( -1, 1, 1, 0,0),
-                new CustomVertex.PositionTextured(1,  1, 1, 1,0),
-                new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
-                new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+                new CustomVertex.PositionTextured(-1, 1, 1, 0, 0),
+                new CustomVertex.PositionTextured(1, 1, 1, 1, 0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0, 1),
+                new CustomVertex.PositionTextured(1, -1, 1, 1, 1)
             };
             //vertex buffer de los triangulos
             screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
-                    4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
-                        CustomVertex.PositionTextured.Format, Pool.Default);
+                4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                CustomVertex.PositionTextured.Format, Pool.Default);
             screenQuadVB.SetData(vertices, 0, LockFlags.None);
 
             // inicializo el render target
             render_target2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
-                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
-                        Format.X8R8G8B8, Pool.Default);
+                , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                Format.X8R8G8B8, Pool.Default);
 
 
             //Cargar Shader de StaticMesh
@@ -75,6 +75,7 @@ namespace Trafico.De.Fauna.Model.PostProcess
             {
                 throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
             }
+
             //Configurar Technique
             //effect.Technique = "DefaultTechnique";
             effect.Technique = "AlarmaTechnique";
@@ -84,13 +85,14 @@ namespace Trafico.De.Fauna.Model.PostProcess
             temporizadorPlayerDead = new Temporizador();
 
             //Modo alarma
-            alarmTexture = TgcTexture.createTexture(d3dDevice, GameModel.instance.gameConfig.basePath + "Shaders\\efecto_alarma.png");
+            alarmTexture = TGCTexture.CreateTexture(d3dDevice,
+                GameModel.instance.gameConfig.basePath + "Shaders\\efecto_alarma.png");
             intVaivenAlarm = new InterpoladorVaiven(0, 1, 5f);
             alarmMode = false;
         }
 
         /// <summary>
-        /// Activar modo alarma
+        ///     Activar modo alarma
         /// </summary>
         public void setAlarmModeEnable(bool enable)
         {
@@ -102,15 +104,16 @@ namespace Trafico.De.Fauna.Model.PostProcess
             {
                 effect.Technique = "DefaultTechnique";
             }
+
             alarmMode = enable;
         }
 
         public void set2DRenderTarget()
         {
-            Device device = D3DDevice.Instance.Device;
+            var device = D3DDevice.Instance.Device;
 
             pOldRT = device.GetRenderTarget(0);
-            Surface pSurf = render_target2D.GetSurfaceLevel(0);
+            var pSurf = render_target2D.GetSurfaceLevel(0);
             device.SetRenderTarget(0, pSurf);
             device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
 
@@ -119,7 +122,7 @@ namespace Trafico.De.Fauna.Model.PostProcess
 
         public void renderAndRestoreTarget()
         {
-            Device device = D3DDevice.Instance.Device;
+            var device = D3DDevice.Instance.Device;
 
             device.EndScene();
 
@@ -135,7 +138,7 @@ namespace Trafico.De.Fauna.Model.PostProcess
             //Parametros de modo alarma
             if (alarmMode)
             {
-                effect.SetValue("textura_alarma", alarmTexture.D3dTexture);
+                effect.SetValue("textura_alarma", alarmTexture.D3DTexture);
                 effect.SetValue("alarmaScaleFactor", intVaivenAlarm.update(GameModel.instance.ElapsedTime));
             }
 
@@ -158,13 +161,13 @@ namespace Trafico.De.Fauna.Model.PostProcess
         }
 
         /// <summary>
-        /// Dibujar siempre el ultimo cuadro de animacion que hubo con efecto de oscurecimiento
+        ///     Dibujar siempre el ultimo cuadro de animacion que hubo con efecto de oscurecimiento
         /// </summary>
         public void renderOldFrame()
         {
             var device = D3DDevice.Instance.Device;
 
-            float scaleFactor = intLinealPlayerDead.update(GameModel.instance.ElapsedTime);
+            var scaleFactor = intLinealPlayerDead.update(GameModel.instance.ElapsedTime);
             if (temporizadorPlayerDead.update(GameModel.instance.ElapsedTime))
             {
                 //Arrancar nuevamente en el ultimo sector
@@ -190,6 +193,5 @@ namespace Trafico.De.Fauna.Model.PostProcess
                 device.EndScene();
             }
         }
-
     }
 }

@@ -22,75 +22,62 @@ using TGC.Core.BoundingVolumes;
 namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
-    /// Objeto con el que se puede colisionar
+    ///     Objeto con el que se puede colisionar
     /// </summary>
     public class ColliderObject
     {
         public ColliderObject(TgcMeshShader mesh)
         {
-            this.mesh = mesh;
-            this.boundingBox = mesh.BoundingBox;
-            this.enable = true;
+            this.Mesh = mesh;
+            BoundingBox = mesh.BoundingBox;
+            Enabled = true;
         }
 
         public ColliderObject(TgcBoundingAxisAlignBox boundingBox)
         {
-            this.mesh = null;
-            this.boundingBox = boundingBox;
-            this.enable = true;
+            Mesh = null;
+            this.BoundingBox = boundingBox;
+            Enabled = true;
         }
 
-        TgcBoundingAxisAlignBox boundingBox;
         /// <summary>
-        /// AABB
+        ///     AABB
         /// </summary>
-        public TgcBoundingAxisAlignBox BoundingBox
-        {
-            get { return boundingBox; }
-            set { boundingBox = value; }
-        }
+        public TgcBoundingAxisAlignBox BoundingBox { get; set; }
 
-        bool enable;
         /// <summary>
-        /// Habilitado
+        ///     Habilitado
         /// </summary>
-        public bool Enabled
-        {
-            get { return enable; }
-            set { enable = value; }
-        }
+        public bool Enabled { get; set; }
 
-        TgcMeshShader mesh;
         /// <summary>
-        /// Mesh
+        ///     Mesh
         /// </summary>
-        public TgcMeshShader Mesh
-        {
-            get { return mesh; }
-            set { mesh = value; }
-        }
+        public TgcMeshShader Mesh { get; set; }
 
         public override string ToString()
         {
-            if (mesh != null)
+            if (Mesh != null)
             {
-                return "ColliderObject: " + mesh.Name;
+                return "ColliderObject: " + Mesh.Name;
             }
+
             return "ColliderObject: BoundingBox";
         }
 
         public void dispose()
         {
-            if (boundingBox != null)
+            if (BoundingBox != null)
             {
-                boundingBox.Dispose();
-                boundingBox = null;
+                BoundingBox.Dispose();
+                BoundingBox = null;
             }
-            // TODO in TGC.Core there are some missing validations (like was in Trafico de fauna TgcMesh) if attributes are null.
-            if (mesh != null && mesh.D3dMesh != null)
+
+            // TODO: in TGC.Core there are some missing validations (like was in Trafico de fauna TgcMesh) if attributes are null.
+            if (Mesh != null && Mesh.D3dMesh != null)
             {
-                mesh.Dispose();
-                mesh = null;
+                Mesh.Dispose();
+                Mesh = null;
             }
         }
     }

@@ -26,13 +26,13 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.Bananas
 {
     /// <summary>
-    /// Pool con modelos de bananas para reutilizar
+    ///     Pool con modelos de bananas para reutilizar
     /// </summary>
     public class BananasPool
     {
-        const int MAX_BANANAS = 50;
+        private const int MAX_BANANAS = 50;
 
-        List<TgcMeshShader> meshes;
+        private readonly List<TgcMeshShader> meshes;
 
         public BananasPool()
         {
@@ -42,17 +42,17 @@ namespace Trafico.De.Fauna.Model.Bananas
         public void loadModels()
         {
             //Parsear modelo una vez
-            string mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\Banana\\";
-            string meshPath = mediaPath + "Banana-TgcScene.xml";
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\Banana\\";
+            var meshPath = mediaPath + "Banana-TgcScene.xml";
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            TgcSceneParser parser = new TgcSceneParser();
-            TgcSceneData sceneData = parser.parseSceneFromString(File.ReadAllText(meshPath));
+            var parser = new TgcSceneParser();
+            var sceneData = parser.parseSceneFromString(File.ReadAllText(meshPath));
 
             //Cargar varios para el pool
-            for (int i = 0; i < MAX_BANANAS; i++)
+            for (var i = 0; i < MAX_BANANAS; i++)
             {
-                TgcMeshShader mesh = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
+                var mesh = (TgcMeshShader)loader.loadScene(sceneData, mediaPath).Meshes[0];
                 mesh.AutoTransformEnable = true;
                 meshes.Add(mesh);
             }
@@ -61,11 +61,11 @@ namespace Trafico.De.Fauna.Model.Bananas
         }
 
         /// <summary>
-        /// Obtener un mesh libre y tomarlo
+        ///     Obtener un mesh libre y tomarlo
         /// </summary>
         public TgcMeshShader getAvaliableMesh()
         {
-            foreach (TgcMeshShader m in meshes)
+            foreach (var m in meshes)
             {
                 if (!m.Enabled)
                 {
@@ -73,19 +73,19 @@ namespace Trafico.De.Fauna.Model.Bananas
                     return m;
                 }
             }
+
             throw new Exception("No hay mas Bananas disponibles para utilizar. Cantidad actual: " + meshes.Count);
         }
 
         /// <summary>
-        /// Liberar todos los meshes
+        ///     Liberar todos los meshes
         /// </summary>
         public void freeAllMeshes()
         {
-            foreach (TgcMeshShader m in meshes)
+            foreach (var m in meshes)
             {
                 m.Enabled = false;
             }
         }
-
     }
 }

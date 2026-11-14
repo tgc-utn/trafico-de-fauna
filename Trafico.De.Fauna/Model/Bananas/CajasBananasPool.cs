@@ -25,15 +25,15 @@ using TGC.Core.KeyFrameLoader;
 namespace Trafico.De.Fauna.Model.Bananas
 {
     /// <summary>
-    /// Pool con modelos de cajas de bananas para reutilizar
+    ///     Pool con modelos de cajas de bananas para reutilizar
     /// </summary>
     public class CajasBananasPool
     {
-        const int MAX_CAJAS_CON_BANANA = 20;
-        const int MAX_CAJAS_SIN_BANANA = 20;
+        private const int MAX_CAJAS_CON_BANANA = 20;
+        private const int MAX_CAJAS_SIN_BANANA = 20;
 
-        List<TgcKeyFrameMesh> meshesConBanana;
-        List<TgcKeyFrameMesh> meshesSinBanana;
+        private readonly List<TgcKeyFrameMesh> meshesConBanana;
+        private readonly List<TgcKeyFrameMesh> meshesSinBanana;
 
         public CajasBananasPool()
         {
@@ -44,13 +44,13 @@ namespace Trafico.De.Fauna.Model.Bananas
         public void loadModels()
         {
             //Parsear modelo sin bananas una vez
-            string mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\CajaBananas\\";
-            string meshPath = mediaPath + "CajaSinBananas-TgcKeyFrameMesh.xml";
-            TgcKeyFrameLoader loader = new TgcKeyFrameLoader();
-            TgcKeyFrameParser parser = new TgcKeyFrameParser();
-            TgcKeyFrameMeshData meshDataSinBananas = parser.parseMeshFromString(File.ReadAllText(meshPath));
+            var mediaPath = GameModel.instance.gameConfig.basePath + "Bananas\\CajaBananas\\";
+            var meshPath = mediaPath + "CajaSinBananas-TgcKeyFrameMesh.xml";
+            var loader = new TgcKeyFrameLoader();
+            var parser = new TgcKeyFrameParser();
+            var meshDataSinBananas = parser.parseMeshFromString(File.ReadAllText(meshPath));
             meshDataSinBananas.materialsData[0].fileName = "CajaSinBananas.jpg";
-            TgcKeyFrameAnimationData[] animData = new TgcKeyFrameAnimationData[]
+            TgcKeyFrameAnimationData[] animData =
             {
                 parser.parseAnimationFromString(File.ReadAllText(mediaPath + "StandBy-TgcKeyFrameAnim.xml")),
                 parser.parseAnimationFromString(File.ReadAllText(mediaPath + "Golpe-TgcKeyFrameAnim.xml")),
@@ -58,43 +58,45 @@ namespace Trafico.De.Fauna.Model.Bananas
             };
 
             //Modelo con bananas (solo cambia la textura)
-            TgcKeyFrameMeshData meshDataConBananas = parser.parseMeshFromString(File.ReadAllText(meshPath));
+            var meshDataConBananas = parser.parseMeshFromString(File.ReadAllText(meshPath));
             meshDataConBananas.materialsData[0].fileName = "CajaConBananas.jpg";
 
             //Cargar varios modelos con bananas para el pool
-            for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
+            for (var i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
-                TgcKeyFrameMesh mesh = loader.loadMesh(meshDataConBananas, mediaPath);
+                var mesh = loader.loadMesh(meshDataConBananas, mediaPath);
                 mesh.AutoTransformEnable = true;
-                for (int j = 0; j < animData.Length; j++)
+                for (var j = 0; j < animData.Length; j++)
                 {
                     loader.loadAnimation(mesh, animData[j]);
                 }
+
                 meshesConBanana.Add(mesh);
             }
 
             //Cargar varios modelos sin bananas para el pool
-            for (int i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
+            for (var i = 0; i < MAX_CAJAS_SIN_BANANA; i++)
             {
-                TgcKeyFrameMesh mesh = loader.loadMesh(meshDataSinBananas, mediaPath);
+                var mesh = loader.loadMesh(meshDataSinBananas, mediaPath);
                 mesh.AutoTransformEnable = true;
-                for (int j = 0; j < animData.Length; j++)
+                for (var j = 0; j < animData.Length; j++)
                 {
                     loader.loadAnimation(mesh, animData[j]);
                 }
+
                 meshesSinBanana.Add(mesh);
             }
 
             freeAllMeshes();
         }
 
-        
+
         /// <summary>
-        /// Obtener un mesh con banana libre y tomarlo
+        ///     Obtener un mesh con banana libre y tomarlo
         /// </summary>
         public TgcKeyFrameMesh getAvaliableMeshConBanana()
         {
-            foreach (TgcKeyFrameMesh m in meshesConBanana)
+            foreach (var m in meshesConBanana)
             {
                 if (!m.Enabled)
                 {
@@ -102,15 +104,17 @@ namespace Trafico.De.Fauna.Model.Bananas
                     return m;
                 }
             }
-            throw new Exception("No hay mas Cajas con Bananas disponibles para utilizar. Cantidad actual: " + meshesConBanana.Count);
+
+            throw new Exception("No hay mas Cajas con Bananas disponibles para utilizar. Cantidad actual: " +
+                                meshesConBanana.Count);
         }
 
         /// <summary>
-        /// Obtener un mesh sin banana libre y tomarlo
+        ///     Obtener un mesh sin banana libre y tomarlo
         /// </summary>
         public TgcKeyFrameMesh getAvaliableMeshSinBanana()
         {
-            foreach (TgcKeyFrameMesh m in meshesSinBanana)
+            foreach (var m in meshesSinBanana)
             {
                 if (!m.Enabled)
                 {
@@ -118,24 +122,26 @@ namespace Trafico.De.Fauna.Model.Bananas
                     return m;
                 }
             }
-            throw new Exception("No hay mas Cajas sin Bananas disponibles para utilizar. Cantidad actual: " + meshesSinBanana.Count);
+
+            throw new Exception("No hay mas Cajas sin Bananas disponibles para utilizar. Cantidad actual: " +
+                                meshesSinBanana.Count);
         }
-        
+
 
         /// <summary>
-        /// Liberar todos los meshes
+        ///     Liberar todos los meshes
         /// </summary>
         public void freeAllMeshes()
         {
-            foreach (TgcKeyFrameMesh m in meshesConBanana)
+            foreach (var m in meshesConBanana)
             {
                 m.Enabled = false;
             }
-            foreach (TgcKeyFrameMesh m in meshesSinBanana)
+
+            foreach (var m in meshesSinBanana)
             {
                 m.Enabled = false;
             }
         }
-
     }
 }

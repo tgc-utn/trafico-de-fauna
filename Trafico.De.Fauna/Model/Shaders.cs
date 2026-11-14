@@ -25,25 +25,27 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model
 {
     /// <summary>
-    /// Utilidad para shaders del juego
+    ///     Utilidad para shaders del juego
     /// </summary>
     public class Shaders
     {
+        public readonly string ANIMATE_UV = "AnimateUVTechnique";
         public readonly string DEFAULT = "DefaultTechnique";
         public readonly string LIGHTMAP = "LightmapTechnique";
+
+        public readonly string ONLY_COLOR = "OnlyColorTechnique";
+
         //public readonly string DEFAULT = "PhongTechnique";
         public readonly string RESALTADO = "ResaltadoTechnique";
-        public readonly string ONLY_COLOR = "OnlyColorTechnique";
-        public readonly string ANIMATE_UV = "AnimateUVTechnique";
 
 
         /// <summary>
-        /// Shader principal
+        ///     Shader principal
         /// </summary>
         public Effect effect;
 
         /// <summary>
-        /// Shader para particulas
+        ///     Shader para particulas
         /// </summary>
         public ParticlesShaders particles;
 
@@ -52,14 +54,15 @@ namespace Trafico.De.Fauna.Model
         {
             //Cargar Shader de StaticMesh
             string compilationErrors;
-            this.effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
+            effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "StaticMeshShader.fx",
                 null, null, ShaderFlags.None, null, out compilationErrors);
             if (effect == null)
             {
                 throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
             }
+
             //Configurar Technique
-            this.effect.Technique = DEFAULT;
+            effect.Technique = DEFAULT;
 
 
             //Cargar efectos para particulas
@@ -67,7 +70,7 @@ namespace Trafico.De.Fauna.Model
         }
 
         /// <summary>
-        /// Carga el Technique default correspondiente segun el tipo de formato de mesh
+        ///     Carga el Technique default correspondiente segun el tipo de formato de mesh
         /// </summary>
         public void setCorrectTechnique(TgcMeshShader mesh)
         {
@@ -86,15 +89,15 @@ namespace Trafico.De.Fauna.Model
         }
 
         /// <summary>
-        /// Shader para efectos de particulas
+        ///     Shader para efectos de particulas
         /// </summary>
         public class ParticlesShaders
         {
-            public readonly string DEFAULT = "DefaultTechnique";
             public readonly string ALPHA_EXIT = "AlphaExitTechnique";
+            public readonly string DEFAULT = "DefaultTechnique";
 
             /// <summary>
-            /// Shader principal
+            ///     Shader principal
             /// </summary>
             public Effect effect;
 
@@ -102,16 +105,16 @@ namespace Trafico.De.Fauna.Model
             {
                 //Cargar Shader de StaticMesh
                 string compilationErrors;
-                this.effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "ParticlesShader.fx",
+                effect = Effect.FromFile(device, GameModel.instance.gameConfig.shadersPath + "ParticlesShader.fx",
                     null, null, ShaderFlags.None, null, out compilationErrors);
                 if (effect == null)
                 {
                     throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
                 }
+
                 //Configurar Technique
-                this.effect.Technique = DEFAULT;
+                effect.Technique = DEFAULT;
             }
         }
-
     }
 }

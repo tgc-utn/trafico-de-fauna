@@ -27,34 +27,13 @@ using Trafico.De.Fauna.Utils.Render;
 namespace Trafico.De.Fauna.Model.Meshes
 {
     /// <summary>
-    /// Mesh que permite que se animen sus coordenadas UV en base a una velocidad especificada.
-    /// Solo permite meshes con formato de Textura y de Textura con Lightmaps (los lightmaps se ignoran).
-    /// No puede haber meshes sin coordenadas uv.
+    ///     Mesh que permite que se animen sus coordenadas UV en base a una velocidad especificada.
+    ///     Solo permite meshes con formato de Textura y de Textura con Lightmaps (los lightmaps se ignoran).
+    ///     No puede haber meshes sin coordenadas uv.
     /// </summary>
     public class MeshAnimatedTexture : TgcMeshShader, IRenderQueueElement, IAlphaObject
     {
-
-        TGCVector2 currentUVsum;
-
-        private bool playing;
-        /// <summary>
-        /// Arrancar o parar avance de animacion de la textura
-        /// </summary>
-        public bool Playing
-        {
-            get { return playing; }
-            set { playing = value; }
-        }
-
-        private TGCVector2 speed;
-        /// <summary>
-        /// Velocidad de desplazamiento de las coordenadas UV
-        /// </summary>
-        public TGCVector2 Speed
-        {
-            get { return speed; }
-            set { speed = value; }
-        }
+        private TGCVector2 currentUVsum;
 
 
         public MeshAnimatedTexture(Mesh mesh, string name, MeshRenderType renderType)
@@ -65,26 +44,47 @@ namespace Trafico.De.Fauna.Model.Meshes
                 throw new Exception("El mesh no tiene texturas.");
             }
 
-            this.speed = new TGCVector2(0, 1);
+            Speed = new TGCVector2(0, 1);
             currentUVsum = new TGCVector2(0, 0);
         }
 
-        public MeshAnimatedTexture(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
+        public MeshAnimatedTexture(string name, TgcMesh parentInstance, TGCVector3 translation, TGCVector3 rotation,
+            TGCVector3 scale)
             : base(name, parentInstance, translation, rotation, scale)
         {
             throw new Exception("Instancia no soportada");
         }
 
+        /// <summary>
+        ///     Arrancar o parar avance de animacion de la textura
+        /// </summary>
+        public bool Playing { get; set; }
 
         /// <summary>
-        /// Se redefine este método.
-        /// Si tiene Alpha habilitado no renderiza directo, sino que lo manda a una lista para renderizar
-        /// luego de todos los objetos opacos.
+        ///     Velocidad de desplazamiento de las coordenadas UV
+        /// </summary>
+        public TGCVector2 Speed { get; set; }
+
+        /// <summary>
+        ///     Render directo
+        /// </summary>
+        public new void renderWithAlpha()
+        {
+            executeRender();
+        }
+
+
+        /// <summary>
+        ///     Se redefine este método.
+        ///     Si tiene Alpha habilitado no renderiza directo, sino que lo manda a una lista para renderizar
+        ///     luego de todos los objetos opacos.
         /// </summary>
         public new void render()
         {
             if (!enabled)
+            {
                 return;
+            }
 
             if (AlphaBlendEnable)
             {
@@ -96,28 +96,20 @@ namespace Trafico.De.Fauna.Model.Meshes
             }
         }
 
-        /// <summary>
-        /// Render directo
-        /// </summary>
-        public new void renderWithAlpha()
-        {
-            executeRender();
-        }
-
 
         /// <summary>
-        /// Se redefine este método para agregar seteo de shader y animacion de uv
+        ///     Se redefine este método para agregar seteo de shader y animacion de uv
         /// </summary>
-        public new void executeRender(float elapsedTime)
+        public void executeRender(float elapsedTime)
         {
-            Effect effect = GameModel.instance.shaders.effect;
-            this.Technique = GameModel.instance.shaders.ANIMATE_UV;
+            var effect = GameModel.instance.shaders.effect;
+            Technique = GameModel.instance.shaders.ANIMATE_UV;
 
 
             //Actualizar incremento de UV
-            if (playing)
+            if (Playing)
             {
-                TGCVector2 addVec = TGCVector2.Scale(speed, elapsedTime);
+                var addVec = TGCVector2.Scale(Speed, elapsedTime);
                 currentUVsum += addVec;
                 currentUVsum.X %= 1;
                 currentUVsum.Y %= 1;
@@ -131,20 +123,20 @@ namespace Trafico.De.Fauna.Model.Meshes
 
 
         /// <summary>
-        /// Factory customizado 
+        ///     Factory customizado
         /// </summary>
         public class MeshAnimatedTextureFactory : IMeshFactory
         {
-            public TgcMesh createNewMesh(Mesh d3dMesh, string meshName, TgcMesh.MeshRenderType renderType)
+            public TgcMesh createNewMesh(Mesh d3dMesh, string meshName, MeshRenderType renderType)
             {
                 return new MeshAnimatedTexture(d3dMesh, meshName, renderType);
             }
 
-            public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation, TGCVector3 rotation, TGCVector3 scale)
+            public TgcMesh createNewMeshInstance(string meshName, TgcMesh originalMesh, TGCVector3 translation,
+                TGCVector3 rotation, TGCVector3 scale)
             {
                 return new MeshAnimatedTexture(meshName, originalMesh, translation, rotation, scale);
             }
         }
-
     }
 }

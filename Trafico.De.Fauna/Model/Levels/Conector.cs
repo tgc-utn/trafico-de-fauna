@@ -21,181 +21,150 @@ using System;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
-using Trafico.De.Fauna.Model.Dialogs;
 using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.Levels
 {
     /// <summary>
-    /// Conecta un sector con otro.
+    ///     Conecta un sector con otro.
     /// </summary>
     public class Conector : IAlphaObject
     {
-        
-        string texto;
+        private readonly TGCVector3 center;
 
-        bool activo;
-        public bool Activo
-        {
-            get { return activo; }
-        }
-
-        TGCVector3 center;
-        public TGCVector3 Center
-        {
-            get { return center; }
-        }
-
-        string id;
-        public string Id
-        {
-            get { return id; }
-        }
-        string siguienteId;
-        public string SiguienteId
-        {
-            get { return siguienteId; }
-        }
-
-        LevelSector sector;
-        public LevelSector Sector
-        {
-            get { return sector; }
-        }
-
-        TgcBoundingAxisAlignBox boundingBox;
-        public TgcBoundingAxisAlignBox BoundingBox
-        {
-            get { return boundingBox; }
-        }
-
-        GameUtils.Orientacion orientacion;
-        /// <summary>
-        /// Hacia donde orientar inicialmente al personaje al pasar por este sector
-        /// </summary>
-        public GameUtils.Orientacion Orientacion
-        {
-            get { return orientacion; }
-        }
-
-        bool changeLevel;
-        /// <summary>
-        /// Indica si este conector produce un cambio de nivel
-        /// </summary>
-        public bool ChangeLevel
-        {
-            get { return changeLevel; }
-        }
+        private readonly string texto;
 
         public Conector(LevelSector sector, TgcMeshData meshData)
         {
-            this.sector = sector;
-            id = meshData.name;
+            this.Sector = sector;
+            Id = meshData.name;
 
             //Propiedad: siguienteId=Conector_XXX (si no viene el conector no pasa de sector)
             if (GameUtils.containsUserProp(meshData.userProperties, "siguienteId"))
             {
-                siguienteId = meshData.userProperties["siguienteId"];
+                SiguienteId = meshData.userProperties["siguienteId"];
             }
             else
             {
-                siguienteId = null;
+                SiguienteId = null;
             }
 
             //Propiedad: texto=Hola
             if (GameUtils.containsUserProp(meshData.userProperties, "texto"))
             {
-                texto = (string)meshData.userProperties["texto"];
+                texto = meshData.userProperties["texto"];
             }
             else
             {
-                texto = "Siguiente: " + siguienteId;
+                texto = "Siguiente: " + SiguienteId;
             }
 
             //Propiedad: activo=true (default=true)
             if (GameUtils.containsUserProp(meshData.userProperties, "activo"))
             {
-                activo = bool.Parse(meshData.userProperties["activo"]);
+                Activo = bool.Parse(meshData.userProperties["activo"]);
             }
             else
             {
-                activo = true;
+                Activo = true;
             }
+
             //Propiedad: orientacion=norte (default norte) => norte = +Y, sur = -Y, este = X, oeste = -X
             if (GameUtils.containsUserProp(meshData.userProperties, "orientacion"))
             {
-                string orientacionStr = meshData.userProperties["orientacion"].ToUpper();
+                var orientacionStr = meshData.userProperties["orientacion"].ToUpper();
                 switch (orientacionStr)
                 {
                     case "NORTE":
-                        orientacion = GameUtils.Orientacion.Norte;
+                        Orientacion = GameUtils.Orientacion.Norte;
                         break;
                     case "SUR":
-                        orientacion = GameUtils.Orientacion.Sur;
+                        Orientacion = GameUtils.Orientacion.Sur;
                         break;
                     case "ESTE":
-                        orientacion = GameUtils.Orientacion.Este;
+                        Orientacion = GameUtils.Orientacion.Este;
                         break;
                     case "OESTE":
-                        orientacion = GameUtils.Orientacion.Oeste;
+                        Orientacion = GameUtils.Orientacion.Oeste;
                         break;
                     default:
-                        throw new Exception("Orientacion incorrecta: " + orientacionStr + ", en Conector: " + id);
+                        throw new Exception("Orientacion incorrecta: " + orientacionStr + ", en Conector: " + Id);
                 }
             }
             else
             {
-                orientacion = GameUtils.Orientacion.Norte;
+                Orientacion = GameUtils.Orientacion.Norte;
             }
 
             //Propiedad: changeLevel=true (default false)
             if (GameUtils.containsUserProp(meshData.userProperties, "changeLevel"))
             {
-                changeLevel = bool.Parse(meshData.userProperties["changeLevel"]);
+                ChangeLevel = bool.Parse(meshData.userProperties["changeLevel"]);
             }
             else
             {
-                changeLevel = false;
+                ChangeLevel = false;
             }
 
 
             //Si no se especifico "siguienteId" y ademas no hay cambio de nivel, se desactiva el conector
-            if (siguienteId == null && !changeLevel)
+            if (SiguienteId == null && !ChangeLevel)
             {
-                activo = false;
+                Activo = false;
             }
 
 
-            boundingBox = GameUtils.createBBFromMeshData(meshData);
-            center = boundingBox.calculateBoxCenter();
+            BoundingBox = GameUtils.createBBFromMeshData(meshData);
+            center = BoundingBox.calculateBoxCenter();
             center.Y = 0;
+        }
+
+        public bool Activo { get; }
+
+        public TGCVector3 Center => center;
+
+        public string Id { get; }
+
+        public string SiguienteId { get; }
+
+        public LevelSector Sector { get; private set; }
+
+        public TgcBoundingAxisAlignBox BoundingBox { get; private set; }
+
+        /// <summary>
+        ///     Hacia donde orientar inicialmente al personaje al pasar por este sector
+        /// </summary>
+        public GameUtils.Orientacion Orientacion { get; }
+
+        /// <summary>
+        ///     Indica si este conector produce un cambio de nivel
+        /// </summary>
+        public bool ChangeLevel { get; }
+
+        public void renderWithAlpha()
+        {
+            var simpleMessageDialog = GameModel.instance.simpleMessageDialog;
+            simpleMessageDialog.setText(texto);
+            simpleMessageDialog.render();
         }
 
 
         public void dispose()
         {
-            sector = null;
-            if (boundingBox != null)
+            Sector = null;
+            if (BoundingBox != null)
             {
-                boundingBox.Dispose();
-                boundingBox = null;
+                BoundingBox.Dispose();
+                BoundingBox = null;
             }
         }
 
         /// <summary>
-        /// Dibujar mensaje indicador de conector
+        ///     Dibujar mensaje indicador de conector
         /// </summary>
         public void render()
         {
             GameModel.instance.currentLevel.AlphaObjects.Add(this);
         }
-
-        public void renderWithAlpha()
-        {
-            SimpleMessageDialog simpleMessageDialog = GameModel.instance.simpleMessageDialog;
-            simpleMessageDialog.setText(this.texto);
-            simpleMessageDialog.render();
-        }
-
     }
 }

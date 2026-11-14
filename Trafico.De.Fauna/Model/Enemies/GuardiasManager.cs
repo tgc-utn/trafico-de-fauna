@@ -19,77 +19,67 @@ along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using Trafico.De.Fauna.Model.Levels;
 
 namespace Trafico.De.Fauna.Model.Enemies
 {
     /// <summary>
-    /// Utilidad para manejar a los Guardias
+    ///     Utilidad para manejar a los Guardias
     /// </summary>
     public class GuardiasManager
     {
-        LevelSector sector;
-        public LevelSector Sector
-        {
-            get { return sector; }
-        }
-
-        List<Guardia> guardias;
-        public List<Guardia> Guardias
-        {
-            get { return guardias; }
-        }
-
-
         public GuardiasManager(LevelSector sector)
         {
-            this.sector = sector;
-            this.guardias = new List<Guardia>();
+            this.Sector = sector;
+            Guardias = new List<Guardia>();
         }
+
+        public LevelSector Sector { get; private set; }
+
+        public List<Guardia> Guardias { get; private set; }
 
         public void addNode(TgcMeshData meshDataNode)
         {
-            TGCVector3 nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
+            var nodeCenter = GameUtils.getBBCenterFromMeshData(meshDataNode);
 
             //Nombre: Guardia_XXX o Guardia_XXX_1 o Guardia_XXX_2
-            string[] split = meshDataNode.name.Split('_');
-            string guardiaId = split[0] + "_" + split[1];
+            var split = meshDataNode.name.Split('_');
+            var guardiaId = split[0] + "_" + split[1];
             if (split.Length == 2)
             {
-                
-                Guardia guardia = existGuardia(guardiaId);
+                var guardia = existGuardia(guardiaId);
                 if (guardia == null)
                 {
                     //Crear guardia real
                     guardia = new Guardia(guardiaId);
                     guardia.setData(meshDataNode.userProperties);
-                    this.guardias.Add(guardia);
+                    Guardias.Add(guardia);
                 }
                 //Actualizar existente
                 else
                 {
                     guardia.setData(meshDataNode.userProperties);
                 }
+
                 //Agregar waypoint inicial
-                GuardiaWaypoint waypoint = new GuardiaWaypoint(guardia, nodeCenter, 0, meshDataNode.userProperties);
+                var waypoint = new GuardiaWaypoint(guardia, nodeCenter, 0, meshDataNode.userProperties);
                 guardia.Waypoints.Add(waypoint);
             }
             else if (split.Length == 3)
             {
-                int nodeIndex = int.Parse(split[2]);
-                Guardia guardia = existGuardia(guardiaId);
+                var nodeIndex = int.Parse(split[2]);
+                var guardia = existGuardia(guardiaId);
 
                 //Crear guardia vacio
                 if (guardia == null)
                 {
                     guardia = new Guardia(guardiaId);
-                    this.guardias.Add(guardia);
+                    Guardias.Add(guardia);
                 }
-                
+
                 //Agregar waypoint
-                GuardiaWaypoint waypoint = new GuardiaWaypoint(guardia, nodeCenter, nodeIndex, meshDataNode.userProperties);
+                var waypoint = new GuardiaWaypoint(guardia, nodeCenter, nodeIndex, meshDataNode.userProperties);
                 guardia.Waypoints.Add(waypoint);
             }
             else
@@ -101,7 +91,7 @@ namespace Trafico.De.Fauna.Model.Enemies
 
         public void arrangeNodes()
         {
-            foreach (Guardia guardia in guardias)
+            foreach (var guardia in Guardias)
             {
                 guardia.arrangeWaypoints();
             }
@@ -109,35 +99,37 @@ namespace Trafico.De.Fauna.Model.Enemies
 
         public Guardia findGuardia(string guardiaId)
         {
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 if (g.Id == guardiaId)
                 {
                     return g;
                 }
             }
+
             throw new Exception("Guardia: " + guardiaId + " no encontrado");
         }
 
         public Guardia existGuardia(string guardiaId)
         {
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 if (g.Id == guardiaId)
                 {
                     return g;
                 }
             }
+
             return null;
         }
 
         /// <summary>
-        /// Iniciar a los guardias en un sector
+        ///     Iniciar a los guardias en un sector
         /// </summary>
         public void initGuardias()
         {
-            GuardiasPool pool = GameModel.instance.guardiasPool;
-            foreach (Guardia g in guardias)
+            var pool = GameModel.instance.guardiasPool;
+            foreach (var g in Guardias)
             {
                 if (g.Activo)
                 {
@@ -147,26 +139,28 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Esconder guardias del sector actual
+        ///     Esconder guardias del sector actual
         /// </summary>
         public void hideGuardias()
         {
             GameModel.instance.guardiasPool.freeAllMeshes();
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 g.hide();
             }
         }
 
         /// <summary>
-        /// Actualizar estados de guardias
+        ///     Actualizar estados de guardias
         /// </summary>
         public void update(float elapsedTime)
         {
             if (GameModel.instance.debugMode.Enabled && !GameModel.instance.debugMode.GuardiasEnabled)
+            {
                 return;
+            }
 
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 if (g.Activo)
                 {
@@ -177,7 +171,7 @@ namespace Trafico.De.Fauna.Model.Enemies
 
         public void render(float elapsedTime)
         {
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 if (g.Activo)
                 {
@@ -188,11 +182,11 @@ namespace Trafico.De.Fauna.Model.Enemies
 
 
         /// <summary>
-        /// Alertar a todos los guardias
+        ///     Alertar a todos los guardias
         /// </summary>
         public void alertAll()
         {
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 if (g.Activo)
                 {
@@ -202,18 +196,19 @@ namespace Trafico.De.Fauna.Model.Enemies
         }
 
         /// <summary>
-        /// Liberar recursos
+        ///     Liberar recursos
         /// </summary>
         public void dispose()
         {
             GameModel.instance.guardiasPool.freeAllMeshes();
-            foreach (Guardia g in guardias)
+            foreach (var g in Guardias)
             {
                 g.dispose();
             }
-            guardias = null;
 
-            sector = null;
+            Guardias = null;
+
+            Sector = null;
         }
     }
 }

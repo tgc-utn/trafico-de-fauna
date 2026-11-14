@@ -24,7 +24,7 @@ using System.Windows.Forms;
 namespace Trafico.De.Fauna.Model.Menu.Error
 {
     /// <summary>
-    /// Ventana de errores
+    ///     Ventana de errores
     /// </summary>
     public partial class ErrorWindow : System.Windows.Forms.Form
     {
@@ -39,8 +39,8 @@ namespace Trafico.De.Fauna.Model.Menu.Error
             this.descripcion.Text = descripcion;
             if (exception != null)
             {
-                StringBuilder sb = new StringBuilder();
-                Exception e = exception;
+                var sb = new StringBuilder();
+                var e = exception;
                 while (e != null)
                 {
                     sb.AppendLine(e.Message);
@@ -48,17 +48,18 @@ namespace Trafico.De.Fauna.Model.Menu.Error
                     sb.AppendLine(e.StackTrace);
                     e = e.InnerException;
                 }
+
                 this.exception.Text = sb.ToString();
             }
 
             Cursor.Show();
-            this.ShowDialog();
+            ShowDialog();
             buttonCerrar.Focus();
         }
 
         private void buttonCerrar_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

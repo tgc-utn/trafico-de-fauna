@@ -24,15 +24,16 @@ using TGC.Core.Mathematica;
 namespace Trafico.De.Fauna.Model.Menu
 {
     /// <summary>
-    /// Draws sprites and primitives.
+    ///     Draws sprites and primitives.
     /// </summary>
     public class Drawer2D
     {
-        Device d3dDevice;
-        Sprite DxSprite;
-        Line line;
+        private Device d3dDevice;
+        private readonly Sprite DxSprite;
+        private readonly Line line;
 
-        CustomVertex.PositionColoredTextured[] LineVertexData = new CustomVertex.PositionColoredTextured[2];
+        private readonly CustomVertex.PositionColoredTextured[] LineVertexData =
+            new CustomVertex.PositionColoredTextured[2];
 
         public Drawer2D(Device device)
         {
@@ -41,7 +42,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Call this method before drawing.
+        ///     Call this method before drawing.
         /// </summary>
         public void BeginDrawSprite()
         {
@@ -49,7 +50,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Call this method after drawing.
+        ///     Call this method after drawing.
         /// </summary>
         public void EndDrawSprite()
         {
@@ -57,7 +58,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Draws a sprite on the screen.
+        ///     Draws a sprite on the screen.
         /// </summary>
         /// <param name="sprite">The sprite.</param>
         public void DrawSprite(GameSprite sprite)
@@ -65,12 +66,13 @@ namespace Trafico.De.Fauna.Model.Menu
             if (sprite.Enabled)
             {
                 DxSprite.Transform = sprite.TransformationMatrix;
-                DxSprite.Draw(sprite.Texture.D3dTexture, sprite.SrcRect, TGCVector3.Empty, TGCVector3.Empty, sprite.Color);
+                DxSprite.Draw(sprite.Texture.D3DTexture, sprite.SrcRect, TGCVector3.Empty, TGCVector3.Empty,
+                    sprite.Color);
             }
         }
 
         /// <summary>
-        /// Dibujar un sprite animado
+        ///     Dibujar un sprite animado
         /// </summary>
         /// <param name="animatedSprite">El sprite a dibujar</param>
         public void DrawAnimatedSprite(AnimatedSprite animatedSprite)
@@ -83,8 +85,8 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Draws a sprite on the screen.
-        /// With an atomic Begin and End Sprite
+        ///     Draws a sprite on the screen.
+        ///     With an atomic Begin and End Sprite
         /// </summary>
         /// <param name="sprite">The sprite.</param>
         public void DrawSpriteAtomic(GameSprite sprite)
@@ -95,7 +97,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Draws a colored point.
+        ///     Draws a colored point.
         /// </summary>
         /// <param name="position">The location.</param>
         /// <param name="color">The color.</param>
@@ -111,7 +113,7 @@ namespace Trafico.De.Fauna.Model.Menu
         }
 
         /// <summary>
-        /// Draws a line segment between two points.
+        ///     Draws a line segment between two points.
         /// </summary>
         /// <param name="position1">The first point.</param>
         /// <param name="position2">The second point.</param>
@@ -120,12 +122,12 @@ namespace Trafico.De.Fauna.Model.Menu
         /// <param name="antiAlias">Anti-alias enabled.</param>
         public void DrawLine(TGCVector2 position1, TGCVector2 position2, Color color, int width, bool antiAlias)
         {
-            TGCVector2[] positionList = new TGCVector2[2] { position1, position2 };
+            var positionList = new TGCVector2[2] { position1, position2 };
             DrawPolyline(positionList, color, width, antiAlias);
         }
 
         /// <summary>
-        /// Draws a polyline.
+        ///     Draws a polyline.
         /// </summary>
         /// <param name="positionList">The list of lines.</param>
         /// <param name="color">The color</param>
@@ -133,13 +135,9 @@ namespace Trafico.De.Fauna.Model.Menu
         /// <param name="antiAlias">Anti-alias enabled.</param>
         public void DrawPolyline(TGCVector2[] positionList, Color color, int width, bool antiAlias)
         {
-
             line.Antialias = antiAlias;
             line.Width = width;
             line.Draw(TGCVector2.ToVector2Array(positionList), color);
-
         }
-
     }
-
 }

@@ -26,80 +26,50 @@ using Trafico.De.Fauna.Model.Meshes;
 namespace Trafico.De.Fauna.Model.ItemsAnimal
 {
     /// <summary>
-    /// Item con animal a rescatar
+    ///     Item con animal a rescatar
     /// </summary>
     public class ItemAnimal
     {
+        private TgcMeshShader mesh;
 
-        Llave.ColorType color;
-        /// <summary>
-        /// Color de la llave
-        /// </summary>
-        public Llave.ColorType Color
-        {
-            get { return color; }
-        }
-
-        bool liberado;
-        public bool Liberado
-        {
-            get { return liberado; }
-        }
-
-        TgcBoundingSphere bSphereProximidad;
-        public TgcBoundingSphere BSphereProximidad
-        {
-            get { return bSphereProximidad; }
-        }
-
-        ColliderObject colliderObject;
-        /// <summary>
-        /// Collider
-        /// </summary>
-        public ColliderObject ColliderObject
-        {
-            get { return colliderObject; }
-        }
-
-        TgcMeshShader mesh;
-
-        
 
         public ItemAnimal(TgcMeshData meshDataNode)
         {
-            liberado = false;
+            Liberado = false;
 
             //Nombre => VERDE_Animal1 o ROJA_Animal1 o AMARILLA_Animal1
-            string name = meshDataNode.name;
+            var name = meshDataNode.name;
             name.ToUpper();
-            string[] split = name.Split('_');
+            var split = name.Split('_');
 
             //Determinar color
-            string colorName = split[0];
-            this.color = Llave.getColorType(colorName);
+            var colorName = split[0];
+            Color = Llave.getColorType(colorName);
 
             //Cargar mesh
-            string meshName = split[1];
-            TGCVector3 nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
-            TgcSceneLoader loader = new TgcSceneLoader();
+            var meshName = split[1];
+            var nodeCenter = GameUtils.getBBLowerCenterFromMeshData(meshDataNode);
+            var loader = new TgcSceneLoader();
             loader.MeshFactory = new TgcMeshShaderFactory();
-            string meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName + "-TgcScene.xml";
-            TgcScene scene = loader.loadSceneFromFile(meshPath);
+            var meshPath = GameModel.instance.gameConfig.basePath + "ItemsAnimal\\" + colorName + "\\" + colorName +
+                           "-TgcScene.xml";
+            var scene = loader.loadSceneFromFile(meshPath);
             mesh = (TgcMeshShader)scene.Meshes[0];
             mesh.AutoTransformEnable = true;
             mesh.Position = new TGCVector3(nodeCenter.X, 0, nodeCenter.Z);
 
             //bSphereProximidad de proximidad
-            bSphereProximidad = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(), mesh.BoundingBox.calculateBoxRadius());
+            BSphereProximidad = new TgcBoundingSphere(mesh.BoundingBox.calculateBoxCenter(),
+                mesh.BoundingBox.calculateBoxRadius());
 
             //Collider
-            colliderObject = new ColliderObject(this.mesh);
+            ColliderObject = new ColliderObject(mesh);
 
             //Propiedad: orientacion=norte (default norte) => norte = +Y, sur = -Y, este = X, oeste = -X
             GameUtils.Orientacion orientacion;
             if (GameUtils.containsUserProp(meshDataNode.userProperties, "orientacion"))
             {
-                string orientacionStr = meshDataNode.userProperties["orientacion"].ToUpper();
+                var orientacionStr = meshDataNode.userProperties["orientacion"].ToUpper();
                 switch (orientacionStr)
                 {
                     case "NORTE":
@@ -140,13 +110,27 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
                     angleRot = FastMath.PI_HALF;
                     break;
             }
-            mesh.RotateY(angleRot);
 
+            mesh.RotateY(angleRot);
         }
+
+        /// <summary>
+        ///     Color de la llave
+        /// </summary>
+        public Llave.ColorType Color { get; }
+
+        public bool Liberado { get; private set; }
+
+        public TgcBoundingSphere BSphereProximidad { get; private set; }
+
+        /// <summary>
+        ///     Collider
+        /// </summary>
+        public ColliderObject ColliderObject { get; private set; }
 
         public void render()
         {
-            if (!liberado)
+            if (!Liberado)
             {
                 //Dibujar si esta en rango visible
                 if (GameModel.instance.mainCharacter.isInProximityRange(mesh.Position))
@@ -158,46 +142,46 @@ namespace Trafico.De.Fauna.Model.ItemsAnimal
                 //Debug render
                 if (GameModel.instance.debugMode.Enabled && GameModel.instance.debugMode.ShowBoundingVolumes)
                 {
-                    bSphereProximidad.Render();
+                    BSphereProximidad.Render();
                 }
             }
         }
 
         /// <summary>
-        /// Intentar liberar el item si ya se encontro la llave indicada.
-        /// Devuelve true si se pudo liberar
+        ///     Intentar liberar el item si ya se encontro la llave indicada.
+        ///     Devuelve true si se pudo liberar
         /// </summary>
         public bool intentarLiberar()
         {
-            Llave llave = GameModel.instance.currentLevel.getLlave(this.color);
+            var llave = GameModel.instance.currentLevel.getLlave(Color);
             if (llave.Agarrada)
             {
                 //Liberar
-                this.liberado = true;
-                GameModel.instance.sonidos.itemAnimal_liberar.play();
+                Liberado = true;
+                GameModel.instance.sonidos.itemAnimal_liberar.Play();
                 GameModel.instance.hud.efectoLiberarItem(this);
                 GameModel.instance.mainCharacter.agregarItemAnimalLiberado(this);
 
                 //Quitar como colision
-                colliderObject.Enabled = false;
+                ColliderObject.Enabled = false;
             }
             else
             {
                 //Aun no fue agarrada la llave
-                GameModel.instance.sonidos.itemAnimal_fallo_liberar.play();
+                GameModel.instance.sonidos.itemAnimal_fallo_liberar.Play();
                 GameModel.instance.hud.efectoFaltaLlaveParaLiberarItem(this);
             }
 
-            return this.liberado;
+            return Liberado;
         }
 
         public void dispose()
         {
             mesh.Dispose();
             mesh = null;
-            colliderObject = null;
-            bSphereProximidad.Dispose();
-            bSphereProximidad = null;
+            ColliderObject = null;
+            BSphereProximidad.Dispose();
+            BSphereProximidad = null;
         }
     }
 }

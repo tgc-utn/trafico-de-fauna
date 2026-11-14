@@ -24,191 +24,159 @@ using TGC.Core.BoundingVolumes;
 using TGC.Core.Mathematica;
 using TGC.Core.Terrain;
 using Trafico.De.Fauna.Model.ItemsAnimal;
-using Trafico.De.Fauna.Model.MainCharacters;
 using Trafico.De.Fauna.Model.Meshes;
 
 namespace Trafico.De.Fauna.Model.Levels
 {
     /// <summary>
-    /// Un nivel del juego
+    ///     Un nivel del juego
     /// </summary>
     public class Level
     {
-
-        List<LevelSector> sectors;
-        TgcSkyBox skyBox;
-
-        int index;
-        /// <summary>
-        /// Numero de nivel
-        /// </summary>
-        public int Index
-        {
-            get { return index; }
-        }
-
-        string name;
-        /// <summary>
-        /// Nombre del nivel
-        /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
-
-        Dictionary<string, Conector> conectores;
-        /// <summary>
-        /// Conectores de todo el nivel
-        /// </summary>
-        public Dictionary<string, Conector> Conectores
-        {
-            get { return conectores; }
-        }
-
-        LevelSector currentSector;
-        /// <summary>
-        /// Sector actual
-        /// </summary>
-        public LevelSector CurrentSector
-        {
-            get { return currentSector; }
-        }
-
-        List<IAlphaObject> alphaObjects;
-        /// <summary>
-        /// Objetos a renderizar con AlphaBlending.
-        /// Se dibujan luego de dibujar todos los opacos
-        /// </summary>
-        public List<IAlphaObject> AlphaObjects
-        {
-            get { return alphaObjects; }
-        }
-
-        int totalItemsAnimal;
-        /// <summary>
-        /// Cantidad de items animal de todo el nivel
-        /// </summary>
-        public int TotalItemsAnimal
-        {
-            get { return totalItemsAnimal; }
-        }
-
-        Llave llaveRoja;
-        Llave llaveVerde;
-        Llave llaveAmarilla;
+        private Llave llaveAmarilla;
+        private Llave llaveRoja;
+        private Llave llaveVerde;
+        private List<LevelSector> sectors;
+        private TGCSkyBox skyBox;
 
         public Level()
         {
             sectors = new List<LevelSector>();
-            conectores = new Dictionary<string, Conector>();
-            alphaObjects = new List<IAlphaObject>();
+            Conectores = new Dictionary<string, Conector>();
+            AlphaObjects = new List<IAlphaObject>();
         }
 
         /// <summary>
-        /// Cargar nivel y todos sus sectores
+        ///     Numero de nivel
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
+        ///     Nombre del nivel
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     Conectores de todo el nivel
+        /// </summary>
+        public Dictionary<string, Conector> Conectores { get; set; }
+
+        /// <summary>
+        ///     Sector actual
+        /// </summary>
+        public LevelSector CurrentSector { get; set; }
+
+        /// <summary>
+        ///     Objetos a renderizar con AlphaBlending.
+        ///     Se dibujan luego de dibujar todos los opacos
+        /// </summary>
+        public List<IAlphaObject> AlphaObjects { get; set; }
+
+        /// <summary>
+        ///     Cantidad de items animal de todo el nivel
+        /// </summary>
+        public int TotalItemsAnimal { get; set; }
+
+        /// <summary>
+        ///     Cargar nivel y todos sus sectores
         /// </summary>
         public void loadLevel(string levelName, int levelIndex)
         {
-            this.name = levelName;
-            this.index = levelIndex;
-            string levelPath = GameModel.instance.gameConfig.levelsPath + levelName + "\\";
+            Name = levelName;
+            Index = levelIndex;
+            var levelPath = GameModel.instance.gameConfig.levelsPath + levelName + "\\";
 
             //Load sectors
-            string[] sectorsDir = Directory.GetDirectories(levelPath, "Sector-*", SearchOption.TopDirectoryOnly);
-            foreach (string sectorDir in sectorsDir)
+            var sectorsDir = Directory.GetDirectories(levelPath, "Sector-*", SearchOption.TopDirectoryOnly);
+            foreach (var sectorDir in sectorsDir)
             {
-                //TODO Texture path (en modo produccion salen todas las texturas de un solo lugar para cada nivel)
-                string texturePath = sectorDir + "\\";
-                string lightmapPath = texturePath;
-                if (!GameModel.instance.debugMode.Enabled)
-                {
-                    texturePath = levelPath + "\\";
-                }
+                var texturePath = sectorDir + "\\";
+                var lightmapPath = texturePath;
 
-                LevelSector sector = new LevelSector();
-                DirectoryInfo dirInfo = new DirectoryInfo(sectorDir);
-                string sectorName = dirInfo.Name;
+                var sector = new LevelSector();
+                var dirInfo = new DirectoryInfo(sectorDir);
+                var sectorName = dirInfo.Name;
                 sector.loadScene(this, sectorName, sectorDir + "\\", texturePath, lightmapPath);
                 sectors.Add(sector);
             }
 
             //Calcular cantidad de items animal de todo el nivel
-            totalItemsAnimal = 0;
-            foreach (LevelSector sector in sectors)
+            TotalItemsAnimal = 0;
+            foreach (var sector in sectors)
             {
-                totalItemsAnimal += sector.ItemsAnimal.Count;
+                TotalItemsAnimal += sector.ItemsAnimal.Count;
             }
 
             //Load skybox
-            string skyboxTexturesPath = levelPath + "SkyBox\\";
-            skyBox = new TgcSkyBox();
+            var skyboxTexturesPath = levelPath + "SkyBox\\";
+            skyBox = new TGCSkyBox();
             skyBox.Center = new TGCVector3(0, 0, 0);
             skyBox.Size = new TGCVector3(10000, 10000, 10000);
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, skyboxTexturesPath + "Up.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, skyboxTexturesPath + "Down.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, skyboxTexturesPath + "Left.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, skyboxTexturesPath + "Right.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, skyboxTexturesPath + "Back.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, skyboxTexturesPath + "Front.jpg");
+            //Valor del juego original
+            skyBox.SkyEpsilon = 5f;
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Up, skyboxTexturesPath + "Up.jpg");
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Down, skyboxTexturesPath + "Down.jpg");
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Left, skyboxTexturesPath + "Left.jpg");
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Right, skyboxTexturesPath + "Right.jpg");
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Front, skyboxTexturesPath + "Back.jpg");
+            skyBox.SetFaceTexture(TGCSkyBox.SkyFaces.Back, skyboxTexturesPath + "Front.jpg");
             //skyBox.updateValues();
             skyBox.Init();
-
-
 
             //TODO: Chequear relaciones entre conectores
         }
 
         /// <summary>
-        /// Arrancar el nive en el primer sector
+        ///     Arrancar el nive en el primer sector
         /// </summary>
         public void initFirstSector(string firstSectorName, string firstConectorName)
         {
-            currentSector = findSector(firstSectorName);
-            Conector firstConector = currentSector.findSector(firstConectorName);
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            CurrentSector = findSector(firstSectorName);
+            var firstConector = CurrentSector.findSector(firstConectorName);
+            var mainCharacter = GameModel.instance.mainCharacter;
             mainCharacter.resetForNewLevel();
-            currentSector.initSector(mainCharacter, firstConector);
+            CurrentSector.initSector(mainCharacter, firstConector);
 
             //Para que todo termine de cargar
             //Thread.Sleep(1000);
         }
 
         /// <summary>
-        /// Cambia de sector
+        ///     Cambia de sector
         /// </summary>
         public void changeSector(Conector nextConector)
         {
             //Transicion de loading
-            GameModel.instance.currentGameMode = GameModel.GameMode.LoadingSector;
+            GameModel.instance.currentGameMode = GameMode.LoadingSector;
             GameModel.instance.transiciones.initLoadingSector();
 
             //Cargar sector
-            currentSector.hideSector();
-            currentSector = nextConector.Sector;
-            currentSector.initSector(GameModel.instance.mainCharacter, nextConector);
+            CurrentSector.hideSector();
+            CurrentSector = nextConector.Sector;
+            CurrentSector.initSector(GameModel.instance.mainCharacter, nextConector);
         }
 
         /// <summary>
-        /// Actualizar estado del nivel
+        ///     Actualizar estado del nivel
         /// </summary>
         public void update(float elapsedTime)
         {
-            currentSector.update(elapsedTime);
+            CurrentSector.update(elapsedTime);
         }
 
         /// <summary>
-        /// Renderizar nivel
+        ///     Renderizar nivel
         /// </summary>
         public void render(float elapsedTime, TgcFrustum frustum)
         {
             //Render SkyBox
             skyBox.Render();
 
-            //render sector
-            currentSector.render(elapsedTime, frustum);
+            //Render sector
+            CurrentSector.render(elapsedTime, frustum);
 
             //Renderizar al final los objetos acumulados con alpha
-            foreach (IAlphaObject alphaObj in alphaObjects)
+            foreach (var alphaObj in AlphaObjects)
             {
                 alphaObj.renderWithAlpha();
             }
@@ -216,145 +184,148 @@ namespace Trafico.De.Fauna.Model.Levels
 
         private LevelSector findSector(string sectorName)
         {
-            foreach (LevelSector sector in sectors)
+            foreach (var sector in sectors)
             {
                 if (sector.SectorName == sectorName)
                 {
                     return sector;
                 }
             }
+
             throw new Exception("Sector: " + sectorName + " not found");
         }
 
         /// <summary>
-        /// Devuelve la llave del nivel segun el color pedido
+        ///     Devuelve la llave del nivel segun el color pedido
         /// </summary>
         public Llave getLlave(Llave.ColorType colorType)
         {
             switch (colorType)
             {
                 case Llave.ColorType.VERDE:
-                    return this.llaveVerde;
+                    return llaveVerde;
                 case Llave.ColorType.ROJA:
-                    return this.llaveRoja;
+                    return llaveRoja;
                 case Llave.ColorType.AMARILLA:
-                    return this.llaveAmarilla;
+                    return llaveAmarilla;
             }
+
             return null;
         }
 
         /// <summary>
-        /// Cargar una llave en el nivel
+        ///     Cargar una llave en el nivel
         /// </summary>
         public void setLlave(Llave llave)
         {
-            Llave myLlave = getLlave(llave.Color);
+            var myLlave = getLlave(llave.Color);
             if (myLlave != null)
             {
-                throw new Exception("Hay dos llaves del mismo color en el nivel: " + llave.ToString());
+                throw new Exception("Hay dos llaves del mismo color en el nivel: " + llave);
             }
+
             switch (llave.Color)
             {
                 case Llave.ColorType.VERDE:
-                    this.llaveVerde = llave;
+                    llaveVerde = llave;
                     break;
                 case Llave.ColorType.ROJA:
-                    this.llaveRoja = llave;
+                    llaveRoja = llave;
                     break;
                 case Llave.ColorType.AMARILLA:
-                    this.llaveAmarilla = llave;
+                    llaveAmarilla = llave;
                     break;
             }
         }
 
-
         /// <summary>
-        /// Cuando el personaje pierde una vida, por diversos motivos.
-        /// Se carga un efecto de perder.
+        ///     Cuando el personaje pierde una vida, por diversos motivos.
+        ///     Se carga un efecto de perder.
         /// </summary>
         public void removeLifeToPlayer()
         {
             //Restar vida
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
+            var mainCharacter = GameModel.instance.mainCharacter;
             mainCharacter.Vidas--;
 
             //Poner sonido de perder vida
             GameModel.instance.sonidos.stopAllSounds();
-            GameModel.instance.sonidos.personaje_perder_vida.play();
+            GameModel.instance.sonidos.personaje_perder_vida.Play();
 
             //Quitar efecto de modo alarma
             GameModel.instance.postProcessEffects.setAlarmModeEnable(false);
 
             //Cargar efecto de Game Over
             GameModel.instance.postProcessEffects.setPlayerDeadEffect();
-            GameModel.instance.currentGameMode = GameModel.GameMode.PlayerDead;
+            GameModel.instance.currentGameMode = GameMode.PlayerDead;
         }
 
         /// <summary>
-        /// Luego de que el jugador perdio, arrancar en el ultimo conector por el que paso.
-        /// Si no le quedan mas vidas, pierde el juego y arranca desde el primer nivel.
+        ///     Luego de que el jugador perdio, arrancar en el ultimo conector por el que paso.
+        ///     Si no le quedan mas vidas, pierde el juego y arranca desde el primer nivel.
         /// </summary>
         public void restoreFromLoseLife()
         {
-            MainCharacter mainCharacter = GameModel.instance.mainCharacter;
-            
+            var mainCharacter = GameModel.instance.mainCharacter;
+
             //Arrancar en el ultimo conector por el que paso
             if (mainCharacter.Vidas > 0)
             {
-                GameModel.instance.currentGameMode = GameModel.GameMode.Playing;
+                GameModel.instance.currentGameMode = GameMode.Playing;
                 changeSector(GameModel.instance.currentLevel.CurrentSector.CurrentConector);
             }
             //Game over
             else
             {
                 //Ocultar sector actual
-                currentSector.hideSector();
+                CurrentSector.hideSector();
 
                 //Mostrar pantalla de GameOver
                 GameModel.instance.transiciones.initGameOver();
-                GameModel.instance.currentGameMode = GameModel.GameMode.GameOver;
-                
+                GameModel.instance.currentGameMode = GameMode.GameOver;
 
                 //Arrancar desde el primer nivel del juego
-                //Game.instance.loadFirstLevel();
+                //Game.instance.LoadFirstLevel();
             }
         }
 
         /// <summary>
-        /// Pasar al siguiente nivel
+        ///     Pasar al siguiente nivel
         /// </summary>
         public void changeLevel()
         {
-            currentSector.hideSector();
-            GameConfig.Level levelData = GameModel.instance.gameConfig.getNextLevel(this.index);
-            GameModel.instance.loadLevel(levelData);
+            CurrentSector.hideSector();
+            var levelData = GameModel.instance.gameConfig.getNextLevel(Index);
+            GameModel.instance.LoadLevel(levelData);
         }
 
         /// <summary>
-        /// Elimina todo contenido del nivel
+        ///     Elimina todo contenido del nivel
         /// </summary>
         public void unloadLevel()
         {
             //Eliminar sectores
-            foreach (LevelSector sector in sectors)
+            foreach (var sector in sectors)
             {
                 sector.unload();
             }
+
             sectors.Clear();
             sectors = null;
-            currentSector = null;
+            CurrentSector = null;
 
             //Eliminar skybox
             skyBox.Dispose();
             skyBox = null;
 
             //Eliminar conectores
-            foreach (KeyValuePair<string, Conector> item in conectores)
+            foreach (var item in Conectores)
             {
                 item.Value.dispose();
             }
-            conectores.Clear();
-            conectores = null;
+
+            Conectores.Clear();
+            Conectores = null;
 
             //Llaves
             llaveRoja.dispose();
@@ -365,9 +336,8 @@ namespace Trafico.De.Fauna.Model.Levels
             llaveAmarilla = null;
 
             //AlphaObjects
-            alphaObjects.Clear();
-            alphaObjects = null;
+            AlphaObjects.Clear();
+            AlphaObjects = null;
         }
-
     }
 }

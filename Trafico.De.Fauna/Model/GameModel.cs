@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with "Trafico de Fauna".  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Drawing;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
@@ -38,46 +39,31 @@ using Trafico.De.Fauna.Model.Sonidos;
 namespace Trafico.De.Fauna.Model
 {
     /// <summary>
-    /// Clase principal del juego
+    ///     Clase principal del juego
     /// </summary>
     public class GameModel : TGCExample
     {
         public static GameModel instance;
-        public GameConfig gameConfig;
-        public Level currentLevel;
-        public MainCharacter mainCharacter;
-        public GuardiasPool guardiasPool;
-        public DebugMode debugMode;
-        public PostProcessEffects postProcessEffects;
-        public HUD hud;
-        public GameSounds sonidos;
-        public Shaders shaders;
-        public GameMode currentGameMode;
-        public Transiciones transiciones;
-        public MenuPrincipal menuPrincipal;
-        public CustomEventsManager customEventsManager;
-        public TextDialog textDialog;
-        public SimpleMessageDialog simpleMessageDialog;
         public BananasPool bananasPool;
         public CajasBananasPool cajasBananasPool;
+        public GameMode currentGameMode;
+        public Level currentLevel;
+        public CustomEventsManager customEventsManager;
+        public DebugMode debugMode;
+        public GameConfig gameConfig;
+        public GuardiasPool guardiasPool;
+        public HUD hud;
+        public MainCharacter mainCharacter;
+        public MenuPrincipal menuPrincipal;
+        public PostProcessEffects postProcessEffects;
+        public Shaders shaders;
+        public SimpleMessageDialog simpleMessageDialog;
+        public GameSounds sonidos;
+        public TextDialog textDialog;
+        public Transiciones transiciones;
 
         /// <summary>
-        /// Modos en los que se encuentra el juego
-        /// </summary>
-        public enum GameMode
-        {
-            Playing,
-            Menu,
-            Intro,
-            PlayerDead,
-            LoadingLevel,
-            LoadingSector,
-            GameOver,
-            GameWin,
-        }
-
-        /// <summary>
-        /// Constructor del juego
+        ///     Constructor del juego
         /// </summary>
         /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
         /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
@@ -93,15 +79,20 @@ namespace Trafico.De.Fauna.Model
             //Device de DirectX para crear primitivas
             var d3dDevice = D3DDevice.Instance.Device;
 
-            //Utilizando esta propiedad puedo activar el update/render a intervalos constantes.
+            //Utilizando esta propiedad puedo activar el update/Render a intervalos constantes.
+
+            //El juego original corria sin limite: pero en PCs actuales eso puede generar problemas en el desplazamiento.
+            //Cuando queda por debajo del EPSILON de SphereCollisionManager, que lo descarta (el personaje casi no camina).
             FixedTickEnable = true;
 
-            //BackgroundColor = Color.Black; this is the way in the last version.
             //BackgroundColor
-            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            BackgroundColor = Color.Black;
+
+            //Valor del juego original
+            d3dDevice.RenderState.ReferenceAlpha = 100;
 
             //Singleton trucho
-            GameModel.instance = this;
+            instance = this;
 
             //Cargar gameConfig
             gameConfig = new GameConfig(MediaDir, "config.xml", ShadersDir);
@@ -153,20 +144,20 @@ namespace Trafico.De.Fauna.Model
         }
 
         /// <summary>
-        /// Cargar primer nivel de todo el juego
+        ///     Cargar primer nivel de todo el juego
         /// </summary>
-        public void loadFirstLevel()
+        public void LoadFirstLevel()
         {
             mainCharacter.resetForFirstLevel();
             sonidos.stopAllSounds();
-            GameConfig.Level levelData = gameConfig.getFirstLevel();
-            loadLevel(levelData);
+            var levelData = gameConfig.getFirstLevel();
+            LoadLevel(levelData);
         }
 
         /// <summary>
-        /// Iniciar la carga de un nuevo nivel
+        ///     Iniciar la carga de un nuevo nivel
         /// </summary>
-        public void loadLevel(GameConfig.Level levelData)
+        public void LoadLevel(GameConfig.Level levelData)
         {
             //Quitar nivel anterior
             if (currentLevel != null)
@@ -175,38 +166,66 @@ namespace Trafico.De.Fauna.Model
                 currentLevel = null;
 
                 //Limpiar memoria
-                System.GC.Collect();
-                System.GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
 
             //Cargar nuevo nivel
-            Level level = new Level();
-            this.currentLevel = level;
-            this.currentGameMode = GameMode.LoadingLevel;
-            this.currentLevel.loadLevel(levelData.name, levelData.index);
+            var level = new Level();
+            currentLevel = level;
+            currentGameMode = GameMode.LoadingLevel;
+            currentLevel.loadLevel(levelData.name, levelData.index);
 
-            System.GC.Collect();
+            GC.Collect();
 
             //Cargar primer sector
-            this.currentGameMode = GameMode.LoadingSector;
+            currentGameMode = GameMode.LoadingSector;
             currentLevel.initFirstSector(levelData.sectorInicial, levelData.conectorInicial);
-            this.currentGameMode = GameMode.Playing;
-        }
-
-        public override void Update()
-        {
-            
+            currentGameMode = GameMode.Playing;
         }
 
         /// <summary>
-        /// Render principal del juego
+        ///     Logica del juego.
+        ///     En el juego original la logica se ejecutaba dentro del render. Con FixedTickEnable tiene que estar aca:
+        ///     el framework llama a Update en pasos constantes (ElapsedTime vale siempre 1/60) y actualiza el teclado
+        ///     antes de cada uno. Desde el Render la velocidad dependeria de los FPS y se perderian pulsaciones.
+        /// </summary>
+        public override void Update()
+        {
+            debugMode.Update(Input, this);
+
+            switch (currentGameMode)
+            {
+                case GameMode.Menu:
+                    menuPrincipal.update(Input);
+                    break;
+                case GameMode.Playing:
+                    mainCharacter.update(ElapsedTime);
+                    currentLevel.update(ElapsedTime);
+                    hud.update(ElapsedTime);
+
+                    //Si termino el juego y ya cambio de modo, esconder sector actual
+                    if (currentGameMode == GameMode.GameWin)
+                    {
+                        currentLevel.CurrentSector.hideSector();
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        ///     Render principal del juego
         /// </summary>
         public override void Render()
         {
-            // TODO remove this from the Render method.
-            ((GameThirdPersonCamera)this.Camera).updateViewMatrix(D3DDevice.Instance.Device);
+            //Lo que avanza dentro del render (animaciones, particulas, temporizadores de transicion) usa el tiempo
+            //real desde el ultimo cuadro dibujado, no el paso constante del Update.
+            ElapsedTime = LastRenderTime;
 
-            //Inicio el render de la escena
+            // TODO remove this from the Render method.
+            ((GameThirdPersonCamera)Camera).updateViewMatrix(D3DDevice.Instance.Device);
+
+            //Inicio el Render de la escena
             PreRender();
 
             //Device de DirectX para crear primitivas
@@ -216,119 +235,105 @@ namespace Trafico.De.Fauna.Model
             switch (currentGameMode)
             {
                 case GameMode.Menu:
-                    doMenu(d3dDevice, Input);
+                    DoMenu(d3dDevice);
                     break;
                 case GameMode.Intro:
-                    doIntro();
+                    DoIntro();
                     break;
                 case GameMode.LoadingLevel:
-                    doLoadingLevel();
+                    DoLoadingLevel();
                     break;
                 case GameMode.LoadingSector:
-                    doLoadingSector();
+                    DoLoadingSector();
                     break;
                 case GameMode.Playing:
-                    doPlaying(d3dDevice, ElapsedTime);
+                    DoPlaying(d3dDevice, ElapsedTime);
                     break;
                 case GameMode.PlayerDead:
-                    doPlayerDead(ElapsedTime);
+                    DoPlayerDead(ElapsedTime);
                     break;
                 case GameMode.GameOver:
-                    doGameOver(ElapsedTime);
+                    DoGameOver(ElapsedTime);
                     break;
                 case GameMode.GameWin:
-                    doGameWin(ElapsedTime);
-                    break;
-                default:
+                    DoGameWin(ElapsedTime);
                     break;
             }
 
-            d3dDevice.BeginScene();
-            //Finaliza el render
+            BeginScene();
+
+            //Finaliza el Render
             PostRender();
         }
 
-        private void doMenu(Device device, TgcD3dInput input)
+        private void DoMenu(Device device)
         {
-            menuPrincipal.render(device, input);
+            menuPrincipal.render(device);
         }
 
-        private void doIntro()
+        private void DoIntro()
         {
-
         }
 
-        private void doLoadingLevel()
+        private void DoLoadingLevel()
         {
-
         }
 
-        private void doLoadingSector()
+        private void DoLoadingSector()
         {
             transiciones.renderLoadingSector();
         }
 
         /// <summary>
-        /// Estado normal, en el que el jugador esta jugando (99% del tiempo)
+        ///     Estado normal, en el que el jugador esta jugando (99% del tiempo)
         /// </summary>
-        private void doPlaying(Device device, float elapsedTime)
+        private void DoPlaying(Device device, float elapsedTime)
         {
             //Renderizar todo al RenderTarget secundario
             postProcessEffects.set2DRenderTarget();
 
-            //update
-            mainCharacter.update(elapsedTime);
-            currentLevel.update(elapsedTime);
-            hud.update(elapsedTime);
-
-            //render
+            //Render
             currentLevel.AlphaObjects.Clear();
             mainCharacter.render(elapsedTime);
             currentLevel.render(elapsedTime, Frustum);
             hud.render(device);
 
             //Modo debug
-            debugMode.render();
+            debugMode.Render();
 
             postProcessEffects.renderAndRestoreTarget();
-
-            //Si termino el juego y ya cambido de modo, esconder sector actual
-            if (currentGameMode == GameMode.GameWin)
-            {
-               currentLevel.CurrentSector.hideSector();
-            }
         }
 
         /// <summary>
-        /// Estado cuando el jugador fue atrapado y pierde
+        ///     Estado cuando el jugador fue atrapado y pierde
         /// </summary>
-        private void doPlayerDead(float elapsedTime)
+        private void DoPlayerDead(float elapsedTime)
         {
             postProcessEffects.renderOldFrame();
         }
 
         /// <summary>
-        /// Estado cuando el jugador perdio todas sus vidas
+        ///     Estado cuando el jugador perdio todas sus vidas
         /// </summary>
-        private void doGameOver(float elapsedTime)
+        private void DoGameOver(float elapsedTime)
         {
             transiciones.renderGameOver();
         }
 
         /// <summary>
-        /// Estado cuando el jugador gano todo el juego
+        ///     Estado cuando el jugador gano todo el juego
         /// </summary>
-        private void doGameWin(float elapsedTime)
+        private void DoGameWin(float elapsedTime)
         {
             transiciones.renderGameWin();
         }
 
         public override void Dispose()
         {
-            //TODO: hacer dispose de todo
+            //TODO: hacer Dispose de todo
 
-            this.currentLevel?.unloadLevel();
-            this.textDialog.dispose();
+            currentLevel?.unloadLevel();
+            textDialog.dispose();
         }
     }
 }
