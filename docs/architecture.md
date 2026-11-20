@@ -270,7 +270,7 @@ Para ello se utilizan plataformas de saltos. Una plataforma de salto se compone 
 
 Si el personaje se encuentra dentro del volumen de alguna de las plataformas puede saltar hacia la otra plataforma (y
 viceversa). El juego calcula la distancia entre la plataforma de origen y la de destino y desplaza cuadro a cuadro al
-personaje hacia el centro de la plataforma destino. El desplazamiento sigue el movimiento de una parábola.
+personaje hacia el centro de la plataforma destino. El desplazamiento simula una parábola: sube en línea recta hasta una altura igual a la cuarta parte de la distancia y luego baja.
 
 El salto es controlado automáticamente por el juego. El usuario no se puede mover mientras está saltando.
 

@@ -18,35 +18,31 @@
     </marker>
   </defs>
   <g class="line" marker-end="url(#flecha)">
-    <!-- Rotating <-> Walking -->
-    <path d="M290 58 Q330 44 370 62"/>
-    <path d="M370 62 Q330 76 290 58"/>
-    <!-- Rotating <-> Watching -->
-    <path d="M234.5 90.2 Q240.2 146.1 275.5 189.8"/>
-    <path d="M275.5 189.8 Q269.8 133.9 234.5 90.2"/>
-    <!-- Walking <-> Chasing -->
-    <path d="M455.4 100.1 Q460.3 151.4 494.6 189.9"/>
-    <path d="M494.6 189.9 Q489.7 138.6 455.4 100.1"/>
-    <!-- Watching <-> Chasing -->
-    <path d="M360 225 Q400 209 440 225"/>
-    <path d="M440 225 Q400 241 360 225"/>
-    <!-- Rotating for Watching <-> Watching -->
-    <path d="M150 232 Q185 214 220 228"/>
-    <path d="M220 228 Q185 246 150 232"/>
+    <!-- Patrulla -->
+    <path d="M177 35 L423 35"/>
+    <path d="M423 55 L177 55"/>
+    <path d="M490 79 L490 201"/>
+    <path d="M410 235 L180 235"/>
+    <path d="M110 201 L110 79"/>
+    <!-- Persecucion: desde cualquier estado de patrulla -->
+    <path d="M158 70 L252 117"/>
+    <path d="M442 70 L348 117"/>
+    <path d="M159 211 L251 166"/>
+    <path d="M438 209 L349 166"/>
   </g>
   <g class="shape">
-    <ellipse cx="220" cy="55" rx="70" ry="36"/>
-    <ellipse cx="440" cy="65" rx="70" ry="36"/>
-    <ellipse cx="80" cy="235" rx="70" ry="36"/>
-    <ellipse cx="290" cy="225" rx="70" ry="36"/>
-    <ellipse cx="510" cy="225" rx="70" ry="36"/>
+    <ellipse cx="110" cy="45" rx="70" ry="34"/>
+    <ellipse cx="490" cy="45" rx="70" ry="34"/>
+    <ellipse cx="300" cy="142" rx="70" ry="34"/>
+    <ellipse cx="110" cy="235" rx="70" ry="34"/>
+    <ellipse cx="490" cy="235" rx="80" ry="34"/>
   </g>
   <g text-anchor="middle">
-    <text x="220" y="60">Rotating</text>
-    <text x="440" y="70">Walking</text>
-    <text x="80" y="230">Rotating for</text>
-    <text x="80" y="248">Watching</text>
-    <text x="290" y="230">Watching</text>
-    <text x="510" y="230">Chasing</text>
+    <text x="110" y="50">Rotating</text>
+    <text x="490" y="50">Walking</text>
+    <text x="300" y="147">Chasing</text>
+    <text x="110" y="240">Watching</text>
+    <text x="490" y="230">Rotating for</text>
+    <text x="490" y="248">Watching</text>
   </g>
 </svg>
