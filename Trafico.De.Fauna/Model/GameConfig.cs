@@ -276,7 +276,7 @@ namespace Trafico.De.Fauna.Model
             public void init()
             {
                 radioPerpendicularVision = FastMath.Sin(anguloVision) * distanciaVisual;
-                anguloVisionDotValue = FastMath.Acos(anguloVision);
+                anguloVisionDotValue = FastMath.Cos(anguloVision);
             }
         }
 

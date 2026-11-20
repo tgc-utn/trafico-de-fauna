@@ -152,6 +152,7 @@ namespace Trafico.De.Fauna.Model.DebugTools
 
         public void Update(TgcD3dInput input, GameModel gameModel)
         {
+#if DEBUG
             //Habilitar modo debug por teclado
             if (input.keyPressed(Key.D))
             {
@@ -161,9 +162,11 @@ namespace Trafico.De.Fauna.Model.DebugTools
                 }
 
                 Enabled = !Enabled;
-                gameModel.FPSText = !gameModel.FPSText;
-                gameModel.AxisLinesEnable = !gameModel.AxisLinesEnable;
             }
+#endif
+
+            gameModel.FPSText = Enabled;
+            gameModel.AxisLinesEnable = Enabled;
 
             if (!Enabled || gameModel.currentLevel == null)
             {
