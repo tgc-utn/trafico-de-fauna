@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 389 157" width="389" height="157" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title>Conector entre dos sectores</title>
+  <style>
+    .shape { fill: #e9e9e9; stroke: #777; }
+    .top { fill: #fff; stroke: #777; }
+    text { fill: #222; }
+    @media (prefers-color-scheme: dark) {
+      .shape { fill: #3d444b; stroke: #9aa0a6; }
+      .top { fill: #596169; stroke: #b4bac0; }
+      text { fill: #eee; }
+    }
+  </style>
+  <!-- Sector 2 is vertically centred on Sector 1; the connector sits on the shared edge -->
+  <rect class="shape" x="192" y="45" width="187" height="70"/>
+  <rect class="shape" x="10" y="10" width="182" height="137"/>
+  <rect class="top" x="162" y="61" width="60" height="38"/>
+  <g text-anchor="middle">
+    <text x="101" y="86" font-size="17">Sector 1</text>
+    <text x="288" y="86" font-size="17">Sector 2</text>
+    <text x="192" y="84" font-size="11">Conector</text>
+  </g>
+</svg>
