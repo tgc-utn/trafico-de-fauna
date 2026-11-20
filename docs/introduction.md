@@ -8,7 +8,8 @@ brinda información sobre las decisiones de diseño y las cuestiones técnicas q
 desarrollar el videojuego.
 
 Fue [presentado por Educ.ar](https://www.educ.ar/recursos/110051/videojuego-sobre-trafico-de-fauna-disenado-por-educ-ar)
-en 2012 como parte de *Cuenta regresiva*, un proyecto para poner en discusión el tráfico ilegal de fauna con chicos de
+en 2012 como parte de *Cuenta regresiva*, un proyecto para poner en discusión el
+[tráfico ilegal de fauna](https://es.wikipedia.org/wiki/Comercio_de_animales_salvajes) con chicos de
 8 a 12 años. Se diseñó para las netbooks del Programa
 [Conectar Igualdad](https://es.wikipedia.org/wiki/Conectar_Igualdad), que llevó computadoras a estudiantes y docentes
 de escuelas públicas de todo el país.

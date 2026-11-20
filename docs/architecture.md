@@ -56,7 +56,8 @@ Todos los assets de los niveles se ubican en la carpeta “src\Trafico.De.Fauna\
 ser declarado en el archivo config.xml, dentro del tag “levels”. El orden de declaración en el XML es el orden de
 los niveles dentro del juego.
 
-El juego posee actualmente un solo nivel que se compone de 6 sectores. El nivel se llama “Level1-SelvaMisionera”.
+El juego posee actualmente un solo nivel que se compone de 6 sectores. El nivel se llama “Level1-SelvaMisionera”
+y transcurre en la [selva misionera](https://es.wikipedia.org/wiki/Selva_misionera).
 Adentro posee la siguiente estructura:
 
 - Sector-NOMBRE: una carpeta para cada sector del nivel. Hay 6 sectores:
@@ -186,7 +187,7 @@ sector.
 
 ## Personaje principal
 
-La lógica del mono capuchino es manejada por la clase “src\Trafico.De.Fauna\Model\MainCharacters\MainCharacter.cs”.
+La lógica del [mono capuchino](https://es.wikipedia.org/wiki/Sapajus_nigritus) es manejada por la clase “src\Trafico.De.Fauna\Model\MainCharacters\MainCharacter.cs”.
 
 El personaje posee una malla con animación esquelética. Los assets del personaje se encuentran en
 “src\Trafico.De.Fauna\Media\MainCharacterMono”:
