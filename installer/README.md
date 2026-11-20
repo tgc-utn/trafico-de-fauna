@@ -1,30 +1,30 @@
-# Instalador de Tráfico de Fauna
+# Tráfico de Fauna installer
 
-El instalador se genera con [NSIS](https://nsis.sourceforge.io/) a partir de `TraficoFaunaInstaller.nsi`.
-En el repositorio no se versionan binarios, así que antes de generarlo hay que preparar lo siguiente.
+The installer is built with [NSIS](https://nsis.sourceforge.io/) from `TraficoFaunaInstaller.nsi`.
+Binaries are not versioned in the repository, so the following must be prepared before building it.
 
-## Requisitos
+## Requirements
 
-- [NSIS](https://sourceforge.net/projects/nsis/) 3.02 o superior.
-- Visual Studio (o MSBuild) con .NET Framework 4.8.1 Developer Pack.
-- Managed DirectX instalado en la PC donde se compila: las `Microsoft.DirectX*.dll` se copian desde ahí a la
-  carpeta de salida. Se instala con el mismo redistribuible de DirectX del paso 2.
+- [NSIS](https://sourceforge.net/projects/nsis/) 3.13 or later.
+- Visual Studio (or MSBuild) with the .NET Framework 4.8.1 Developer Pack.
+- Managed DirectX installed on the build PC: the `Microsoft.DirectX*.dll` files are copied from there to the
+  output folder. It is installed with the same DirectX redistributable as in step 2.
 
-## Pasos
+## Steps
 
-### 1. Compilar el juego en Release
+### 1. Build the game in Release
 
-Restaurar los paquetes NuGet y compilar `Trafico.De.Fauna.slnx` en configuración `Release`.
+Restore the NuGet packages and build `Trafico.De.Fauna.slnx` in the `Release` configuration.
 
-La carpeta `src\Trafico.De.Fauna\bin\Release` queda como la carpeta completa del juego (ejecutable, DLLs, `Media` y
-`Shaders`). El instalador empaqueta lo que encuentra ahí.
+The `src\Trafico.De.Fauna\bin\Release` folder becomes the complete game folder (executable, DLLs, `Media` and
+`Shaders`). The installer packages what it finds there.
 
-### 2. Preparar el redistribuible de DirectX
+### 2. Prepare the DirectX redistributable
 
-1. Descargar *DirectX End-User Runtimes (June 2010)*:
+1. Download *DirectX End-User Runtimes (June 2010)*:
    <https://www.microsoft.com/en-us/download/details.aspx?id=8109>
-2. Ejecutarlo y extraer su contenido en una carpeta temporal.
-3. Copiar a `installer\DirectX\` estos seis archivos:
+2. Run it and extract its contents to a temporary folder.
+3. Copy these six files to `installer\DirectX\`:
 
    - `DXSETUP.exe`
    - `DSETUP.dll`
@@ -33,73 +33,68 @@ La carpeta `src\Trafico.De.Fauna\bin\Release` queda como la carpeta completa del
    - `dxdllreg_x86.cab`
    - `Apr2006_d3dx9_30_x86.cab`
 
-El juego solo necesita `d3dx9_30.dll`, por eso alcanza con ese `.cab` y los archivos del setup.
+The game only needs `d3dx9_30.dll`, so that `.cab` plus the setup files are enough.
 
-### 3. Generar el instalador
+### 3. Build the installer
 
-Desde la carpeta `installer`:
+From the `installer` folder:
 
 ```
 "C:\Program Files (x86)\NSIS\makensis.exe" /INPUTCHARSET UTF8 TraficoFaunaInstaller.nsi
 ```
 
-El resultado es `installer\TraficoFaunaInstaller-<versión>.exe`. La versión se toma del ejecutable compilado
-(`AssemblyFileVersion` en `src\Trafico.De.Fauna\Properties\AssemblyInfo.cs`).
+The result is `installer\TraficoFaunaInstaller-<version>.exe`. The version is taken from the compiled executable
+(`AssemblyFileVersion` in `src\Trafico.De.Fauna\Properties\AssemblyInfo.cs`).
 
-## Qué hace el instalador
+## What the installer does
 
-- Instala por usuario en `%LOCALAPPDATA%\Programs\TraficoFauna`, sin permisos de administrador.
-- Propone instalar la biblioteca D3DX de DirectX 9 solo si falta `d3dx9_30.dll`; ese paso sí pide permisos de administrador.
-- Si falta .NET Framework 4.8.1 avisa y ofrece abrir la página de descarga; no lo incluye.
-- No instala fuentes en Windows: el juego las carga desde `Media\Fonts`.
-- Registra el desinstalador en "Agregar o quitar programas"; al desinstalar borra solo lo que instaló.
+- Installs per user in `%LOCALAPPDATA%\Programs\TraficoFauna`, without administrator rights.
+- Offers to install the DirectX 9 D3DX library only if `d3dx9_30.dll` is missing; that step does ask for
+  administrator rights.
+- If .NET Framework 4.8.1 is missing, it warns and offers to open the download page; it is not bundled.
+- Registers the uninstaller in "Add or remove programs"; uninstalling removes only what it installed.
 
-## Pendientes
+## To do
 
-### Firma de código
+### Code signing
 
-Sin firma, Smart App Control de Windows 11 puede bloquear el instalador y el juego, y SmartScreen muestra la
-advertencia de editor desconocido. Hace falta un certificado de firma de código emitido por una autoridad
-reconocida por Microsoft; uno autofirmado no sirve.
+Without a signature, Windows 11 Smart App Control may block the installer and the game, and SmartScreen shows the
+unknown publisher warning. A code signing certificate issued by an authority trusted by Microsoft is required; a
+self-signed one does not work.
 
-- **Binarios del juego (proyecto C#):** firmar `Trafico.De.Fauna.exe` y las DLL que se distribuyen después de
-  compilar y antes de generar el instalador, por ejemplo con
+- **Game binaries:** sign `Trafico.De.Fauna.exe` and the distributed DLLs after building and before generating
+  the installer, for example with
   [SignTool](https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool).
-- **Instalador (NSIS):** firmar `TraficoFaunaInstaller-<versión>.exe` una vez generado.
-- **Desinstalador (NSIS):** se genera recién al instalar, así que hay que firmarlo desde el script. Ver
-  [Signing an Uninstaller](https://nsis.sourceforge.io/Signing_an_Uninstaller); desde NSIS 3.08 se puede hacer
-  directamente con `!uninstfinalize`.
+- **Installer (NSIS):** sign `TraficoFaunaInstaller-<version>.exe` once generated.
+- **Uninstaller (NSIS):** it is generated at install time, so it must be signed from the script. Since NSIS 3.08
+  [`!uninstfinalize`](https://nsis.sourceforge.io/Signing_an_Uninstaller) can be used directly.
 
-Para investigar:
+To investigate:
 
 - [Code signing for Smart App Control](https://learn.microsoft.com/en-us/windows/apps/develop/smart-app-control/code-signing-for-smart-app-control):
-  requisitos de Microsoft (firmar todos los binarios, firma RSA).
-- [SignPath Foundation](https://signpath.org/): firma gratuita para proyectos de código abierto; exige que el
-  build esté automatizado desde el repositorio.
+  Microsoft's requirements (sign every binary, RSA signature).
+- [SignPath Foundation](https://signpath.org/): free signing for open source projects; requires the build to be
+  automated from the repository.
 
-## Referencias
+## References
 
-### Descargas
+### Downloads
 
 - [DirectX End-User Runtimes (June 2010)](https://www.microsoft.com/en-us/download/details.aspx?id=8109):
-  redistribuible de donde salen los seis archivos de `installer\DirectX\`.
-- [.NET Framework 4.8.1, instalador web](https://go.microsoft.com/fwlink/?LinkId=2203304) (`NDP481-Web.exe`, 1,5 MB).
-- [.NET Framework 4.8.1, instalador offline](https://go.microsoft.com/fwlink/?linkid=2203305)
+  redistributable the six files in `installer\DirectX\` come from.
+- [.NET Framework 4.8.1, web installer](https://go.microsoft.com/fwlink/?LinkId=2203304) (`NDP481-Web.exe`, 1.5 MB).
+- [.NET Framework 4.8.1, offline installer](https://go.microsoft.com/fwlink/?linkid=2203305)
   (`NDP481-x86-x64-AllOS-ENU.exe`, 78 MB).
 
-### NSIS
-
-- [Documentación de NSIS](https://nsis.sourceforge.io/Main_Page).
-
-### Contexto sobre DirectX 9 y Managed DirectX
+### Background on DirectX 9 and Managed DirectX
 
 - [Where is the DirectX SDK?](https://learn.microsoft.com/en-us/windows/win32/directx-sdk--august-2009-):
-  el SDK de DirectX pasó a ser parte del Windows SDK; Managed DirectX y D3DX quedaron obsoletos.
+  the DirectX SDK became part of the Windows SDK; Managed DirectX and D3DX were deprecated.
 - [Where is the DirectX SDK (2021 Edition)?](https://walbourn.github.io/where-is-the-directx-sdk-2021-edition/):
-  actualización de lo anterior; los instaladores antiguos siguen disponibles, re-firmados.
-- [DirectX and .NET](https://walbourn.github.io/directx-and-net/): estado de Managed DirectX 1.1. Es solo de
-  32 bits, por eso el juego se compila como x86.
-- [Not So Direct Setup](https://walbourn.github.io/not-so-direct-setup/): `DXSETUP` ya no instala DirectX sino
-  componentes opcionales; conviene incluir solo los `.cab` necesarios, que es lo que hace este instalador.
-- [DXSETUP Update](https://walbourn.github.io/dxsetup-update/): versión corregida de `DXSETUP` (abril 2011), que
-  arregla un error del modo silencioso. Es la que trae la descarga actual.
+  update of the above; the legacy installers are still available, re-signed.
+- [DirectX and .NET](https://walbourn.github.io/directx-and-net/): status of Managed DirectX 1.1. It is 32-bit
+  only, which is why the game is built as x86.
+- [Not So Direct Setup](https://walbourn.github.io/not-so-direct-setup/): `DXSETUP` no longer installs DirectX
+  but optional components; only the required `.cab` files should be included, which is what this installer does.
+- [DXSETUP Update](https://walbourn.github.io/dxsetup-update/): fixed version of `DXSETUP` (April 2011) that fixes
+  a silent mode bug. It is the one included in the current download.
