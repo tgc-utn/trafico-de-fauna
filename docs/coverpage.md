@@ -4,5 +4,6 @@
 
 > Juego 3D de sigilo y rescate ambientado en la Selva Misionera.
 
+[Descargar](download.md)
 [Documentación](introduction.md)
 [GitHub](https://github.com/tgc-utn/trafico-de-fauna)
