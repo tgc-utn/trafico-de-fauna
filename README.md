@@ -1,7 +1,8 @@
 # 🐒 Tráfico de Fauna
 
-3D stealth and rescue game set in the Misiones jungle. You control a capuchin monkey who must avoid the guards,
-collect bananas and get the keys to free the animals trapped by wildlife traffickers.
+3D stealth and rescue game set in the [Misiones rainforest](https://en.wikipedia.org/wiki/Alto_Paran%C3%A1_Atlantic_forests).
+You control a [capuchin monkey](https://en.wikipedia.org/wiki/Black_capuchin) who must avoid the guards, collect
+bananas and get the keys to free the animals trapped by wildlife traffickers.
 
 Developed by **Educ.ar S.E.** in 2012 to get children aged 8 to 12 talking about illegal wildlife trafficking, and
 recovered as an open source project. Learn about its history in the [introduction](docs/introduction.md).
