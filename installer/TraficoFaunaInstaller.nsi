@@ -1,9 +1,8 @@
-; NSIS - Instalador de Trafico de Fauna
-;
-; Requiere NSIS 3.02 o superior. Antes de compilar este script hay que compilar la solucion en Release:
-; la carpeta src\Trafico.De.Fauna\bin\Release queda como la carpeta completa del juego y de ahi se empaqueta.
-;
-; Se instala por usuario y sin permisos de administrador. Solo el paso opcional de DirectX los pide.
+; NSIS - Trafico de Fauna installer
+
+!if 0x3013000 > "${NSIS_PACKEDVERSION}"
+  !error "NSIS 3.13 or higher is required to build this installer!"
+!endif
 
 Unicode True
 SetCompressor /SOLID lzma
@@ -13,7 +12,7 @@ SetCompressor /SOLID lzma
 !include "FileFunc.nsh"
 
 ;--------------------------------
-;Definiciones
+;Definitions
 
 !define APP_NAME "Trafico de Fauna"
 !define APP_ID "TraficoFauna"
@@ -23,15 +22,15 @@ SetCompressor /SOLID lzma
 !define DIRECTX_DIR "DirectX"
 !define UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_ID}"
 
-; Valor "Release" del registro a partir del cual esta instalado .NET Framework 4.8.1
+; Minimum registry "Release" value at which .NET Framework 4.8.1 is installed
 !ifndef NETFX_481_RELEASE
   !define NETFX_481_RELEASE 533320
 !endif
 !define NETFX_481_URL "https://dotnet.microsoft.com/download/dotnet-framework/net481"
 
-; La version del instalador se toma del ejecutable compilado
+; The installer version is taken from the compiled executable
 !getdllversion "${BUILD_DIR}\${APP_EXE}" APP_VERSION_
-!define APP_VERSION "${APP_VERSION_1}.${APP_VERSION_2}.${APP_VERSION_3}"
+!define APP_VERSION "${APP_VERSION_1}.${APP_VERSION_2}.${APP_VERSION_3}.${APP_VERSION_4}"
 
 ;--------------------------------
 ;General
@@ -42,7 +41,7 @@ InstallDir "$LOCALAPPDATA\Programs\${APP_ID}"
 InstallDirRegKey HKCU "Software\${APP_ID}" "Install_Dir"
 RequestExecutionLevel user
 
-VIProductVersion "${APP_VERSION_1}.${APP_VERSION_2}.${APP_VERSION_3}.${APP_VERSION_4}"
+VIProductVersion "${APP_VERSION}"
 VIAddVersionKey "ProductName" "${APP_NAME}"
 VIAddVersionKey "CompanyName" "${APP_PUBLISHER}"
 VIAddVersionKey "LegalCopyright" "(c) Educ.ar 2012"
@@ -51,7 +50,7 @@ VIAddVersionKey "FileVersion" "${APP_VERSION}"
 VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 
 ;--------------------------------
-;Interfaz
+;Interface
 
 !define MUI_ABORTWARNING
 !define MUI_ICON "..\src\Trafico.De.Fauna\Icon.ico"
@@ -59,7 +58,7 @@ VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE}"
 
 ;--------------------------------
-;Paginas
+;Pages
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
@@ -70,12 +69,12 @@ VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ;--------------------------------
-;Idiomas
+;Languages
 
 !insertmacro MUI_LANGUAGE "Spanish"
 
 ;--------------------------------
-;Secciones del instalador
+;Installer sections
 
 Section "${APP_NAME}" SecGame
 
@@ -83,11 +82,11 @@ Section "${APP_NAME}" SecGame
   SetOverwrite on
   SetOutPath "$INSTDIR"
 
-  ;Ejecutable y su configuracion (necesaria para cargar Managed DirectX en .NET 4)
+  ;Executable and its configuration (required to load Managed DirectX on .NET 4)
   File "${BUILD_DIR}\${APP_EXE}"
   File "${BUILD_DIR}\${APP_EXE}.config"
 
-  ;Dependencias
+  ;Dependencies
   File "${BUILD_DIR}\TGC.Core.dll"
   File "${BUILD_DIR}\BulletSharp.dll"
   File "${BUILD_DIR}\libbulletc.dll"
@@ -97,14 +96,14 @@ Section "${APP_NAME}" SecGame
   File "${BUILD_DIR}\Microsoft.DirectX.DirectInput.dll"
   File "${BUILD_DIR}\Microsoft.DirectX.DirectSound.dll"
 
-  ;Contenido del juego (incluye las fuentes, que se cargan desde Media\Fonts sin instalarlas en Windows)
-  File /r /x "Thumbs.db" "${BUILD_DIR}\Media"
-  File /r /x "Thumbs.db" "${BUILD_DIR}\Shaders"
+  ;Assets and shaders
+  File /r "${BUILD_DIR}\Media"
+  File /r "${BUILD_DIR}\Shaders"
 
-  ;Carpeta de instalacion
+  ;Install folder
   WriteRegStr HKCU "Software\${APP_ID}" "Install_Dir" "$INSTDIR"
 
-  ;Desinstalador y entrada en "Agregar o quitar programas"
+  ;Uninstaller and "Add or remove programs" entry
   WriteUninstaller "$INSTDIR\uninstall.exe"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayVersion" "${APP_VERSION}"
@@ -123,8 +122,9 @@ SectionEnd
 
 Section "DirectX 9 D3DX" SecDirectX
 
-  ;El juego usa Managed DirectX, que necesita d3dx9_30.dll. Se instala con el redistribuible oficial,
-  ;reducido a ese componente. DXSETUP pide permisos de administrador por si mismo.
+  ;The game uses Managed DirectX, which requires d3dx9_30.dll. It is installed with the official redistributable,
+  ;reduced to that component. When it runs, DXSETUP asks for administrator rights,
+  ;so the rest of the installer does not need them.
   InitPluginsDir
   SetOutPath "$PLUGINSDIR\DirectX"
   File "${DIRECTX_DIR}\DXSETUP.exe"
@@ -161,7 +161,7 @@ Section "Accesos en menú Inicio" SecStartMenu
 SectionEnd
 
 ;--------------------------------
-;Descripciones de los componentes
+;Component descriptions
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGame} "Archivos del juego."
@@ -171,19 +171,19 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
-;Inicio del instalador
+;Installer startup
 
 Function .onInit
 
-  ;DirectX: solo se propone instalarlo si falta. En Windows de 64 bits $SYSDIR es SysWOW64 para este
-  ;instalador de 32 bits, que es donde tiene que estar la DLL porque el juego es x86.
+  ;DirectX: only offered if missing. On 64-bit Windows, $SYSDIR is SysWOW64 for this 32-bit installer,
+  ;which is where the DLL must be because the game is x86.
   ${If} ${FileExists} "$SYSDIR\d3dx9_30.dll"
     SectionGetFlags ${SecDirectX} $0
     IntOp $0 $0 & ~${SF_SELECTED}
     SectionSetFlags ${SecDirectX} $0
   ${EndIf}
 
-  ;.NET Framework 4.8.1: no se empaqueta, se avisa si falta.
+  ;.NET Framework 4.8.1: not bundled; a warning is shown if it is missing.
   ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" "Release"
   ${If} $0 < ${NETFX_481_RELEASE}
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${APP_NAME} necesita .NET Framework 4.8.1, que no esta instalado en esta PC.$\r$\n$\r$\nSe puede instalar el juego igual, pero no va a iniciar hasta que instales .NET Framework 4.8.1.$\r$\n$\r$\n¿Abrir la pagina de descarga de Microsoft?" /SD IDNO IDNO skipNetFx
@@ -194,11 +194,11 @@ Function .onInit
 FunctionEnd
 
 ;--------------------------------
-;Desinstalador
+;Uninstaller
 
 Section "Uninstall"
 
-  ;Solo se borra lo que instalo este instalador
+  ;Only delete what this installer installed
   Delete "$INSTDIR\${APP_EXE}"
   Delete "$INSTDIR\${APP_EXE}.config"
   Delete "$INSTDIR\TGC.Core.dll"
@@ -214,13 +214,13 @@ Section "Uninstall"
   Delete "$INSTDIR\uninstall.exe"
   RMDir "$INSTDIR"
 
-  ;Accesos directos
+  ;Shortcuts
   Delete "$DESKTOP\${APP_NAME}.lnk"
   Delete "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk"
   Delete "$SMPROGRAMS\${APP_NAME}\Desinstalar ${APP_NAME}.lnk"
   RMDir "$SMPROGRAMS\${APP_NAME}"
 
-  ;Registro
+  ;Registry
   DeleteRegKey HKCU "${UNINSTALL_KEY}"
   DeleteRegKey HKCU "Software\${APP_ID}"
 
