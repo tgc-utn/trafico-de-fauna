@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Tráfico de Fauna - Documentación</title>
+  <meta name="description" content="Documentación técnica de Tráfico de Fauna">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Core Theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css">
+
+  <!-- Theme add-on: dark mode following the operating system preference -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@5/dist/themes/addons/core-dark.min.css" media="(prefers-color-scheme: dark)">
+
+  <!-- Branding: game icon, jungle green accent and the designer's concept art on the cover -->
+  <link rel="icon" href="img/icon.ico">
+  <style>
+    :root {
+      --theme-color: #2e7d32;
+      /* Fallback cover gradient; the script below picks one of the game palettes on every load */
+      --cover-bg: linear-gradient(to left bottom, #4a9cc4 0%, #4f9148 50%, #7a4f2c 100%);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --theme-color: #6abf69; }
+    }
+    /* White cover text in both modes (the background no longer depends on the mode); the concept art keeps its white background as a card */
+    .cover {
+      --cover-color: #fff;
+      --cover-title-color: #fff;
+    }
+    /* Outline button: the accent colour is unreadable as text on the cover gradients */
+    .cover a.button:not(.primary) { color: #fff; }
+    .cover-main img {
+      max-width: 100%;
+      max-height: 33vh;
+      border-radius: 12px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, .4);
+    }
+  </style>
+  <script>
+    // Cover background: one of these gradients, built from the game's colours, is picked on every load.
+    // Without a --cover-bg value docsify generates a gradient with random colours instead.
+    // Convention: each gradient goes from what is higher up in the jungle (top right) to what is lower down (bottom left).
+    (function () {
+      var gradients = [
+        '#4a9cc4 0%, #4f9148 50%, #7a4f2c 100%', // sky, leaves, earth
+        '#e0b548 0%, #5c9440 45%, #6e4426 100%', // banana, leaves, trunk
+        '#e0b548 0%, #3f6b2a 50%, #1f3a1c 100%', // banana, deep jungle (menu screen)
+        '#4a9cc4 0%, #2f7d4f 100%'               // sky, jungle
+      ];
+      var pick = gradients[Math.floor(Math.random() * gradients.length)];
+      document.documentElement.style.setProperty('--cover-bg', 'linear-gradient(to left bottom, ' + pick + ')');
+    })();
+  </script>
+</head>
+<body class="loading sidebar-chevron-right sidebar-group-box">
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'Tráfico de Fauna',
+      repo: 'tgc-utn/trafico-de-fauna', // GitHub corner link (view repository, not edit)
+      onlyCover: true,
+      loadSidebar: 'sidebar.md',
+      coverpage: 'coverpage.md',
+      subMaxLevel: 2,
+      auto2top: true,
+      collapsibleSidebarGroups: true,
+      search: {
+        placeholder: 'Buscar',
+        noData: 'Sin resultados',
+        depth: 3
+      }
+    };
+  </script>
+  <!-- Docsify -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5"></script>
+
+  <!-- Official plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5/dist/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@5/dist/plugins/zoom-image.min.js"></script>
+
+  <!-- Community plugin: copy button on code blocks (docsify-copy-code, maintained) -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@3"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 290" width="600" height="290" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14">
+  <title>Máquina de estados del personaje</title>
+  <style>
+    .shape { fill: #e9e9e9; stroke: #777; }
+    .line { fill: none; stroke: #777; }
+    .head { fill: #777; }
+    text { fill: #222; }
+    @media (prefers-color-scheme: dark) {
+      .shape { fill: #3d444b; stroke: #9aa0a6; }
+      .line { stroke: #9aa0a6; }
+      .head { fill: #9aa0a6; }
+      text { fill: #eee; }
+    }
+  </style>
+  <defs>
+    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path class="head" d="M0 0 L10 5 L0 10 Z"/>
+    </marker>
+  </defs>
+  <g class="line" marker-end="url(#flecha)">
+    <!-- Agachado en escondite fijo <-> Normal -->
+    <path d="M143 60 Q177.5 44 212 60"/>
+    <path d="M212 60 Q177.5 76 143 60"/>
+    <!-- Normal <-> Agachado -->
+    <path d="M348 57 Q395 39 442 53"/>
+    <path d="M442 53 Q395 71 348 57"/>
+    <!-- Normal <-> Saltando plataformas -->
+    <path d="M332.5 82.9 Q388.6 124.7 457.5 137.1"/>
+    <path d="M457.5 137.1 Q401.4 95.3 332.5 82.9"/>
+    <!-- Normal <-> Cargando escondite móvil -->
+    <path d="M280 96 Q264 140 280 184"/>
+    <path d="M280 184 Q296 140 280 96"/>
+    <!-- Cargando escondite móvil <-> Agachado con escondite móvil -->
+    <path d="M212 227 Q177.5 214 143 233"/>
+    <path d="M143 233 Q177.5 246 212 227"/>
+  </g>
+  <g class="shape">
+    <ellipse cx="75" cy="60" rx="68" ry="36"/>
+    <ellipse cx="280" cy="60" rx="68" ry="36"/>
+    <ellipse cx="510" cy="50" rx="68" ry="36"/>
+    <ellipse cx="510" cy="160" rx="68" ry="36"/>
+    <ellipse cx="280" cy="220" rx="68" ry="36"/>
+    <ellipse cx="75" cy="240" rx="68" ry="36"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="75" y="56">Agachado en</text>
+    <text x="75" y="73">escondite fijo</text>
+    <text x="280" y="65">Normal</text>
+    <text x="510" y="55">Agachado</text>
+    <text x="510" y="156">Saltando</text>
+    <text x="510" y="173">plataformas</text>
+    <text x="280" y="216">Cargando</text>
+    <text x="280" y="233">escondite móvil</text>
+    <text x="75" y="236">Agachado con</text>
+    <text x="75" y="253">escondite móvil</text>
+  </g>
+</svg>
