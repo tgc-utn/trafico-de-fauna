@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="src/Trafico.De.Fauna/Trafico.De.Fauna.csproj">
+    <Platform Project="x86" />
+  </Project>
+</Solution>

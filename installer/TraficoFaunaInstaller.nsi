@@ -1,7 +1,7 @@
 ; NSIS - Instalador de Trafico de Fauna
 ;
 ; Requiere NSIS 3.02 o superior. Antes de compilar este script hay que compilar la solucion en Release:
-; la carpeta Trafico.De.Fauna\bin\Release queda como la carpeta completa del juego y de ahi se empaqueta.
+; la carpeta src\Trafico.De.Fauna\bin\Release queda como la carpeta completa del juego y de ahi se empaqueta.
 ;
 ; Se instala por usuario y sin permisos de administrador. Solo el paso opcional de DirectX los pide.
 
@@ -19,7 +19,7 @@ SetCompressor /SOLID lzma
 !define APP_ID "TraficoFauna"
 !define APP_EXE "Trafico.De.Fauna.exe"
 !define APP_PUBLISHER "TGC - UTN.BA - Educ.ar"
-!define BUILD_DIR "..\Trafico.De.Fauna\bin\Release"
+!define BUILD_DIR "..\src\Trafico.De.Fauna\bin\Release"
 !define DIRECTX_DIR "DirectX"
 !define UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_ID}"
 
@@ -54,8 +54,8 @@ VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 ;Interfaz
 
 !define MUI_ABORTWARNING
-!define MUI_ICON "..\Trafico.De.Fauna\Icon.ico"
-!define MUI_UNICON "..\Trafico.De.Fauna\Icon.ico"
+!define MUI_ICON "..\src\Trafico.De.Fauna\Icon.ico"
+!define MUI_UNICON "..\src\Trafico.De.Fauna\Icon.ico"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE}"
 
 ;--------------------------------

@@ -14,9 +14,9 @@ En el repositorio no se versionan binarios, así que antes de generarlo hay que 
 
 ### 1. Compilar el juego en Release
 
-Restaurar los paquetes NuGet y compilar `Trafico.De.Fauna.sln` en configuración `Release`.
+Restaurar los paquetes NuGet y compilar `Trafico.De.Fauna.slnx` en configuración `Release`.
 
-La carpeta `Trafico.De.Fauna\bin\Release` queda como la carpeta completa del juego (ejecutable, DLLs, `Media` y
+La carpeta `src\Trafico.De.Fauna\bin\Release` queda como la carpeta completa del juego (ejecutable, DLLs, `Media` y
 `Shaders`). El instalador empaqueta lo que encuentra ahí.
 
 ### 2. Preparar el redistribuible de DirectX
@@ -24,7 +24,7 @@ La carpeta `Trafico.De.Fauna\bin\Release` queda como la carpeta completa del jue
 1. Descargar *DirectX End-User Runtimes (June 2010)*:
    <https://www.microsoft.com/en-us/download/details.aspx?id=8109>
 2. Ejecutarlo y extraer su contenido en una carpeta temporal.
-3. Copiar a `Installer\DirectX\` estos seis archivos:
+3. Copiar a `installer\DirectX\` estos seis archivos:
 
    - `DXSETUP.exe`
    - `DSETUP.dll`
@@ -37,14 +37,14 @@ El juego solo necesita `d3dx9_30.dll`, por eso alcanza con ese `.cab` y los arch
 
 ### 3. Generar el instalador
 
-Desde la carpeta `Installer`:
+Desde la carpeta `installer`:
 
 ```
 "C:\Program Files (x86)\NSIS\makensis.exe" /INPUTCHARSET UTF8 TraficoFaunaInstaller.nsi
 ```
 
-El resultado es `Installer\TraficoFaunaInstaller-<versión>.exe`. La versión se toma del ejecutable compilado
-(`AssemblyFileVersion` en `Trafico.De.Fauna\Properties\AssemblyInfo.cs`).
+El resultado es `installer\TraficoFaunaInstaller-<versión>.exe`. La versión se toma del ejecutable compilado
+(`AssemblyFileVersion` en `src\Trafico.De.Fauna\Properties\AssemblyInfo.cs`).
 
 ## Qué hace el instalador
 
@@ -82,7 +82,7 @@ Para investigar:
 ### Descargas
 
 - [DirectX End-User Runtimes (June 2010)](https://www.microsoft.com/en-us/download/details.aspx?id=8109):
-  redistribuible de donde salen los seis archivos de `Installer\DirectX\`.
+  redistribuible de donde salen los seis archivos de `installer\DirectX\`.
 - [.NET Framework 4.8.1, instalador web](https://go.microsoft.com/fwlink/?LinkId=2203304) (`NDP481-Web.exe`, 1,5 MB).
 - [.NET Framework 4.8.1, instalador offline](https://go.microsoft.com/fwlink/?linkid=2203305)
   (`NDP481-x86-x64-AllOS-ENU.exe`, 78 MB).
