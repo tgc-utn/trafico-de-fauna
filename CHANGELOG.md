@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `CHANGELOG.md`.
 - `LICENSE`.
 - `D` key to toggle debug mode, only in Debug builds.
+- GitHub Actions workflows.
 
 ### Changed
 

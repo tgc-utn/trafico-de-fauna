@@ -1,0 +1,63 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    env:
+      DIRECTX_URL: https://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe
+      DIRECTX_SHA256: 053F76DCBB28802E23341B6A787E3B0791C0FA5C8D4D011B1044172DBF89C73B
+      NSIS_VERSION: 3.13.0
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: microsoft/setup-msbuild@v3
+
+      # DirectX End-User Runtimes (June 2010)
+      - name: Download DirectX redistributable
+        run: |
+          Invoke-WebRequest $env:DIRECTX_URL -OutFile "$env:RUNNER_TEMP\directx_redist.exe"
+          $hash = (Get-FileHash "$env:RUNNER_TEMP\directx_redist.exe" -Algorithm SHA256).Hash
+          if ($hash -ne $env:DIRECTX_SHA256) { throw "Unexpected SHA256: $hash" }
+
+      # Installing it provides the Managed DirectX assemblies needed to build the game.
+      - name: Install DirectX
+        run: |
+          $dir = "$env:RUNNER_TEMP\directx"
+          $extract = Start-Process "$env:RUNNER_TEMP\directx_redist.exe" -ArgumentList '/Q', "/T:$dir" -Wait -PassThru
+          if ($extract.ExitCode -ne 0) { throw "Extraction failed with exit code $($extract.ExitCode)" }
+          $setup = Start-Process "$dir\DXSETUP.exe" -ArgumentList '/silent' -Wait -PassThru
+          if ($setup.ExitCode -ne 0) { throw "DXSETUP failed with exit code $($setup.ExitCode)" }
+          $files = 'DXSETUP.exe', 'DSETUP.dll', 'dsetup32.dll', 'dxupdate.cab', 'dxdllreg_x86.cab', 'Apr2006_d3dx9_30_x86.cab'
+          foreach ($file in $files) { Copy-Item "$dir\$file" installer\DirectX\ }
+
+      - name: Build
+        run: msbuild Trafico.De.Fauna.slnx -restore -p:RestorePackagesConfig=true -p:Configuration=Release -p:Platform=x86
+
+      - name: Install NSIS
+        if: github.event_name != 'pull_request'
+        run: choco install nsis --version=$env:NSIS_VERSION -y --no-progress
+
+      - name: Build installer
+        if: github.event_name != 'pull_request'
+        working-directory: installer
+        run: '& "${env:ProgramFiles(x86)}\NSIS\makensis.exe" /INPUTCHARSET UTF8 TraficoFaunaInstaller.nsi'
+
+      - name: Upload installer
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          path: installer/TraficoFaunaInstaller-*.exe
+          archive: false
+          if-no-files-found: error
+          retention-days: 10
